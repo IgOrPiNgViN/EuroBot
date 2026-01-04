@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #f2a617;
+  --color-eurobot-blue: #1e3a5f;
+  --color-eurobot-navy: #0d2137;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  @apply antialiased bg-eurobot-light text-gray-900;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply btn bg-eurobot-gold text-eurobot-navy hover:bg-primary-400 focus:ring-eurobot-gold;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-eurobot-blue text-white hover:bg-eurobot-navy focus:ring-eurobot-blue;
+  }
+  
+  .btn-outline {
+    @apply btn border-2 border-eurobot-blue text-eurobot-blue hover:bg-eurobot-blue hover:text-white focus:ring-eurobot-blue;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-eurobot-blue focus:ring-2 focus:ring-eurobot-blue/20 outline-none transition-all;
+  }
+  
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg overflow-hidden;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-eurobot-navy mb-6;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-eurobot-blue rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-eurobot-navy;
+}
+
+/* Animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
