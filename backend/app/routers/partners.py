@@ -13,6 +13,7 @@ from app.dependencies import get_current_admin
 router = APIRouter(prefix="/partners", tags=["Partners"])
 
 
+@router.get("", response_model=List[PartnerResponse])
 @router.get("/", response_model=List[PartnerResponse])
 async def list_partners(
     category: Optional[PartnerCategory] = None,
@@ -131,6 +132,7 @@ async def delete_partner(
     await db.commit()
     
     return {"message": "Партнер удален"}
+
 
 
 

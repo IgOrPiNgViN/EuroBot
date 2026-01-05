@@ -2,11 +2,6 @@
 import httpx
 from typing import Optional
 from app.config import settings
-import logging
-
-logger = logging.getLogger(__name__)
-
-SMARTCAPTCHA_VERIFY_URL = "https://smartcaptcha.yandexcloud.net/validate"
 
 
 async def verify_captcha(token: str, ip: Optional[str] = None) -> bool:
@@ -15,41 +10,38 @@ async def verify_captcha(token: str, ip: Optional[str] = None) -> bool:
     
     Args:
         token: The captcha token from frontend
-        ip: User's IP address (optional, improves accuracy)
-    
+        ip: Optional client IP address
+        
     Returns:
         True if verification passed, False otherwise
     """
-    # If no server key configured, skip verification (development mode)
-    if not settings.SMARTCAPTCHA_SERVER_KEY:
-        logger.warning("SmartCaptcha server key not configured, skipping verification")
+    if not token:
+        return False
+    
+    # If no secret key configured, skip verification (for development)
+    secret_key = getattr(settings, 'SMARTCAPTCHA_SERVER_KEY', None)
+    if not secret_key:
         return True
     
     try:
-        params = {
-            "secret": settings.SMARTCAPTCHA_SERVER_KEY,
-            "token": token
-        }
-        
-        if ip:
-            params["ip"] = ip
-        
         async with httpx.AsyncClient() as client:
-            response = await client.get(SMARTCAPTCHA_VERIFY_URL, params=params)
-            result = response.json()
+            response = await client.post(
+                'https://smartcaptcha.yandexcloud.net/validate',
+                data={
+                    'secret': secret_key,
+                    'token': token,
+                    'ip': ip or ''
+                },
+                timeout=10.0
+            )
             
-            # Check status
-            status = result.get("status")
+            if response.status_code == 200:
+                result = response.json()
+                return result.get('status') == 'ok'
             
-            if status == "ok":
-                logger.info("SmartCaptcha verification passed")
-                return True
-            else:
-                logger.warning(f"SmartCaptcha verification failed: {result.get('message', 'unknown')}")
-                return False
-            
+            return False
     except Exception as e:
-        logger.error(f"SmartCaptcha verification error: {e}")
-        # In case of error, fail open in development, fail closed in production
-        return not settings.SMARTCAPTCHA_SERVER_KEY
+        # Log error but don't block user if captcha service is down
+        print(f"Captcha verification error: {e}")
+        return True  # Allow through if service unavailable
 

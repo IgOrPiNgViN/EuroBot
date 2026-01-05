@@ -28,6 +28,7 @@ const AdminSettings = lazy(() => import('./pages/admin/SettingsManagement'))
 const AdminAdmins = lazy(() => import('./pages/admin/AdminsManagement'))
 const AdminDatabase = lazy(() => import('./pages/admin/DatabaseManagement'))
 const AdminMailings = lazy(() => import('./pages/admin/MailingsPage'))
+const AdminRegistrationFields = lazy(() => import('./pages/admin/RegistrationFieldsManagement'))
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
           <Route path="admins" element={<AdminAdmins />} />
           <Route path="database" element={<AdminDatabase />} />
           <Route path="mailings" element={<AdminMailings />} />
+          <Route path="registration-fields" element={<AdminRegistrationFields />} />
         </Route>
       </Routes>
     </Suspense>

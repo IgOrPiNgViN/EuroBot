@@ -1,39 +1,79 @@
 import { useEffect, useRef } from 'react'
+import { useSettingsStore } from '../../store/settingsStore'
 import { useSmartCaptcha } from '../../hooks/useSmartCaptcha'
 
 interface SmartCaptchaProps {
-  onVerify?: (token: string) => void
-  onError?: () => void
+  onVerify: (token: string) => void
   className?: string
 }
 
-export default function SmartCaptcha({ onVerify, onError, className = '' }: SmartCaptchaProps) {
+declare global {
+  interface Window {
+    smartCaptcha?: {
+      render: (container: HTMLElement, options: {
+        sitekey: string
+        callback: (token: string) => void
+      }) => number
+      reset: (widgetId: number) => void
+    }
+  }
+}
+
+export default function SmartCaptcha({ onVerify, className = '' }: SmartCaptchaProps) {
+  const { settings } = useSettingsStore()
+  const { resetKey } = useSmartCaptcha()
   const containerRef = useRef<HTMLDivElement>(null)
-  const { isReady, isEnabled, renderCaptcha, token } = useSmartCaptcha()
+  const widgetIdRef = useRef<number | null>(null)
+
+  const clientKey = settings.smartcaptcha_client_key as string | undefined
 
   useEffect(() => {
-    if (isReady && isEnabled && containerRef.current) {
-      renderCaptcha(containerRef.current)
-    }
-  }, [isReady, isEnabled, renderCaptcha])
+    if (!clientKey || !containerRef.current) return
 
+    // Load SmartCaptcha script if not loaded
+    const scriptId = 'smartcaptcha-script'
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script')
+      script.id = scriptId
+      script.src = 'https://smartcaptcha.yandexcloud.net/captcha.js'
+      script.async = true
+      script.defer = true
+      document.head.appendChild(script)
+
+      script.onload = () => {
+        renderCaptcha()
+      }
+    } else if (window.smartCaptcha) {
+      renderCaptcha()
+    }
+
+    function renderCaptcha() {
+      if (!containerRef.current || !window.smartCaptcha || !clientKey) return
+      
+      // Clear previous captcha
+      containerRef.current.innerHTML = ''
+      
+      widgetIdRef.current = window.smartCaptcha.render(containerRef.current, {
+        sitekey: clientKey,
+        callback: onVerify
+      })
+    }
+  }, [clientKey, onVerify, resetKey])
+
+  // Reset captcha when resetKey changes
   useEffect(() => {
-    if (token && onVerify) {
-      onVerify(token)
+    if (widgetIdRef.current !== null && window.smartCaptcha) {
+      window.smartCaptcha.reset(widgetIdRef.current)
     }
-  }, [token, onVerify])
+  }, [resetKey])
 
-  // Don't render anything if captcha is not configured
-  if (!isEnabled) {
+  if (!clientKey) {
     return null
   }
 
   return (
-    <div className={`smart-captcha-container ${className}`}>
+    <div className={className}>
       <div ref={containerRef} />
-      {!isReady && (
-        <div className="text-sm text-gray-400">Загрузка капчи...</div>
-      )}
     </div>
   )
 }

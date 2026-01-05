@@ -13,6 +13,7 @@ from app.dependencies import get_current_admin
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
 
+@router.get("", response_model=Dict[str, Any])
 @router.get("/", response_model=Dict[str, Any])
 async def get_public_settings(db: AsyncSession = Depends(get_db)):
     """Get all public site settings."""
@@ -108,6 +109,7 @@ async def delete_setting(
     await db.commit()
     
     return {"message": "Настройка удалена"}
+
 
 
 

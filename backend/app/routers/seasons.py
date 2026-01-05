@@ -11,7 +11,7 @@ from app.models.user import User
 from app.schemas.competition import (
     SeasonCreate, SeasonUpdate, SeasonResponse,
     CompetitionCreate, CompetitionUpdate, CompetitionResponse,
-    RegistrationFieldCreate, RegistrationFieldResponse
+    RegistrationFieldCreate, RegistrationFieldUpdate, RegistrationFieldResponse
 )
 from app.dependencies import get_current_admin
 
@@ -20,6 +20,7 @@ router = APIRouter(prefix="/seasons", tags=["Seasons"])
 
 # Public endpoints
 
+@router.get("", response_model=List[SeasonResponse])
 @router.get("/", response_model=List[SeasonResponse])
 async def list_seasons(
     current_only: bool = False,
@@ -102,9 +103,15 @@ async def create_season(
     season = Season(**season_data.model_dump())
     db.add(season)
     await db.commit()
-    await db.refresh(season)
     
-    return season
+    # Reload with relationships
+    query = select(Season).options(
+        selectinload(Season.competitions),
+        selectinload(Season.registration_fields)
+    ).where(Season.id == season.id)
+    result = await db.execute(query)
+    
+    return result.scalar_one()
 
 
 @router.patch("/{season_id}", response_model=SeasonResponse)
@@ -115,12 +122,7 @@ async def update_season(
     db: AsyncSession = Depends(get_db)
 ):
     """Update season (admin only)."""
-    query = select(Season).options(
-        selectinload(Season.competitions),
-        selectinload(Season.registration_fields)
-    ).where(Season.id == season_id)
-    
-    result = await db.execute(query)
+    result = await db.execute(select(Season).where(Season.id == season_id))
     season = result.scalar_one_or_none()
     
     if not season:
@@ -141,9 +143,15 @@ async def update_season(
         setattr(season, field, value)
     
     await db.commit()
-    await db.refresh(season)
     
-    return season
+    # Reload with relationships
+    query = select(Season).options(
+        selectinload(Season.competitions),
+        selectinload(Season.registration_fields)
+    ).where(Season.id == season_id)
+    result = await db.execute(query)
+    
+    return result.scalar_one()
 
 
 @router.delete("/{season_id}")
@@ -245,6 +253,19 @@ async def delete_competition(
 
 # Registration fields
 
+@router.get("/{season_id}/fields", response_model=List[RegistrationFieldResponse])
+async def get_registration_fields(
+    season_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get registration fields for a season."""
+    query = select(RegistrationField).where(
+        RegistrationField.season_id == season_id
+    ).order_by(RegistrationField.display_order)
+    result = await db.execute(query)
+    return result.scalars().all()
+
+
 @router.post("/{season_id}/fields", response_model=RegistrationFieldResponse, status_code=status.HTTP_201_CREATED)
 async def create_registration_field(
     season_id: int,
@@ -259,6 +280,56 @@ async def create_registration_field(
     await db.refresh(field)
     
     return field
+
+
+@router.patch("/fields/{field_id}", response_model=RegistrationFieldResponse)
+async def update_registration_field(
+    field_id: int,
+    field_data: RegistrationFieldUpdate,
+    admin: User = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """Update registration field (admin only)."""
+    result = await db.execute(select(RegistrationField).where(RegistrationField.id == field_id))
+    field = result.scalar_one_or_none()
+    
+    if not field:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Поле не найдено"
+        )
+    
+    update_data = field_data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(field, key, value)
+    
+    await db.commit()
+    await db.refresh(field)
+    
+    return field
+
+
+@router.delete("/fields/{field_id}")
+async def delete_registration_field(
+    field_id: int,
+    admin: User = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """Delete registration field (admin only)."""
+    result = await db.execute(select(RegistrationField).where(RegistrationField.id == field_id))
+    field = result.scalar_one_or_none()
+    
+    if not field:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Поле не найдено"
+        )
+    
+    await db.delete(field)
+    await db.commit()
+    
+    return {"message": "Поле удалено"}
+
 
 
 

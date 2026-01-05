@@ -59,6 +59,7 @@ async def send_contact_message(
 
 # Admin endpoints
 
+@router.get("", response_model=ContactMessageListResponse)
 @router.get("/", response_model=ContactMessageListResponse)
 async def list_messages(
     page: int = Query(1, ge=1),

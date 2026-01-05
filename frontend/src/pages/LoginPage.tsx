@@ -110,12 +110,6 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-gray-600">
-              Нет аккаунта?{' '}
-              <Link to="/register" className="text-eurobot-blue hover:underline font-medium">
-                Зарегистрируйтесь
-              </Link>
-            </div>
           </div>
         </motion.div>
       </div>

@@ -89,3 +89,4 @@ class MassMailingCampaign(Base):
     def __repr__(self):
         return f"<MassMailingCampaign {self.id}: {self.name}>"
 
+

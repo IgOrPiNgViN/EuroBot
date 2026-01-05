@@ -83,6 +83,18 @@ export default function SeasonsManagement() {
     }
   }
 
+  const handleSetCurrent = async (season: Season) => {
+    if (season.is_current) return
+    
+    try {
+      await seasonsApi.update(season.id, { is_current: true })
+      toast.success(`${season.name} установлен как текущий сезон`)
+      fetchSeasons()
+    } catch (error) {
+      toast.error('Ошибка при обновлении')
+    }
+  }
+
   const handleSave = async () => {
     if (!formData.year || !formData.name) {
       toast.error('Заполните обязательные поля')
@@ -155,6 +167,16 @@ export default function SeasonsManagement() {
               </div>
               
               <div className="flex items-center space-x-2">
+                {!season.is_current && (
+                  <button
+                    onClick={() => handleSetCurrent(season)}
+                    className="px-3 py-1 text-sm bg-eurobot-gold/10 text-eurobot-gold hover:bg-eurobot-gold hover:text-white rounded-lg transition-colors"
+                    title="Сделать текущим"
+                  >
+                    <StarIcon className="w-4 h-4 inline mr-1" />
+                    Сделать текущим
+                  </button>
+                )}
                 <button
                   onClick={() => handleEdit(season)}
                   className="p-2 text-gray-400 hover:text-blue-600"
@@ -362,6 +384,7 @@ export default function SeasonsManagement() {
     </div>
   )
 }
+
 
 
 

@@ -132,31 +132,41 @@ async def create_initial_data():
             session.add(admin)
             logger.info(f"Created super admin user: {settings.ADMIN_EMAIL}")
         
-        # Create default season if none exists
+        # Ensure there's a current season
         result = await session.execute(select(Season).where(Season.is_current == True))
         current_season = result.scalar_one_or_none()
         
         if not current_season:
             current_year = datetime.now().year
-            season = Season(
-                year=current_year,
-                name=f"Евробот {current_year}",
-                theme="Farming Mars",
-                registration_open=True,
-                registration_start=datetime.now(),
-                registration_end=datetime.now() + timedelta(days=90),
-                competition_date_start=date(current_year, 5, 1),
-                competition_date_end=date(current_year, 5, 3),
-                location="Москва",
-                is_current=True,
-                is_archived=False,
-                show_dates=True,
-                show_location=True,
-                show_format=True,
-                show_registration_deadline=True
-            )
-            session.add(season)
-            logger.info(f"Created default season: Евробот {current_year}")
+            # Check if season for this year exists but not marked as current
+            result = await session.execute(select(Season).where(Season.year == current_year))
+            existing_season = result.scalar_one_or_none()
+            
+            if existing_season:
+                # Make existing season current
+                existing_season.is_current = True
+                logger.info(f"Marked existing season as current: {existing_season.name}")
+            else:
+                # Create new season
+                season = Season(
+                    year=current_year,
+                    name=f"Евробот {current_year}",
+                    theme="Farming Mars",
+                    registration_open=True,
+                    registration_start=datetime.now(),
+                    registration_end=datetime.now() + timedelta(days=90),
+                    competition_date_start=date(current_year, 5, 1),
+                    competition_date_end=date(current_year, 5, 3),
+                    location="Москва",
+                    is_current=True,
+                    is_archived=False,
+                    show_dates=True,
+                    show_location=True,
+                    show_format=True,
+                    show_registration_deadline=True
+                )
+                session.add(season)
+                logger.info(f"Created default season: Евробот {current_year}")
         
         # Create default news categories
         categories = [

@@ -20,6 +20,17 @@ class RegistrationFieldCreate(RegistrationFieldBase):
     pass
 
 
+class RegistrationFieldUpdate(BaseModel):
+    """Schema for updating a registration field."""
+    name: Optional[str] = None
+    label: Optional[str] = None
+    field_type: Optional[str] = None
+    options: Optional[List[Any]] = None
+    is_required: Optional[bool] = None
+    display_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
 class RegistrationFieldResponse(RegistrationFieldBase):
     """Registration field response schema."""
     id: int
@@ -128,6 +139,7 @@ class SeasonResponse(SeasonBase):
     
     class Config:
         from_attributes = True
+
 
 
 

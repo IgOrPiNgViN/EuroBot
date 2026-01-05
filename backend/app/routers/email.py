@@ -287,3 +287,4 @@ async def send_custom_email(
     else:
         raise HTTPException(status_code=500, detail="Ошибка при отправке писем")
 
+
