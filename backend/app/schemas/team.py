@@ -1,6 +1,6 @@
 """Team schemas."""
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 from app.models.team import TeamStatus, League
 
@@ -39,6 +39,7 @@ class TeamBase(BaseModel):
     league: League
     poster_link: Optional[str] = None
     rules_accepted: bool = False
+    custom_fields: Optional[Dict[str, Any]] = None  # Дополнительные поля из админки
 
 
 class TeamCreate(TeamBase):
@@ -71,6 +72,7 @@ class TeamResponse(TeamBase):
     user_id: Optional[int] = None
     members: List[TeamMemberResponse] = []
     notes: Optional[str] = None
+    custom_fields: Optional[Dict[str, Any]] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     

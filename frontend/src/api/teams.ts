@@ -30,12 +30,13 @@ export interface TeamRegisterData {
   rules_accepted: boolean
   season_id: number
   members?: TeamMemberData[]
+  custom_fields?: Record<string, unknown>
   recaptcha_token?: string
 }
 
 export const teamsApi = {
   register: async (data: TeamRegisterData): Promise<Team> => {
-    const response = await apiClient.post('/teams/register/', data)
+    const response = await apiClient.post('/teams/register', data)
     return response.data
   },
 

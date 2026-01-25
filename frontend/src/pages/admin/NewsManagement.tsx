@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline'
+import ReactPlayer from 'react-player'
 import { newsApi, NewsCreateData } from '../../api/news'
 import { News, NewsCategory } from '../../types'
 import { format } from 'date-fns'
@@ -11,6 +12,23 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
 import Select from '../../components/ui/Select'
+
+// Функция для получения embed URL из Rutube
+const getRutubeEmbedUrl = (url: string): string | null => {
+  const patterns = [
+    /rutube\.ru\/video\/([a-zA-Z0-9]+)/,
+    /rutube\.ru\/play\/embed\/([a-zA-Z0-9]+)/
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) {
+      return `https://rutube.ru/play/embed/${match[1]}`
+    }
+  }
+  return null
+}
+
+const isRutubeUrl = (url: string): boolean => url.includes('rutube.ru')
 
 export default function NewsManagement() {
   const [news, setNews] = useState<News[]>([])
@@ -247,8 +265,53 @@ export default function NewsManagement() {
                   label="URL видео"
                   value={formData.video_url || ''}
                   onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                  helperText="YouTube, Vimeo, Rutube и др."
                 />
               </div>
+
+              {/* Video Preview */}
+              {formData.video_url && (isRutubeUrl(formData.video_url) || ReactPlayer.canPlay(formData.video_url)) && (
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Превью видео
+                  </label>
+                  <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
+                    {isRutubeUrl(formData.video_url) ? (
+                      <iframe
+                        src={getRutubeEmbedUrl(formData.video_url) || formData.video_url}
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        allow="clipboard-write; autoplay"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <ReactPlayer
+                        url={formData.video_url}
+                        width="100%"
+                        height="100%"
+                        controls
+                        light
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Image Preview */}
+              {formData.featured_image && (
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Превью изображения
+                  </label>
+                  <img 
+                    src={formData.featured_image} 
+                    alt="Preview" 
+                    className="max-h-48 rounded-lg object-cover"
+                    onError={(e) => e.currentTarget.style.display = 'none'}
+                  />
+                </div>
+              )}
 
               <Select
                 label="Категория"

@@ -167,45 +167,44 @@ export default function NewsPage() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {news.map((item, index) => (
-                      <motion.article
-                        key={item.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="card hover:shadow-xl transition-shadow"
-                      >
-                        {item.featured_image && (
-                          <div className="aspect-video overflow-hidden">
-                            <img
-                              src={item.featured_image}
-                              alt={item.title}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                        )}
-                        <div className="p-5">
-                          <div className="flex items-center space-x-2 text-xs text-gray-500 mb-2">
-                            {item.category && (
-                              <span className="bg-eurobot-gold/10 text-eurobot-gold px-2 py-0.5 rounded">
-                                {item.category.name}
-                              </span>
-                            )}
-                            {item.publish_date && (
-                              <time dateTime={item.publish_date}>
-                                {format(new Date(item.publish_date), 'd MMM yyyy', { locale: ru })}
-                              </time>
-                            )}
-                          </div>
-                          <h2 className="font-heading font-semibold text-lg mb-2 line-clamp-2">
-                            <Link to={`/news/${item.slug}`} className="hover:text-eurobot-blue">
-                              {item.title}
-                            </Link>
-                          </h2>
-                          {item.excerpt && (
-                            <p className="text-gray-600 text-sm line-clamp-2">{item.excerpt}</p>
+                      <Link to={`/news/${item.slug}`} key={item.id}>
+                        <motion.article
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="card hover:shadow-xl transition-shadow cursor-pointer h-full"
+                        >
+                          {item.featured_image && (
+                            <div className="aspect-video overflow-hidden rounded-t-xl">
+                              <img
+                                src={item.featured_image}
+                                alt={item.title}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
                           )}
-                        </div>
-                      </motion.article>
+                          <div className="p-5">
+                            <div className="flex items-center space-x-2 text-xs text-gray-500 mb-2">
+                              {item.category && (
+                                <span className="bg-eurobot-gold/10 text-eurobot-gold px-2 py-0.5 rounded">
+                                  {item.category.name}
+                                </span>
+                              )}
+                              {item.publish_date && (
+                                <time dateTime={item.publish_date}>
+                                  {format(new Date(item.publish_date), 'd MMM yyyy', { locale: ru })}
+                                </time>
+                              )}
+                            </div>
+                            <h2 className="font-heading font-semibold text-lg mb-2 line-clamp-2 hover:text-eurobot-blue transition-colors">
+                              {item.title}
+                            </h2>
+                            {item.excerpt && (
+                              <p className="text-gray-600 text-sm line-clamp-2">{item.excerpt}</p>
+                            )}
+                          </div>
+                        </motion.article>
+                      </Link>
                     ))}
                   </div>
 

@@ -1,5 +1,5 @@
 """Team registration models."""
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Enum as SAEnum, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -42,6 +42,9 @@ class Team(Base):
     
     # Technical
     poster_link = Column(String(1000), nullable=True)  # Ссылка на технический плакат
+    
+    # Custom registration fields (JSON)
+    custom_fields = Column(JSON, nullable=True)  # Дополнительные поля из админки
     
     # Status
     status = Column(SAEnum(TeamStatus, values_callable=lambda x: [e.value for e in x]), default=TeamStatus.pending)

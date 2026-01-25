@@ -86,6 +86,7 @@ async def register_team(
         league=team_data.league,
         poster_link=team_data.poster_link,
         rules_accepted=team_data.rules_accepted,
+        custom_fields=team_data.custom_fields,
         season_id=team_data.season_id,
         user_id=user.id if user else None,
         status=TeamStatus.pending

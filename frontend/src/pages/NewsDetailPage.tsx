@@ -10,6 +10,28 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import ReactPlayer from 'react-player'
 import SEO from '../components/SEO'
 
+// Функция для получения embed URL из Rutube
+const getRutubeEmbedUrl = (url: string): string | null => {
+  // Форматы: rutube.ru/video/ID/ или rutube.ru/play/embed/ID
+  const patterns = [
+    /rutube\.ru\/video\/([a-zA-Z0-9]+)/,
+    /rutube\.ru\/play\/embed\/([a-zA-Z0-9]+)/
+  ]
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) {
+      return `https://rutube.ru/play/embed/${match[1]}`
+    }
+  }
+  return null
+}
+
+// Проверка, является ли URL Rutube
+const isRutubeUrl = (url: string): boolean => {
+  return url.includes('rutube.ru')
+}
+
 export default function NewsDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const [news, setNews] = useState<News | null>(null)
@@ -133,13 +155,24 @@ export default function NewsDetailPage() {
 
             {/* Video */}
             {news.video_url && (
-              <div className="mb-8 aspect-video rounded-xl overflow-hidden">
-                <ReactPlayer
-                  url={news.video_url}
-                  width="100%"
-                  height="100%"
-                  controls
-                />
+              <div className="mb-8 aspect-video rounded-xl overflow-hidden bg-black">
+                {isRutubeUrl(news.video_url) ? (
+                  <iframe
+                    src={getRutubeEmbedUrl(news.video_url) || news.video_url}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    allow="clipboard-write; autoplay"
+                    allowFullScreen
+                  />
+                ) : (
+                  <ReactPlayer
+                    url={news.video_url}
+                    width="100%"
+                    height="100%"
+                    controls
+                  />
+                )}
               </div>
             )}
 
