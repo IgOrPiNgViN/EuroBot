@@ -127,10 +127,34 @@ export default function ArchivePage() {
                     </div>
 
                     {/* Results */}
-                    {selectedSeason.results_summary && (
+                    {(selectedSeason.first_place || selectedSeason.second_place || selectedSeason.third_place) && (
                       <div className="mb-8 p-6 bg-eurobot-gold/10 rounded-xl">
-                        <h3 className="font-heading font-semibold text-xl mb-3">Итоги</h3>
-                        <div className="prose prose-sm" dangerouslySetInnerHTML={{ __html: selectedSeason.results_summary }} />
+                        <h3 className="font-heading font-semibold text-xl mb-4">Итоги</h3>
+                        <div className="space-y-3">
+                          {selectedSeason.first_place && (
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">🥇</span>
+                              <span className="font-medium">{selectedSeason.first_place}</span>
+                            </div>
+                          )}
+                          {selectedSeason.second_place && (
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">🥈</span>
+                              <span className="font-medium">{selectedSeason.second_place}</span>
+                            </div>
+                          )}
+                          {selectedSeason.third_place && (
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">🥉</span>
+                              <span className="font-medium">{selectedSeason.third_place}</span>
+                            </div>
+                          )}
+                          {selectedSeason.additional_info && (
+                            <p className="text-gray-600 mt-4 pt-3 border-t border-eurobot-gold/20">
+                              {selectedSeason.additional_info}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     )}
 

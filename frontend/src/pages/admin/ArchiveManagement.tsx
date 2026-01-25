@@ -26,9 +26,6 @@ export default function ArchiveManagement() {
   const [selectedSeason, setSelectedSeason] = useState<ArchiveSeason | null>(null)
   const [seasonForm, setSeasonForm] = useState<Partial<ArchiveSeasonCreateData>>({})
   const [mediaForm, setMediaForm] = useState<Partial<ArchiveMediaCreateData>>({ media_type: 'photo' })
-  
-  // Простые поля для призёров (вместо HTML)
-  const [winners, setWinners] = useState({ first: '', second: '', third: '', extra: '' })
   const [saving, setSaving] = useState(false)
 
   const fetchSeasons = async () => {
@@ -47,50 +44,9 @@ export default function ArchiveManagement() {
     fetchSeasons()
   }, [])
 
-  // Парсинг HTML итогов обратно в простые поля
-  const parseResultsToWinners = (html: string | null | undefined) => {
-    if (!html) return { first: '', second: '', third: '', extra: '' }
-    
-    const result = { first: '', second: '', third: '', extra: '' }
-    
-    // Ищем места
-    const firstMatch = html.match(/1 место[^<]*<\/strong>:?\s*([^<]+)/i)
-    const secondMatch = html.match(/2 место[^<]*<\/strong>:?\s*([^<]+)/i)
-    const thirdMatch = html.match(/3 место[^<]*<\/strong>:?\s*([^<]+)/i)
-    const extraMatch = html.match(/<p>([^<]+)<\/p>\s*$/i)
-    
-    if (firstMatch) result.first = firstMatch[1].trim()
-    if (secondMatch) result.second = secondMatch[1].trim()
-    if (thirdMatch) result.third = thirdMatch[1].trim()
-    if (extraMatch) result.extra = extraMatch[1].trim()
-    
-    return result
-  }
-
-  // Генерация HTML из простых полей
-  const generateResultsHtml = () => {
-    const parts: string[] = []
-    
-    if (winners.first || winners.second || winners.third) {
-      parts.push('<h4>🏆 Призёры</h4>')
-      parts.push('<ul>')
-      if (winners.first) parts.push(`<li><strong>🥇 1 место:</strong> ${winners.first}</li>`)
-      if (winners.second) parts.push(`<li><strong>🥈 2 место:</strong> ${winners.second}</li>`)
-      if (winners.third) parts.push(`<li><strong>🥉 3 место:</strong> ${winners.third}</li>`)
-      parts.push('</ul>')
-    }
-    
-    if (winners.extra) {
-      parts.push(`<p>${winners.extra}</p>`)
-    }
-    
-    return parts.length > 0 ? parts.join('\n') : undefined
-  }
-
   const handleCreateSeason = () => {
     setEditingSeason(null)
     setSeasonForm({})
-    setWinners({ first: '', second: '', third: '', extra: '' })
     setShowSeasonModal(true)
   }
 
@@ -102,10 +58,12 @@ export default function ArchiveManagement() {
       theme: season.theme || '',
       description: season.description || '',
       cover_image: season.cover_image || '',
-      results_summary: season.results_summary || '',
+      first_place: season.first_place || '',
+      second_place: season.second_place || '',
+      third_place: season.third_place || '',
+      additional_info: season.additional_info || '',
       teams_count: season.teams_count || undefined
     })
-    setWinners(parseResultsToWinners(season.results_summary))
     setShowSeasonModal(true)
   }
 
@@ -115,19 +73,13 @@ export default function ArchiveManagement() {
       return
     }
 
-    // Генерируем HTML из простых полей
-    const dataToSave = {
-      ...seasonForm,
-      results_summary: generateResultsHtml()
-    }
-
     setSaving(true)
     try {
       if (editingSeason) {
-        await archiveApi.updateSeason(editingSeason.id, dataToSave)
+        await archiveApi.updateSeason(editingSeason.id, seasonForm)
         toast.success('Сезон обновлён')
       } else {
-        await archiveApi.createSeason(dataToSave as ArchiveSeasonCreateData)
+        await archiveApi.createSeason(seasonForm as ArchiveSeasonCreateData)
         toast.success('Сезон добавлен в архив')
       }
       setShowSeasonModal(false)
@@ -387,26 +339,26 @@ export default function ArchiveManagement() {
                 <div className="space-y-3">
                   <Input
                     label="🥇 1 место"
-                    value={winners.first}
-                    onChange={(e) => setWinners({ ...winners, first: e.target.value })}
+                    value={seasonForm.first_place || ''}
+                    onChange={(e) => setSeasonForm({ ...seasonForm, first_place: e.target.value })}
                     placeholder="Название команды — 150 очков"
                   />
                   <Input
                     label="🥈 2 место"
-                    value={winners.second}
-                    onChange={(e) => setWinners({ ...winners, second: e.target.value })}
+                    value={seasonForm.second_place || ''}
+                    onChange={(e) => setSeasonForm({ ...seasonForm, second_place: e.target.value })}
                     placeholder="Название команды — 142 очка"
                   />
                   <Input
                     label="🥉 3 место"
-                    value={winners.third}
-                    onChange={(e) => setWinners({ ...winners, third: e.target.value })}
+                    value={seasonForm.third_place || ''}
+                    onChange={(e) => setSeasonForm({ ...seasonForm, third_place: e.target.value })}
                     placeholder="Название команды — 138 очков"
                   />
                   <Textarea
                     label="Дополнительная информация"
-                    value={winners.extra}
-                    onChange={(e) => setWinners({ ...winners, extra: e.target.value })}
+                    value={seasonForm.additional_info || ''}
+                    onChange={(e) => setSeasonForm({ ...seasonForm, additional_info: e.target.value })}
                     rows={2}
                     placeholder="Например: Всего участвовало 45 команд из 12 регионов"
                   />

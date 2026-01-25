@@ -26,8 +26,13 @@ class ArchiveSeason(Base):
     # Cover image
     cover_image = Column(String(500), nullable=True)
     
-    # Results and stats
-    results_summary = Column(Text, nullable=True)
+    # Results - structured fields
+    first_place = Column(String(255), nullable=True)
+    second_place = Column(String(255), nullable=True)
+    third_place = Column(String(255), nullable=True)
+    additional_info = Column(Text, nullable=True)
+    
+    # Stats
     teams_count = Column(Integer, nullable=True)
     
     # Media

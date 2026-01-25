@@ -33,6 +33,15 @@ export interface CompetitionCreateData {
   is_active?: boolean
 }
 
+export interface FinalizeSeasonData {
+  description?: string
+  cover_image?: string
+  first_place?: string
+  second_place?: string
+  third_place?: string
+  additional_info?: string
+}
+
 export const seasonsApi = {
   getList: async (currentOnly = false, includeArchived = false): Promise<Season[]> => {
     const response = await apiClient.get('/seasons', {
@@ -63,6 +72,10 @@ export const seasonsApi = {
 
   delete: async (id: number): Promise<void> => {
     await apiClient.delete(`/seasons/${id}`)
+  },
+
+  finalize: async (id: number, data: FinalizeSeasonData): Promise<void> => {
+    await apiClient.post(`/seasons/${id}/finalize`, data)
   },
 
   // Competitions

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { PlusIcon, PencilIcon, TrashIcon, StarIcon } from '@heroicons/react/24/outline'
-import { seasonsApi, SeasonCreateData } from '../../api/seasons'
+import { PlusIcon, PencilIcon, TrashIcon, StarIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
+import { seasonsApi, SeasonCreateData, FinalizeSeasonData } from '../../api/seasons'
 import { Season } from '../../types'
 import { format } from 'date-fns'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
@@ -17,6 +17,12 @@ export default function SeasonsManagement() {
   const [editingSeason, setEditingSeason] = useState<Season | null>(null)
   const [formData, setFormData] = useState<Partial<SeasonCreateData>>({})
   const [saving, setSaving] = useState(false)
+  
+  // Finalize season modal
+  const [showFinalizeModal, setShowFinalizeModal] = useState(false)
+  const [finalizingSeason, setFinalizingSeason] = useState<Season | null>(null)
+  const [finalizeData, setFinalizeData] = useState<FinalizeSeasonData>({})
+  const [finalizing, setFinalizing] = useState(false)
 
   const fetchSeasons = async () => {
     try {
@@ -95,6 +101,39 @@ export default function SeasonsManagement() {
     }
   }
 
+  const handleOpenFinalize = (season: Season) => {
+    setFinalizingSeason(season)
+    setFinalizeData({
+      description: '',
+      cover_image: '',
+      first_place: '',
+      second_place: '',
+      third_place: '',
+      additional_info: ''
+    })
+    setShowFinalizeModal(true)
+  }
+
+  const handleFinalize = async () => {
+    if (!finalizingSeason) return
+    
+    if (!confirm(`Вы уверены, что хотите завершить сезон "${finalizingSeason.name}" и отправить его в архив? Это действие необратимо.`)) {
+      return
+    }
+
+    setFinalizing(true)
+    try {
+      await seasonsApi.finalize(finalizingSeason.id, finalizeData)
+      toast.success('Сезон завершён и отправлен в архив')
+      setShowFinalizeModal(false)
+      fetchSeasons()
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || 'Ошибка при завершении сезона')
+    } finally {
+      setFinalizing(false)
+    }
+  }
+
   const handleSave = async () => {
     if (!formData.year || !formData.name) {
       toast.error('Заполните обязательные поля')
@@ -167,7 +206,7 @@ export default function SeasonsManagement() {
               </div>
               
               <div className="flex items-center space-x-2">
-                {!season.is_current && (
+                {!season.is_current && !season.is_archived && (
                   <button
                     onClick={() => handleSetCurrent(season)}
                     className="px-3 py-1 text-sm bg-eurobot-gold/10 text-eurobot-gold hover:bg-eurobot-gold hover:text-white rounded-lg transition-colors"
@@ -175,6 +214,16 @@ export default function SeasonsManagement() {
                   >
                     <StarIcon className="w-4 h-4 inline mr-1" />
                     Сделать текущим
+                  </button>
+                )}
+                {!season.is_archived && (
+                  <button
+                    onClick={() => handleOpenFinalize(season)}
+                    className="px-3 py-1 text-sm bg-orange-100 text-orange-600 hover:bg-orange-500 hover:text-white rounded-lg transition-colors"
+                    title="Завершить сезон и отправить в архив"
+                  >
+                    <ArchiveBoxIcon className="w-4 h-4 inline mr-1" />
+                    Завершить
                   </button>
                 )}
                 <button
@@ -376,6 +425,115 @@ export default function SeasonsManagement() {
               </Button>
               <Button onClick={handleSave} isLoading={saving}>
                 {editingSeason ? 'Сохранить' : 'Создать'}
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Finalize Season Modal */}
+      {showFinalizeModal && finalizingSeason && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b bg-orange-50">
+              <h2 className="text-xl font-heading font-bold flex items-center">
+                <ArchiveBoxIcon className="w-6 h-6 mr-2 text-orange-600" />
+                Завершить сезон: {finalizingSeason.name}
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Заполните дополнительную информацию для архива
+              </p>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              {/* Info from season (read-only) */}
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <p className="text-sm font-medium text-gray-700">Данные из сезона (будут скопированы автоматически):</p>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div><span className="text-gray-500">Год:</span> {finalizingSeason.year}</div>
+                  <div><span className="text-gray-500">Название:</span> {finalizingSeason.name}</div>
+                  {finalizingSeason.theme && (
+                    <div className="col-span-2"><span className="text-gray-500">Тема:</span> {finalizingSeason.theme}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Additional fields for archive */}
+              <Textarea
+                label="Описание сезона"
+                value={finalizeData.description || ''}
+                onChange={(e) => setFinalizeData({ ...finalizeData, description: e.target.value })}
+                placeholder="Краткое описание прошедшего сезона..."
+                rows={3}
+              />
+
+              <Input
+                label="URL обложки"
+                value={finalizeData.cover_image || ''}
+                onChange={(e) => setFinalizeData({ ...finalizeData, cover_image: e.target.value })}
+                placeholder="https://example.com/image.jpg"
+              />
+              {finalizeData.cover_image && (
+                <div className="mt-2">
+                  <img 
+                    src={finalizeData.cover_image} 
+                    alt="Превью обложки" 
+                    className="max-h-40 rounded-lg object-cover"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
+                </div>
+              )}
+
+              <div className="border-t pt-4 mt-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">Итоги сезона</p>
+                <div className="space-y-3">
+                  <Input
+                    label="🥇 1 место"
+                    value={finalizeData.first_place || ''}
+                    onChange={(e) => setFinalizeData({ ...finalizeData, first_place: e.target.value })}
+                    placeholder="Название команды-победителя"
+                  />
+                  <Input
+                    label="🥈 2 место"
+                    value={finalizeData.second_place || ''}
+                    onChange={(e) => setFinalizeData({ ...finalizeData, second_place: e.target.value })}
+                    placeholder="Название команды"
+                  />
+                  <Input
+                    label="🥉 3 место"
+                    value={finalizeData.third_place || ''}
+                    onChange={(e) => setFinalizeData({ ...finalizeData, third_place: e.target.value })}
+                    placeholder="Название команды"
+                  />
+                  <Textarea
+                    label="Дополнительная информация"
+                    value={finalizeData.additional_info || ''}
+                    onChange={(e) => setFinalizeData({ ...finalizeData, additional_info: e.target.value })}
+                    placeholder="Другие награды, особые достижения и т.д."
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">
+                Количество команд будет подсчитано автоматически.
+              </p>
+            </div>
+
+            <div className="p-6 border-t flex justify-end space-x-3">
+              <Button variant="ghost" onClick={() => setShowFinalizeModal(false)}>
+                Отмена
+              </Button>
+              <Button 
+                onClick={handleFinalize} 
+                isLoading={finalizing}
+                className="bg-orange-500 hover:bg-orange-600"
+              >
+                <ArchiveBoxIcon className="w-5 h-5 mr-2" />
+                Завершить и отправить в архив
               </Button>
             </div>
           </motion.div>

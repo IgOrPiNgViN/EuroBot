@@ -33,6 +33,9 @@ python-dateutil>=2.8.0
 # Environment
 python-dotenv>=1.0.0
 
+# Logging
+loguru>=0.7.0
+
 # Multipart forms
 python-multipart>=0.0.6
 

@@ -39,7 +39,10 @@ class ArchiveSeasonBase(BaseModel):
     theme: Optional[str] = None
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    results_summary: Optional[str] = None
+    first_place: Optional[str] = None
+    second_place: Optional[str] = None
+    third_place: Optional[str] = None
+    additional_info: Optional[str] = None
     teams_count: Optional[int] = None
 
 
@@ -48,13 +51,27 @@ class ArchiveSeasonCreate(ArchiveSeasonBase):
     pass
 
 
+class FinalizeSeasonData(BaseModel):
+    """Schema for finalizing a season (additional fields for archive)."""
+    description: Optional[str] = None
+    cover_image: Optional[str] = None
+    first_place: Optional[str] = None
+    second_place: Optional[str] = None
+    third_place: Optional[str] = None
+    additional_info: Optional[str] = None
+    # teams_count will be calculated automatically
+
+
 class ArchiveSeasonUpdate(BaseModel):
     """Schema for updating an archive season."""
     name: Optional[str] = None
     theme: Optional[str] = None
     description: Optional[str] = None
     cover_image: Optional[str] = None
-    results_summary: Optional[str] = None
+    first_place: Optional[str] = None
+    second_place: Optional[str] = None
+    third_place: Optional[str] = None
+    additional_info: Optional[str] = None
     teams_count: Optional[int] = None
 
 

@@ -1,18 +1,21 @@
 """Seasons and competitions router."""
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
 
 from app.database import get_db
 from app.models.competition import Season, Competition, RegistrationField
+from app.models.team import Team
+from app.models.archive import ArchiveSeason
 from app.models.user import User
 from app.schemas.competition import (
     SeasonCreate, SeasonUpdate, SeasonResponse,
     CompetitionCreate, CompetitionUpdate, CompetitionResponse,
     RegistrationFieldCreate, RegistrationFieldUpdate, RegistrationFieldResponse
 )
+from app.schemas.archive import FinalizeSeasonData, ArchiveSeasonResponse
 from app.dependencies import get_current_admin
 
 router = APIRouter(prefix="/seasons", tags=["Seasons"])
@@ -150,6 +153,76 @@ async def update_season(
         selectinload(Season.registration_fields)
     ).where(Season.id == season_id)
     result = await db.execute(query)
+    
+    return result.scalar_one()
+
+
+@router.post("/{season_id}/finalize", response_model=ArchiveSeasonResponse)
+async def finalize_season(
+    season_id: int,
+    archive_data: FinalizeSeasonData,
+    admin: User = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """Finalize season and create archive entry (admin only)."""
+    # Get the season
+    result = await db.execute(select(Season).where(Season.id == season_id))
+    season = result.scalar_one_or_none()
+    
+    if not season:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Сезон не найден"
+        )
+    
+    if season.is_archived:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Сезон уже завершён и находится в архиве"
+        )
+    
+    # Check if archive for this year already exists
+    result = await db.execute(select(ArchiveSeason).where(ArchiveSeason.year == season.year))
+    if result.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Архив для этого года уже существует"
+        )
+    
+    # Count teams for this season
+    teams_count_result = await db.execute(
+        select(func.count(Team.id)).where(Team.season_id == season_id)
+    )
+    teams_count = teams_count_result.scalar() or 0
+    
+    # Create archive entry with data from season + additional fields
+    archive_season = ArchiveSeason(
+        year=season.year,
+        name=season.name,
+        theme=season.theme,
+        description=archive_data.description,
+        cover_image=archive_data.cover_image,
+        first_place=archive_data.first_place,
+        second_place=archive_data.second_place,
+        third_place=archive_data.third_place,
+        additional_info=archive_data.additional_info,
+        teams_count=teams_count
+    )
+    db.add(archive_season)
+    
+    # Mark season as archived and not current
+    season.is_archived = True
+    if season.is_current:
+        season.is_current = False
+    
+    await db.commit()
+    
+    # Re-fetch archive with relationships
+    result = await db.execute(
+        select(ArchiveSeason).options(
+            selectinload(ArchiveSeason.media)
+        ).where(ArchiveSeason.id == archive_season.id)
+    )
     
     return result.scalar_one()
 

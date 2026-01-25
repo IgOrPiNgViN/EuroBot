@@ -7,7 +7,10 @@ export interface ArchiveSeasonCreateData {
   theme?: string
   description?: string
   cover_image?: string
-  results_summary?: string
+  first_place?: string
+  second_place?: string
+  third_place?: string
+  additional_info?: string
   teams_count?: number
 }
 

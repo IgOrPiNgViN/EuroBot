@@ -197,7 +197,10 @@ export interface ArchiveSeason {
   theme: string | null
   description: string | null
   cover_image: string | null
-  results_summary: string | null
+  first_place: string | null
+  second_place: string | null
+  third_place: string | null
+  additional_info: string | null
   teams_count: number | null
   media: ArchiveMedia[]
   created_at: string
