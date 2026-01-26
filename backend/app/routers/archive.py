@@ -119,6 +119,49 @@ async def update_archive_season(
     return season
 
 
+@router.post("/{season_id}/restore")
+async def restore_archive_season(
+    season_id: int,
+    admin: User = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """Restore archive season back to seasons (admin only)."""
+    from app.models.competition import Season
+    
+    result = await db.execute(select(ArchiveSeason).where(ArchiveSeason.id == season_id))
+    archive_season = result.scalar_one_or_none()
+    
+    if not archive_season:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Архивный сезон не найден"
+        )
+    
+    # Find original season by year
+    result = await db.execute(select(Season).where(Season.year == archive_season.year))
+    original_season = result.scalar_one_or_none()
+    
+    if original_season:
+        # Restore existing season
+        original_season.is_archived = False
+    else:
+        # Create new season from archive data
+        new_season = Season(
+            year=archive_season.year,
+            name=archive_season.name,
+            theme=archive_season.theme,
+            is_archived=False,
+            is_current=False
+        )
+        db.add(new_season)
+    
+    # Delete from archive
+    await db.delete(archive_season)
+    await db.commit()
+    
+    return {"message": "Сезон восстановлен из архива"}
+
+
 @router.delete("/{season_id}")
 async def delete_archive_season(
     season_id: int,

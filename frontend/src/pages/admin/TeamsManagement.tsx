@@ -6,7 +6,7 @@ import {
   CheckIcon, 
   XMarkIcon,
   EyeIcon,
-  FunnelIcon
+  TrashIcon
 } from '@heroicons/react/24/outline'
 import { teamsApi } from '../../api/teams'
 import { seasonsApi } from '../../api/seasons'
@@ -85,6 +85,21 @@ export default function TeamsManagement() {
       toast.success('Статус обновлён')
     } catch (error) {
       toast.error('Ошибка обновления статуса')
+    }
+  }
+
+  const handleDelete = async (team: Team) => {
+    if (!confirm(`Удалить команду "${team.name}"? Это действие необратимо.`)) return
+
+    try {
+      await teamsApi.delete(team.id)
+      setTeams(teams.filter(t => t.id !== team.id))
+      if (selectedTeam?.id === team.id) {
+        setSelectedTeam(null)
+      }
+      toast.success('Команда удалена')
+    } catch (error) {
+      toast.error('Ошибка удаления')
     }
   }
 
@@ -243,6 +258,13 @@ export default function TeamsManagement() {
                         </button>
                       </>
                     )}
+                    <button
+                      onClick={() => handleDelete(team)}
+                      className="p-2 text-gray-400 hover:text-red-600"
+                      title="Удалить"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -345,7 +367,7 @@ export default function TeamsManagement() {
               )}
             </div>
 
-            <div className="p-6 border-t flex justify-between">
+            <div className="p-6 border-t flex justify-between items-center">
               <Select
                 value={selectedTeam.status}
                 onChange={(e) => handleStatusChange(selectedTeam.id, e.target.value as TeamStatus)}
@@ -356,9 +378,19 @@ export default function TeamsManagement() {
                   { value: 'withdrawn', label: 'Снята' }
                 ]}
               />
-              <Button variant="ghost" onClick={() => setSelectedTeam(null)}>
-                Закрыть
-              </Button>
+              <div className="flex space-x-2">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => handleDelete(selectedTeam)}
+                  className="text-red-600 hover:bg-red-50"
+                >
+                  <TrashIcon className="w-5 h-5 mr-1" />
+                  Удалить
+                </Button>
+                <Button variant="ghost" onClick={() => setSelectedTeam(null)}>
+                  Закрыть
+                </Button>
+              </div>
             </div>
           </motion.div>
         </div>

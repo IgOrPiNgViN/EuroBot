@@ -230,6 +230,7 @@ async def finalize_season(
 @router.delete("/{season_id}")
 async def delete_season(
     season_id: int,
+    force: bool = Query(False, description="Удалить вместе с командами"),
     admin: User = Depends(get_current_admin),
     db: AsyncSession = Depends(get_db)
 ):
@@ -243,10 +244,29 @@ async def delete_season(
             detail="Сезон не найден"
         )
     
+    # Check if there are teams registered for this season
+    teams_count_result = await db.execute(
+        select(func.count(Team.id)).where(Team.season_id == season_id)
+    )
+    teams_count = teams_count_result.scalar() or 0
+    
+    if teams_count > 0 and not force:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Невозможно удалить сезон: зарегистрировано {teams_count} команд(ы). Используйте force=true для удаления вместе с командами."
+        )
+    
+    # Delete teams first if force is True
+    if teams_count > 0 and force:
+        from app.models.team import Team as TeamModel
+        await db.execute(
+            TeamModel.__table__.delete().where(TeamModel.season_id == season_id)
+        )
+    
     await db.delete(season)
     await db.commit()
     
-    return {"message": "Сезон удален"}
+    return {"message": f"Сезон удален" + (f" вместе с {teams_count} командами" if teams_count > 0 else "")}
 
 
 # Competitions

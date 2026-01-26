@@ -70,8 +70,8 @@ export const seasonsApi = {
     return response.data
   },
 
-  delete: async (id: number): Promise<void> => {
-    await apiClient.delete(`/seasons/${id}`)
+  delete: async (id: number, force: boolean = false): Promise<void> => {
+    await apiClient.delete(`/seasons/${id}`, { params: { force } })
   },
 
   finalize: async (id: number, data: FinalizeSeasonData): Promise<void> => {

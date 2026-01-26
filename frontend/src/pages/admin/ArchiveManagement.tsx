@@ -27,6 +27,8 @@ export default function ArchiveManagement() {
   const [seasonForm, setSeasonForm] = useState<Partial<ArchiveSeasonCreateData>>({})
   const [mediaForm, setMediaForm] = useState<Partial<ArchiveMediaCreateData>>({ media_type: 'photo' })
   const [saving, setSaving] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deletingSeason, setDeletingSeason] = useState<ArchiveSeason | null>(null)
 
   const fetchSeasons = async () => {
     try {
@@ -91,15 +93,36 @@ export default function ArchiveManagement() {
     }
   }
 
-  const handleDeleteSeason = async (id: number) => {
-    if (!confirm('Удалить этот сезон из архива? Все медиафайлы также будут удалены.')) return
+  const handleDeleteClick = (season: ArchiveSeason) => {
+    setDeletingSeason(season)
+    setShowDeleteModal(true)
+  }
+
+  const handleDeleteSeason = async () => {
+    if (!deletingSeason) return
 
     try {
-      await archiveApi.deleteSeason(id)
-      toast.success('Сезон удалён')
+      await archiveApi.deleteSeason(deletingSeason.id)
+      toast.success('Сезон удалён из архива')
+      setShowDeleteModal(false)
+      setDeletingSeason(null)
       fetchSeasons()
     } catch (error) {
       toast.error('Ошибка удаления')
+    }
+  }
+
+  const handleRestoreSeason = async () => {
+    if (!deletingSeason) return
+
+    try {
+      await archiveApi.restoreSeason(deletingSeason.id)
+      toast.success('Сезон восстановлен и возвращён в список сезонов')
+      setShowDeleteModal(false)
+      setDeletingSeason(null)
+      fetchSeasons()
+    } catch (error) {
+      toast.error('Ошибка восстановления')
     }
   }
 
@@ -215,7 +238,7 @@ export default function ArchiveManagement() {
                       <PencilIcon className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => handleDeleteSeason(season.id)}
+                      onClick={() => handleDeleteClick(season)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
                       title="Удалить"
                     >
@@ -452,6 +475,79 @@ export default function ArchiveManagement() {
               </Button>
               <Button onClick={handleSaveMedia} isLoading={saving}>
                 Добавить
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete/Restore Modal */}
+      {showDeleteModal && deletingSeason && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-xl w-full max-w-md"
+          >
+            <div className="p-6 border-b">
+              <h2 className="text-xl font-heading font-bold text-gray-900">
+                Что сделать с архивом?
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {deletingSeason.year} — {deletingSeason.name}
+              </p>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <p className="text-gray-600">
+                Выберите действие для этого архивного сезона:
+              </p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={handleRestoreSeason}
+                  className="w-full p-4 border-2 border-green-200 rounded-xl hover:bg-green-50 transition-colors text-left"
+                >
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Вернуть в сезоны</h4>
+                      <p className="text-sm text-gray-500">Сезон будет восстановлен и появится в списке сезонов</p>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={handleDeleteSeason}
+                  className="w-full p-4 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-colors text-left"
+                >
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                      <TrashIcon className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Удалить полностью</h4>
+                      <p className="text-sm text-gray-500">Архив и все медиафайлы будут удалены навсегда</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 border-t">
+              <Button 
+                variant="ghost" 
+                onClick={() => {
+                  setShowDeleteModal(false)
+                  setDeletingSeason(null)
+                }}
+                className="w-full"
+              >
+                Отмена
               </Button>
             </div>
           </motion.div>

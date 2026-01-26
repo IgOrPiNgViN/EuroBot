@@ -50,6 +50,10 @@ export const archiveApi = {
     await apiClient.delete(`/archive/${id}`)
   },
 
+  restoreSeason: async (id: number): Promise<void> => {
+    await apiClient.post(`/archive/${id}/restore`)
+  },
+
   addMedia: async (seasonId: number, data: ArchiveMediaCreateData): Promise<ArchiveMedia> => {
     const response = await apiClient.post(`/archive/${seasonId}/media`, data)
     return response.data

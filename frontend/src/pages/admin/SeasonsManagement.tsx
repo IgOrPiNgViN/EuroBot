@@ -77,15 +77,27 @@ export default function SeasonsManagement() {
     setShowModal(true)
   }
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Удалить этот сезон? Это также удалит все связанные данные.')) return
+  const handleDelete = async (id: number, force: boolean = false) => {
+    const message = force 
+      ? 'Вы уверены? Сезон будет удалён ВМЕСТЕ со всеми зарегистрированными командами!'
+      : 'Удалить этот сезон?'
+    
+    if (!confirm(message)) return
 
     try {
-      await seasonsApi.delete(id)
+      await seasonsApi.delete(id, force)
       setSeasons(seasons.filter(s => s.id !== id))
       toast.success('Сезон удалён')
-    } catch (error) {
-      toast.error('Ошибка при удалении')
+    } catch (error: any) {
+      const detail = error.response?.data?.detail || ''
+      // Check if error is about teams
+      if (detail.includes('команд') && !force) {
+        if (confirm(`${detail}\n\nУдалить сезон вместе с командами?`)) {
+          handleDelete(id, true)
+        }
+      } else {
+        toast.error(detail || 'Ошибка при удалении')
+      }
     }
   }
 
