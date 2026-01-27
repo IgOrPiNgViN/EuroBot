@@ -40,7 +40,7 @@
 | Python | 3.11+ | Язык программирования |
 | FastAPI | 0.104+ | Web-фреймворк |
 | SQLAlchemy | 2.0+ | ORM для работы с БД |
-| PostgreSQL | 15+ | База данных |
+| PostgreSQL / MySQL | 15+ / 8.0+ | База данных |
 | Pydantic | 2.0+ | Валидация данных |
 | JWT | - | Аутентификация |
 | bcrypt | - | Хеширование паролей |
@@ -135,12 +135,14 @@ EuroBot/
 
 - **Python** 3.11+
 - **Node.js** 18+
-- **PostgreSQL** 15+
+- **PostgreSQL** 15+ или **MySQL** 8.0+
 - **Git**
+
+> 💡 Проект поддерживает обе СУБД: PostgreSQL и MySQL. Выберите одну из них.
 
 ---
 
-### 🪟 Windows
+### 🪟 Windows (PostgreSQL)
 
 #### 1. Клонирование репозитория
 ```powershell
@@ -188,6 +190,65 @@ npm run dev
 ```
 
 #### 5. Открытие в браузере
+- 🌐 **Сайт:** http://localhost:5173
+- 🔧 **API:** http://localhost:8000
+- 📚 **API Docs:** http://localhost:8000/docs
+- 👤 **Админ:** admin@eurobot.ru / admin123
+
+---
+
+### 🪟 Windows (MySQL) — альтернативный вариант
+
+#### 1. Клонирование репозитория
+```powershell
+git clone https://github.com/IgOrPiNgViN/EuroBot.git
+cd EuroBot
+```
+
+#### 2. Установка и настройка MySQL
+1. Скачайте MySQL Installer: https://dev.mysql.com/downloads/installer/
+2. Установите **MySQL Server** и **MySQL Workbench** (опционально)
+3. Запомните пароль для пользователя `root`
+
+```sql
+-- В MySQL командной строке или Workbench:
+CREATE DATABASE eurobot CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+#### 3. Настройка Backend
+```powershell
+cd backend
+
+# Создание виртуального окружения
+py -m venv venv
+.\venv\Scripts\Activate.ps1
+
+# Установка зависимостей
+pip install -r requirements.txt
+
+# Установка MySQL драйвера
+pip install aiomysql cryptography
+```
+
+#### 4. Настройка подключения к MySQL
+Создайте файл `backend/.env` или отредактируйте существующий:
+```env
+DATABASE_URL=mysql+aiomysql://root:ВАШ_ПАРОЛЬ@localhost:3306/eurobot
+```
+
+#### 5. Запуск сервера
+```powershell
+py -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### 6. Настройка Frontend (в новом терминале)
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+#### 7. Открытие в браузере
 - 🌐 **Сайт:** http://localhost:5173
 - 🔧 **API:** http://localhost:8000
 - 📚 **API Docs:** http://localhost:8000/docs
@@ -660,6 +721,60 @@ backend/
     ├── eurobot_backup_20260121_120000.sql
     ├── eurobot_backup_20260120_030000.sql
     └── ...
+```
+
+---
+
+## 🔄 Миграция с PostgreSQL на MySQL
+
+Если вы хотите перейти с PostgreSQL на MySQL, следуйте этой инструкции:
+
+### 1. Установите MySQL
+- Скачайте MySQL Installer: https://dev.mysql.com/downloads/installer/
+- Установите MySQL Server
+- Создайте базу данных:
+```sql
+CREATE DATABASE eurobot CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 2. Установите MySQL драйвер
+```powershell
+cd backend
+.\venv\Scripts\Activate.ps1
+pip install aiomysql cryptography psycopg2-binary
+```
+
+### 3. Запустите скрипт миграции
+```powershell
+python scripts/migrate_pg_to_mysql.py
+```
+
+Скрипт автоматически:
+- Подключится к PostgreSQL (старая БД)
+- Подключится к MySQL (новая БД)
+- Перенесёт все данные из всех таблиц
+
+### 4. Измените подключение к БД
+В файле `backend/.env` замените:
+```env
+# Было (PostgreSQL)
+DATABASE_URL=postgresql+asyncpg://eurobot:eurobot@localhost:5432/eurobot
+
+# Стало (MySQL)
+DATABASE_URL=mysql+aiomysql://root:ВАШ_ПАРОЛЬ@localhost:3306/eurobot
+```
+
+### 5. Перезапустите сервер
+```powershell
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 6. Проверьте миграцию
+В логах сервера должны быть MySQL запросы с `%s` параметрами (вместо PostgreSQL `$1::VARCHAR`).
+
+Проверьте данные в MySQL:
+```powershell
+mysql -u root -p eurobot -e "SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM news;"
 ```
 
 ---
