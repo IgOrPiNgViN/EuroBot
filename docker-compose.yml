@@ -1,13 +1,16 @@
 version: '3.8'
 
 services:
+  # ===========================================
+  # ВАРИАНТ 1: PostgreSQL (по умолчанию)
+  # ===========================================
   db:
     image: postgres:16-alpine
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: eurobot
-      POSTGRES_PASSWORD: eurobot
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-eurobot}
       POSTGRES_DB: eurobot
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -17,7 +20,35 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    profiles:
+      - postgres
 
+  # ===========================================
+  # ВАРИАНТ 2: MySQL
+  # ===========================================
+  db-mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-eurobot}
+      MYSQL_DATABASE: eurobot
+      MYSQL_USER: eurobot
+      MYSQL_PASSWORD: ${DB_PASSWORD:-eurobot}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    profiles:
+      - mysql
+
+  # ===========================================
+  # Backend
+  # ===========================================
   backend:
     build:
       context: ./backend
@@ -25,11 +56,32 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://eurobot:eurobot@db:5432/eurobot
-      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
-      - ADMIN_EMAIL=admin@eurobot.ru
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
-      - FRONTEND_URL=http://localhost:5173
+      # База данных (выберите одну)
+      # Для PostgreSQL:
+      # DATABASE_URL: postgresql+asyncpg://eurobot:${DB_PASSWORD:-eurobot}@db:5432/eurobot
+      # Для MySQL:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://eurobot:eurobot@db:5432/eurobot}
+      
+      # JWT
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
+      
+      # Админ
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@eurobot.ru}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      
+      # CORS
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      
+      # Yandex SmartCaptcha (опционально)
+      SMARTCAPTCHA_SERVER_KEY: ${SMARTCAPTCHA_SERVER_KEY:-}
+      SMARTCAPTCHA_CLIENT_KEY: ${SMARTCAPTCHA_CLIENT_KEY:-}
+      
+      # Email (опционально)
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@eurobot.ru}
     volumes:
       - ./backend/uploads:/app/uploads
     depends_on:
@@ -37,10 +89,15 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # ===========================================
+  # Frontend
+  # ===========================================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_YANDEX_MAPS_API_KEY: ${VITE_YANDEX_MAPS_API_KEY:-}
     ports:
       - "5173:80"
     depends_on:
@@ -49,6 +106,7 @@ services:
 
 volumes:
   postgres_data:
+  mysql_data:
 
 networks:
   default:
