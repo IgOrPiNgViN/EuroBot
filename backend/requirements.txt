@@ -2,10 +2,19 @@
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 
-# Database
+# Database (PostgreSQL или MySQL - выберите одну)
 sqlalchemy[asyncio]>=2.0.0
-asyncpg>=0.29.0
 greenlet>=3.0.0
+cryptography>=41.0.0
+
+# PostgreSQL драйвер (раскомментируйте для PostgreSQL)
+# asyncpg>=0.29.0
+
+# MySQL драйвер (раскомментируйте для MySQL)
+aiomysql>=0.2.0
+
+# Для скрипта миграции PostgreSQL → MySQL
+# psycopg2-binary>=2.9.0
 
 # Data validation
 pydantic>=2.0.0
