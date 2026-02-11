@@ -1,0 +1,326 @@
+@import '../../palettes/eurobot.css';
+
+.admins-management {
+    --admins-bg: var(--color-white);
+    --admins-text-primary: var(--color-gray-900);
+    --admins-text-secondary: var(--color-gray-500);
+    --admins-border: var(--color-gray-200);
+    --admins-header-bg: var(--color-gray-50);
+    --admins-row-inactive-bg: var(--color-gray-50);
+
+    --admins-role-admin-bg: var(--color-blue-100);
+    --admins-role-admin-text: var(--color-blue-800);
+    --admins-role-super-admin-bg: #f3e8ff;
+    --admins-role-super-admin-text: #6b21a8;
+
+    --admins-status-active-bg: darkgreen;
+    --admins-status-active-text: lightgreen;
+    --admins-status-inactive-bg: var(--color-red-100);
+    --admins-status-inactive-text: var(--color-red-800);
+
+    --admins-avatar-bg: var(--color-blue);
+    --admins-avatar-text: var(--color-white);
+
+    --admins-action-edit: var(--color-blue-600);
+    --admins-action-delete: var(--color-red-600);
+    --admins-action-hover: var(--color-gray-400);
+
+    --admins-current-user: var(--color-blue);
+
+    --admins-modal-overlay: var(--color-overlay-black);
+    --admins-modal-bg: var(--color-white);
+    --admins-modal-border: var(--color-gray-200);
+
+    --admins-checkbox-disabled: var(--color-gray-400);
+    --admins-checkbox-hint: var(--color-gray-400);
+}
+
+/* Main Container */
+.admins-management {
+    width: 100%;
+}
+
+/* Header */
+.admins-management-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.admins-management-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--admins-text-primary);
+}
+
+.admins-management-subtitle {
+    margin-top: 0.25rem;
+    color: var(--admins-text-secondary);
+}
+
+.admins-management-button-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.admins-management-table-container {
+    background-color: var(--admins-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--color-shadow-blue);
+    overflow: hidden;
+}
+
+.admins-management-table {
+    width: 100%;
+}
+
+/* Table Header */
+.admins-management-table-head {
+    background-color: var(--admins-header-bg);
+}
+
+.admins-management-table-header {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--admins-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admins-management-table-header-actions {
+    text-align: right;
+}
+
+/* Table Body */
+.admins-management-table-body {
+    border-top: 1px solid var(--admins-border);
+}
+
+.admins-management-table-row {
+    border-bottom: 1px solid var(--admins-border);
+}
+
+.admins-management-table-row-inactive {
+    background-color: var(--admins-row-inactive-bg);
+}
+
+.admins-management-table-row:hover {
+    background-color: var(--color-gray-50);
+}
+
+/* Table Cells */
+.admins-management-table-cell {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.admins-management-last-login {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--admins-text-secondary);
+}
+
+.admins-management-actions {
+    text-align: right;
+}
+
+/* Admin Info */
+.admins-management-admin-info {
+    display: flex;
+    align-items: center;
+}
+
+.admins-management-admin-name {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--admins-text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.admins-management-current-user {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--admins-current-user);
+}
+
+.admins-management-admin-email {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--admins-text-secondary);
+}
+
+/* Role Badges */
+.admins-management-role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+}
+
+.admins-management-role-badge-admin {
+    background-color: var(--admins-role-admin-bg);
+    color: var(--admins-role-admin-text);
+}
+
+.admins-management-role-badge-super_admin {
+    background-color: var(--admins-role-super-admin-bg);
+    color: var(--admins-role-super-admin-text);
+}
+
+.admins-management-role-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-right: 0.25rem;
+}
+
+/* Status Badges */
+.admins-management-status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.admins-management-status-badge-active {
+    background-color: var(--admins-status-active-bg);
+    color: var(--admins-status-active-text);
+}
+
+.admins-management-status-badge-inactive {
+    background-color: var(--admins-status-inactive-bg);
+    color: var(--admins-status-inactive-text);
+}
+
+/* Action Buttons */
+.admins-management-actions-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.admins-management-action-button {
+    padding: 0.25rem;
+    color: var(--admins-action-hover);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.admins-management-edit-button:hover {
+    color: var(--admins-action-edit);
+}
+
+.admins-management-delete-button:hover {
+    color: var(--admins-action-delete);
+}
+
+.admins-management-action-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Modal */
+.admins-management-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--admins-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+.admins-management-modal {
+    background-color: var(--admins-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 28rem;
+}
+
+.admins-management-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--admins-modal-border);
+}
+
+.admins-management-modal-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--admins-text-primary);
+}
+
+.admins-management-modal-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.admins-management-modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--admins-modal-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Checkbox */
+.admins-management-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.admins-management-checkbox {
+    margin-right: 0.5rem;
+}
+
+.admins-management-checkbox-disabled {
+    color: var(--admins-checkbox-disabled);
+}
+
+.admins-management-checkbox-hint {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--admins-checkbox-hint);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admins-management-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .admins-management-table-container {
+        overflow-x: auto;
+    }
+
+    .admins-management-actions-container {
+        justify-content: center;
+    }
+}

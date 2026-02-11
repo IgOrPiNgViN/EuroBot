@@ -1,0 +1,680 @@
+/* Импортируем палитру */
+@import '../../palettes/eurobot.css';
+
+/* RegistrationFieldsManagement Component Variables */
+.registration-fields-management {
+    --fields-bg: var(--color-white);
+    --fields-text-primary: var(--color-gray-900);
+    --fields-text-secondary: var(--color-gray-500);
+    --fields-text-tertiary: var(--color-gray-400);
+    --fields-border: var(--color-gray-200);
+    --fields-border-light: var(--color-gray-100);
+    --fields-hover-bg: var(--color-gray-50);
+
+    /* Header Colors */
+    --fields-title: var(--color-gray-900);
+    --fields-subtitle: var(--color-gray-500);
+
+    /* Preview Container Colors */
+    --fields-preview-bg: var(--color-white);
+    --fields-preview-shadow: var(--color-shadow-blue);
+    --fields-preview-toggle-bg: var(--color-white);
+    --fields-preview-toggle-hover: var(--color-gray-50);
+    --fields-preview-icon: var(--color-blue);
+    --fields-preview-title: var(--color-gray-900);
+    --fields-preview-count: var(--color-gray-500);
+    --fields-preview-toggle-text: var(--color-gray-400);
+
+    /* Preview Content Colors */
+    --fields-preview-content-bg: transparent;
+    --fields-preview-section-title: var(--color-gray-700);
+    --fields-preview-field-bg: var(--color-gray-50);
+    --fields-preview-field-label: var(--color-gray-700);
+    --fields-preview-field-meta-bg: var(--color-gray-200);
+    --fields-required-indicator: var(--color-red-500);
+    --fields-field-type-badge-bg: var(--color-gray-200);
+    --fields-field-type-badge-text: var(--color-gray-400);
+
+    /* Preview Info Colors */
+    --fields-preview-info-bg: var(--color-blue-50);
+    --fields-preview-info-border: var(--color-blue-200);
+    --fields-preview-info-text: var(--color-blue-700);
+
+    /* Season Selector Colors */
+    --fields-season-selector-bg: var(--color-white);
+    --fields-season-selector-shadow: var(--color-shadow-blue);
+    --fields-season-title: var(--color-gray-900);
+
+    /* Season Info Colors */
+    --fields-season-open-bg: olive
+    --fields-season-open-border: darkgreen;
+    --fields-season-open-text: green;
+    --fields-season-closed-bg: var(--color-yellow-main-300);
+    --fields-season-closed-border: var(--color-yellow-main-400);
+    --fields-season-closed-text: var(--color-yellow-main-600);
+
+    /* Button Icon Colors */
+    --fields-button-icon: var(--color-white);
+
+    /* Fields List Colors */
+    --fields-list-bg: var(--color-white);
+    --fields-list-shadow: var(--color-shadow-blue);
+
+    /* Field Item Colors */
+    --fields-item-inactive-bg: var(--color-gray-50);
+    --fields-item-inactive-opacity: 0.6;
+    --fields-drag-icon: var(--color-gray-400);
+    --fields-label: var(--color-gray-900);
+    --fields-required: var(--color-red-500);
+    --fields-name-bg: var(--color-gray-100);
+    --fields-name-text: var(--color-gray-400);
+    --fields-type: var(--color-gray-500);
+    --fields-options-count: var(--color-gray-400);
+
+    /* Field Actions Colors */
+    --fields-toggle-active: green;
+    --fields-toggle-active-hover: darkgreen;
+    --fields-toggle-inactive: var(--color-gray-400);
+    --fields-toggle-inactive-hover: var(--color-gray-100);
+    --fields-edit-button: var(--color-gray-400);
+    --fields-edit-button-hover: var(--color-blue-600);
+    --fields-edit-button-hover-bg: var(--color-blue-50);
+    --fields-delete-button: var(--color-gray-400);
+    --fields-delete-button-hover: var(--color-red-600);
+    --fields-delete-button-hover-bg: var(--color-red-50);
+
+    /* Modal Colors */
+    --fields-modal-overlay: var(--color-overlay-black);
+    --fields-modal-bg: var(--color-white);
+    --fields-modal-border: var(--color-gray-200);
+    --fields-modal-title: var(--color-gray-900);
+
+    /* Options Section Colors */
+    --fields-options-label: var(--color-gray-700);
+    --fields-options-textarea-border: var(--color-gray-300);
+    --fields-options-textarea-focus-ring: var(--color-blue);
+    --fields-options-textarea-focus-border: transparent;
+    --fields-options-hint: var(--color-gray-500);
+
+    /* Checkbox Colors */
+    --fields-checkbox-border: var(--color-gray-300);
+    --fields-checkbox-checked: var(--color-blue);
+    --fields-checkbox-text: var(--color-gray-900);
+
+    /* Empty State Colors */
+    --fields-empty-icon: var(--color-gray-300);
+    --fields-empty-text: var(--color-gray-500);
+}
+
+/* Main Container */
+.registration-fields-management {
+    width: 100%;
+}
+
+/* Header */
+.registration-fields-header {
+    margin-bottom: 1.5rem;
+}
+
+.registration-fields-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--fields-title);
+}
+
+.registration-fields-subtitle {
+    color: var(--fields-subtitle);
+    margin-top: 0.25rem;
+}
+
+/* Preview Container */
+.registration-fields-preview-container {
+    background-color: var(--fields-preview-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--fields-preview-shadow);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+/* Preview Toggle */
+.registration-fields-preview-toggle {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--fields-preview-toggle-bg);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.registration-fields-preview-toggle:hover {
+    background-color: var(--fields-preview-toggle-hover);
+}
+
+.registration-fields-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.registration-fields-preview-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--fields-preview-icon);
+}
+
+.registration-fields-preview-title {
+    font-weight: 600;
+    color: var(--fields-preview-title);
+}
+
+.registration-fields-preview-count {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-preview-count);
+}
+
+.registration-fields-preview-toggle-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-preview-toggle-text);
+}
+
+/* Preview Content */
+.registration-fields-preview-content {
+    border-top: 1px solid var(--fields-border);
+    padding: 1rem;
+    background-color: var(--fields-preview-content-bg);
+}
+
+.registration-fields-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .registration-fields-preview-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Preview Section */
+.registration-fields-preview-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.registration-fields-preview-section-title {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-preview-section-title);
+    margin-bottom: 0.5rem;
+}
+
+/* Preview Field */
+.registration-fields-preview-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background-color: var(--fields-preview-field-bg);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.registration-fields-preview-field-label {
+    color: var(--fields-preview-field-label);
+}
+
+.registration-fields-preview-field-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.registration-fields-required-indicator {
+    color: var(--fields-required-indicator);
+}
+
+.registration-fields-field-type-badge {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--fields-field-type-badge-text);
+    background-color: var(--fields-field-type-badge-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 9999px;
+}
+
+/* Preview Info */
+.registration-fields-preview-info {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: var(--fields-preview-info-bg);
+    border: 1px solid var(--fields-preview-info-border);
+    border-radius: 0.5rem;
+}
+
+.registration-fields-preview-info-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-preview-info-text);
+}
+
+/* Season Selector */
+.registration-fields-season-selector {
+    background-color: var(--fields-season-selector-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--fields-season-selector-shadow);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.registration-fields-season-title {
+    font-weight: 600;
+    color: var(--fields-season-title);
+    margin-bottom: 1rem;
+}
+
+.registration-fields-season-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.registration-fields-season-dropdown {
+    width: 16rem;
+}
+
+.registration-fields-season-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.registration-fields-button-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    color: var(--fields-button-icon);
+}
+
+/* Season Info */
+.registration-fields-season-info {
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.registration-fields-season-open {
+    background-color: var(--fields-season-open-bg);
+    border: 1px solid var(--fields-season-open-border);
+}
+
+.registration-fields-season-closed {
+    background-color: var(--fields-season-closed-bg);
+    border: 1px solid var(--fields-season-closed-border);
+}
+
+.registration-fields-season-info-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.registration-fields-season-open .registration-fields-season-info-text {
+    color: var(--fields-season-open-text);
+}
+
+.registration-fields-season-closed .registration-fields-season-info-text {
+    color: var(--fields-season-closed-text);
+}
+
+/* Fields List Container */
+.registration-fields-list-container {
+    background-color: var(--fields-list-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--fields-list-shadow);
+    overflow: hidden;
+}
+
+/* Fields List */
+.registration-fields-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Field Item */
+.registration-fields-item {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--fields-border);
+}
+
+.registration-fields-item:last-child {
+    border-bottom: none;
+}
+
+.registration-fields-item-inactive {
+    background-color: var(--fields-item-inactive-bg);
+    opacity: var(--fields-item-inactive-opacity);
+}
+
+/* Drag Handle */
+.registration-fields-drag-handle {
+    cursor: move;
+}
+
+.registration-fields-drag-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--fields-drag-icon);
+}
+
+/* Field Content */
+.registration-fields-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.registration-fields-header-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.registration-fields-label {
+    font-weight: 500;
+    color: var(--fields-label);
+}
+
+.registration-fields-required {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--fields-required);
+}
+
+.registration-fields-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.registration-fields-name {
+    font-family: monospace;
+    color: var(--fields-name-text);
+    background-color: var(--fields-name-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+}
+
+.registration-fields-type {
+    color: var(--fields-type);
+}
+
+.registration-fields-options-count {
+    color: var(--fields-options-count);
+}
+
+/* Field Actions */
+.registration-fields-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.registration-fields-toggle-button {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.registration-fields-toggle-active {
+    color: var(--fields-toggle-active);
+}
+
+.registration-fields-toggle-active:hover {
+    background-color: var(--fields-toggle-active-hover);
+}
+
+.registration-fields-toggle-inactive {
+    color: var(--fields-toggle-inactive);
+}
+
+.registration-fields-toggle-inactive:hover {
+    background-color: var(--fields-toggle-inactive-hover);
+}
+
+.registration-fields-toggle-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.registration-fields-edit-button,
+.registration-fields-delete-button {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.registration-fields-edit-button {
+    color: var(--fields-edit-button);
+}
+
+.registration-fields-edit-button:hover {
+    color: var(--fields-edit-button-hover);
+    background-color: var(--fields-edit-button-hover-bg);
+}
+
+.registration-fields-delete-button {
+    color: var(--fields-delete-button);
+}
+
+.registration-fields-delete-button:hover {
+    color: var(--fields-delete-button-hover);
+    background-color: var(--fields-delete-button-hover-bg);
+}
+
+.registration-fields-action-icon {
+
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Empty State */
+.registration-fields-empty {
+    padding: 3rem;
+    text-align: center;
+}
+
+.registration-fields-empty-icon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--fields-empty-icon);
+    margin: 0 auto 1rem;
+}
+
+.registration-fields-empty-text {
+    color: var(--fields-empty-text);
+    margin-bottom: 1rem;
+}
+
+.registration-fields-empty-button {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Modal Overlay */
+.registration-fields-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--fields-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+/* Modal */
+.registration-fields-modal {
+    background-color: var(--fields-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 28rem;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.registration-fields-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--fields-modal-border);
+}
+
+.registration-fields-modal-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--fields-modal-title);
+}
+
+/* Modal Content */
+.registration-fields-modal-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Options Section */
+.registration-fields-options-section {
+    margin-top: 0.5rem;
+}
+
+.registration-fields-options-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--fields-options-label);
+    margin-bottom: 0.5rem;
+}
+
+.registration-fields-options-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--fields-options-textarea-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-text-primary);
+    transition: all 0.2s;
+}
+
+.registration-fields-options-textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--fields-options-textarea-focus-ring);
+    border-color: var(--fields-options-textarea-focus-border);
+}
+
+.registration-fields-options-hint {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--fields-options-hint);
+    margin-top: 0.25rem;
+}
+
+/* Checkboxes */
+.registration-fields-checkboxes {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.registration-fields-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--fields-checkbox-text);
+}
+
+.registration-fields-checkbox {
+    border-radius: 0.25rem;
+    border: 1px solid var(--fields-checkbox-border);
+    color: var(--fields-checkbox-checked);
+    margin-right: 0.5rem;
+}
+
+.registration-fields-checkbox:checked {
+    background-color: var(--fields-checkbox-checked);
+    border-color: var(--fields-checkbox-checked);
+}
+
+/* Modal Footer */
+.registration-fields-modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--fields-modal-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .registration-fields-season-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .registration-fields-season-dropdown {
+        width: 100%;
+    }
+
+    .registration-fields-season-buttons {
+        margin-left: 0;
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .registration-fields-season-buttons button {
+        width: 100%;
+    }
+
+    .registration-fields-checkboxes {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .registration-fields-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .registration-fields-drag-handle {
+        align-self: flex-end;
+    }
+
+    .registration-fields-actions {
+        align-self: flex-end;
+    }
+}

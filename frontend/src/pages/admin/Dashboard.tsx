@@ -6,8 +6,7 @@ import {
   NewspaperIcon,
   BuildingOfficeIcon,
   EnvelopeIcon,
-  ExclamationCircleIcon,
-  ArrowTrendingUpIcon
+  ExclamationCircleIcon
 } from '@heroicons/react/24/outline'
 import { adminApi } from '../../api/settings'
 import { DashboardStats } from '../../types'
@@ -156,7 +155,7 @@ export default function Dashboard() {
               to="/admin/news"
               className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <span className="font-medium">+ Добавить новость</span>
+              <span className="font-medium">Добавить новость</span>
               <p className="text-sm text-gray-500">Создать новую публикацию</p>
             </Link>
             <Link
@@ -178,17 +177,17 @@ export default function Dashboard() {
 
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <h3 className="font-heading font-semibold text-lg mb-4 flex items-center">
-            <ArrowTrendingUpIcon className="w-5 h-5 mr-2 text-green-500" />
-            Статистика за неделю
+            <UserGroupIcon className="w-10 h-10 mr-2 text-blue-500" />
+            Статистика по командам
           </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <span className="text-gray-600">Новых регистраций</span>
+              <span className="text-gray-600">Новых регистраций за неделю</span>
               <span className="text-2xl font-bold text-green-600">+{stats.recent.teams_week}</span>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <span className="text-gray-600">Всего пользователей</span>
-              <span className="text-2xl font-bold text-gray-900">{stats.totals.users}</span>
+              <span className="text-gray-600">Всего команд</span>
+              <span className="text-2xl font-bold text-gray-900">{stats.totals.teams}</span>
             </div>
           </div>
         </div>

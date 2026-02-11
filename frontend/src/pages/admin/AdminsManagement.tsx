@@ -12,6 +12,7 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import PhoneInput from '../../components/ui/PhoneInput'
 import Select from '../../components/ui/Select'
+import '../../styles/pages/admin/AdminsManagement.css'
 
 const roleOptions = [
   { value: 'admin', label: 'Администратор' },
@@ -76,7 +77,7 @@ export default function AdminsManagement() {
       toast.error('Нельзя удалить свой аккаунт')
       return
     }
-    
+
     if (!confirm('Удалить этого администратора?')) return
 
     try {
@@ -90,7 +91,6 @@ export default function AdminsManagement() {
 
   const handleSave = async () => {
     if (editingAdmin) {
-      // Update existing admin
       const updateData: AdminUpdateData = {}
       if (formData.full_name !== undefined) updateData.full_name = formData.full_name
       if (formData.phone !== undefined) updateData.phone = formData.phone
@@ -110,7 +110,6 @@ export default function AdminsManagement() {
         setSaving(false)
       }
     } else {
-      // Create new admin
       if (!formData.email || !formData.password || !formData.role) {
         toast.error('Заполните обязательные поля')
         return
@@ -141,199 +140,187 @@ export default function AdminsManagement() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-heading font-bold text-gray-900">
-            Управление администраторами
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Добавление и редактирование администраторов системы
-          </p>
+      <div className="admins-management">
+        <div className="admins-management-header">
+          <div>
+            <h1 className="admins-management-title">
+              Управление администраторами
+            </h1>
+            <p className="admins-management-subtitle">
+              Добавление и редактирование администраторов системы
+            </p>
+          </div>
+          <Button onClick={handleCreate} leftIcon={<PlusIcon className="admins-management-button-icon" />}>
+            Добавить админа
+          </Button>
         </div>
-        <Button onClick={handleCreate} leftIcon={<PlusIcon className="w-5 h-5" />}>
-          Добавить админа
-        </Button>
-      </div>
 
-      {/* Admins List */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
+        {/* Admins List */}
+        <div className="admins-management-table-container">
+          <table className="admins-management-table">
+            <thead className="admins-management-table-head">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="admins-management-table-header">
                 Администратор
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="admins-management-table-header">
                 Роль
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="admins-management-table-header">
                 Статус
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="admins-management-table-header">
                 Последний вход
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="admins-management-table-header admins-management-table-header-actions">
                 Действия
               </th>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
+            </thead>
+            <tbody className="admins-management-table-body">
             {admins.map((admin) => (
-              <tr key={admin.id} className={!admin.is_active ? 'bg-gray-50' : ''}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-eurobot-blue text-white flex items-center justify-center font-semibold">
-                      {admin.full_name?.charAt(0) || admin.email.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {admin.full_name || 'Без имени'}
-                        {admin.id === currentUser?.id && (
-                          <span className="ml-2 text-xs text-eurobot-blue">(вы)</span>
-                        )}
+                <tr key={admin.id} className={`admins-management-table-row ${!admin.is_active ? 'admins-management-table-row-inactive' : ''}`}>
+                  <td className="admins-management-table-cell">
+                    <div className="admins-management-admin-info">
+                      <div className="admins-management-admin-details">
+                        <div className="admins-management-admin-name">
+                          {admin.full_name || 'Без имени'}
+                          {admin.id === currentUser?.id && (
+                              <span className="admins-management-current-user">(вы)</span>
+                          )}
+                        </div>
+                        <div className="admins-management-admin-email">{admin.email}</div>
                       </div>
-                      <div className="text-sm text-gray-500">{admin.email}</div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    admin.role === 'super_admin' 
-                      ? 'bg-purple-100 text-purple-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {admin.role === 'super_admin' && <ShieldCheckIcon className="w-3 h-3 mr-1" />}
+                  </td>
+                  <td className="admins-management-table-cell">
+                  <span className={`admins-management-role-badge admins-management-role-badge-${admin.role}`}>
+                    {admin.role === 'super_admin' && <ShieldCheckIcon className="admins-management-role-icon" />}
                     {getRoleLabel(admin.role)}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
-                    admin.is_active 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
+                  </td>
+                  <td className="admins-management-table-cell">
+                  <span className={`admins-management-status-badge ${admin.is_active ? 'admins-management-status-badge-active' : 'admins-management-status-badge-inactive'}`}>
                     {admin.is_active ? 'Активен' : 'Неактивен'}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {admin.last_login 
-                    ? format(new Date(admin.last_login), 'dd MMM yyyy, HH:mm', { locale: ru })
-                    : 'Не входил'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() => handleEdit(admin)}
-                      className="text-gray-400 hover:text-blue-600 p-1"
-                      title="Редактировать"
-                    >
-                      <PencilIcon className="w-5 h-5" />
-                    </button>
-                    {admin.id !== currentUser?.id && (
+                  </td>
+                  <td className="admins-management-table-cell admins-management-last-login">
+                    {admin.last_login
+                        ? format(new Date(admin.last_login), 'dd MMM yyyy, HH:mm', { locale: ru })
+                        : 'Не входил'}
+                  </td>
+                  <td className="admins-management-table-cell admins-management-actions">
+                    <div className="admins-management-actions-container">
                       <button
-                        onClick={() => handleDelete(admin.id)}
-                        className="text-gray-400 hover:text-red-600 p-1"
-                        title="Удалить"
+                          onClick={() => handleEdit(admin)}
+                          className="admins-management-action-button admins-management-edit-button"
+                          title="Редактировать"
                       >
-                        <TrashIcon className="w-5 h-5" />
+                        <PencilIcon className="admins-management-action-icon" />
                       </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
+                      {admin.id !== currentUser?.id && (
+                          <button
+                              onClick={() => handleDelete(admin.id)}
+                              className="admins-management-action-button admins-management-delete-button"
+                              title="Удалить"
+                          >
+                            <TrashIcon className="admins-management-action-icon" />
+                          </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl w-full max-w-md"
-          >
-            <div className="p-6 border-b">
-              <h2 className="text-xl font-heading font-bold">
-                {editingAdmin ? 'Редактировать администратора' : 'Новый администратор'}
-              </h2>
-            </div>
-            
-            <div className="p-6 space-y-4">
-              {!editingAdmin && (
-                <Input
-                  label="Email"
-                  type="email"
-                  required
-                  value={formData.email || ''}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="admin@eurobot.ru"
-                />
-              )}
+        {/* Modal */}
+        {showModal && (
+            <div className="admins-management-modal-overlay">
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="admins-management-modal"
+              >
+                <div className="admins-management-modal-header">
+                  <h2 className="admins-management-modal-title">
+                    {editingAdmin ? 'Редактировать администратора' : 'Новый администратор'}
+                  </h2>
+                </div>
 
-              <Input
-                label="Полное имя"
-                value={formData.full_name || ''}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                placeholder="Иван Иванов"
-              />
+                <div className="admins-management-modal-content">
+                  {!editingAdmin && (
+                      <Input
+                          label="Email"
+                          type="email"
+                          required
+                          value={formData.email || ''}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="admin@eurobot.ru"
+                      />
+                  )}
 
-              <PhoneInput
-                label="Телефон"
-                value={formData.phone || ''}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-
-              <Input
-                label={editingAdmin ? "Новый пароль (оставьте пустым, чтобы не менять)" : "Пароль"}
-                type="password"
-                required={!editingAdmin}
-                value={formData.password || ''}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="••••••••"
-              />
-
-              <Select
-                label="Роль"
-                required
-                options={roleOptions}
-                value={formData.role || 'admin'}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-              />
-
-              {editingAdmin && (
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="mr-2"
-                    disabled={editingAdmin.id === currentUser?.id}
+                  <Input
+                      label="Полное имя"
+                      value={formData.full_name || ''}
+                      onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                      placeholder="Иван Иванов"
                   />
-                  <span className={editingAdmin.id === currentUser?.id ? 'text-gray-400' : ''}>
+
+                  <PhoneInput
+                      label="Телефон"
+                      value={formData.phone || ''}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+
+                  <Input
+                      label={editingAdmin ? "Новый пароль (оставьте пустым, чтобы не менять)" : "Пароль"}
+                      type="password"
+                      required={!editingAdmin}
+                      value={formData.password || ''}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="••••••••"
+                  />
+
+                  <Select
+                      label="Роль"
+                      required
+                      options={roleOptions}
+                      value={formData.role || 'admin'}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+                  />
+
+                  {editingAdmin && (
+                      <label className="admins-management-checkbox-label">
+                        <input
+                            type="checkbox"
+                            checked={formData.is_active}
+                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                            className="admins-management-checkbox"
+                            disabled={editingAdmin.id === currentUser?.id}
+                        />
+                        <span className={editingAdmin.id === currentUser?.id ? 'admins-management-checkbox-disabled' : ''}>
                     Активен
                   </span>
-                  {editingAdmin.id === currentUser?.id && (
-                    <span className="text-xs text-gray-400 ml-2">(нельзя деактивировать себя)</span>
+                        {editingAdmin.id === currentUser?.id && (
+                            <span className="admins-management-checkbox-hint">(нельзя деактивировать себя)</span>
+                        )}
+                      </label>
                   )}
-                </label>
-              )}
-            </div>
+                </div>
 
-            <div className="p-6 border-t flex justify-end space-x-3">
-              <Button variant="ghost" onClick={() => setShowModal(false)}>
-                Отмена
-              </Button>
-              <Button onClick={handleSave} isLoading={saving}>
-                {editingAdmin ? 'Сохранить' : 'Создать'}
-              </Button>
+                <div className="admins-management-modal-footer">
+                  <Button variant="ghost" onClick={() => setShowModal(false)}>
+                    Отмена
+                  </Button>
+                  <Button onClick={handleSave} isLoading={saving}>
+                    {editingAdmin ? 'Сохранить' : 'Создать'}
+                  </Button>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
   )
 }
-

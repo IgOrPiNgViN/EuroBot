@@ -1,0 +1,517 @@
+.competitions-images-section {
+    background-color: white;
+    padding: 4rem 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+
+.competitions-images-container {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.competition-logo-container,
+.competition-title-container {
+    max-width: 100%;
+}
+
+.competition-logo {
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+}
+
+.competition-title-image {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.competitions-registration-button-container {
+    margin-top: 2rem;
+}
+
+.competitions-registration-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #0f3d63 0%, #1e3a8a 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.competitions-registration-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f3d63 100%);
+}
+
+.competitions-theme-section {
+    background: linear-gradient(135deg, #0f3d63 0%, #1e3a8a 100%);
+    padding: 4rem 0;
+    color: white;
+}
+
+.competitions-theme-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-theme-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-format-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-tasks-section {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    padding: 4rem 0;
+    color: white;
+}
+
+.competitions-tasks-content {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-tasks-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-tasks-list {
+    list-style: none;
+    padding: 0;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.competitions-task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    line-height: 1.6;
+    width: fit-content;
+}
+
+.competitions-task-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.competitions-task-bullet {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.5rem;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-task-text {
+    width: fit-content;
+    max-width: 600px;
+}
+
+.competitions-documents-section {
+    background: url("../../public/images/j5Z6XLapCTjQdGxPBh7pT456CXzbZfHXcHoUGhGWyBAZL1v1kv14f0imu77rKPzji3QXj63P_knQnb0vlVq4v7yP.jpg") no-repeat center center;
+    background-size: cover;
+    padding: 6rem 0;
+    position: relative;
+}
+
+.competitions-documents-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.competitions-documents-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.competitions-documents-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-family: 'FunnyFont', sans-serif;
+}
+
+.competitions-documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.competitions-document-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.competitions-document-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: white;
+}
+
+.competitions-document-icon {
+    width: 3rem;
+    height: 3rem;
+    color: #1e40af;
+    flex-shrink: 0;
+}
+
+.competitions-document-info {
+    flex: 1;
+}
+
+.competitions-document-name {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.competitions-document-link {
+    color: #3b82f6;
+    font-size: 0.875rem;
+    text-decoration: underline;
+}
+
+/* Существующие стили для инфо-карточек */
+.competitions-info-section {
+    padding: 4rem 0;
+    background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+}
+
+.competitions-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.competitions-info-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.competitions-info-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.competitions-info-icon-success {
+    background-color: #d1fae5;
+    color: #10b981;
+}
+
+.competitions-info-icon-default {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+}
+
+.competitions-info-icon-gold {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.competitions-info-icon-blue {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.competitions-info-title {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+}
+
+.competitions-info-text {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.competitions-info-text-success {
+    color: #10b981;
+}
+
+.competitions-info-text-muted {
+    color: #6b7280;
+}
+
+.competitions-info-date {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+/* Файлы соревнований */
+.competitions-files-section {
+    padding: 4rem 0;
+    background: white;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.competitions-files-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.competition-files-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.competition-files-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.competition-files-description {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.competition-files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.competition-file-item,
+.competition-file-group {
+    background: #f9fafb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: background-color 0.2s;
+}
+
+.competition-file-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.competition-file-item:hover {
+    background: #f3f4f6;
+}
+
+.competition-file-icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+}
+
+.competition-file-icon-blue {
+    color: #3b82f6;
+}
+
+.competition-file-icon-green {
+    color: #10b981;
+}
+
+.competition-file-icon-purple {
+    color: #8b5cf6;
+}
+
+.competition-file-icon-orange {
+    color: #f97316;
+}
+
+.competition-file-info {
+    flex: 1;
+}
+
+.competition-file-name {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.competition-file-type {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.competition-file-group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.competition-file-group-title {
+    font-weight: 500;
+    color: #374151;
+}
+
+.competition-file-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.competition-file-link {
+    font-size: 0.875rem;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.competition-file-link:hover {
+    text-decoration: underline;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .competitions-images-container {
+        gap: 2rem;
+    }
+
+    .competition-logo {
+        max-width: 150px;
+    }
+
+    .competition-title-image {
+        max-width: 100%;
+    }
+
+    .competitions-theme-title,
+    .competitions-tasks-title,
+    .competitions-documents-title {
+        font-size: 2rem;
+    }
+
+    .competitions-documents-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .competitions-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .competition-files-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .competitions-theme-title,
+    .competitions-tasks-title,
+    .competitions-documents-title {
+        font-size: 1.75rem;
+    }
+
+    .competitions-task-item {
+        font-size: 1rem;
+    }
+
+    .competitions-registration-button {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Стили для дат регистрации */
+.competitions-registration-dates {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.competitions-info-date {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.competitions-date-label {
+    font-weight: 500;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+/* Адаптивность для дат */
+@media (max-width: 640px) {
+    .competitions-info-date {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.125rem;
+    }
+
+    .competitions-date-label {
+        font-size: 0.75rem;
+    }
+}

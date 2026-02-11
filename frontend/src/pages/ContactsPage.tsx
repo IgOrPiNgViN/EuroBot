@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { 
-  EnvelopeIcon, 
-  PhoneIcon, 
+import {
+  EnvelopeIcon,
+  PhoneIcon,
   MapPinIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
@@ -19,6 +19,7 @@ import PhoneInput from '../components/ui/PhoneInput'
 import Textarea from '../components/ui/Textarea'
 import Select from '../components/ui/Select'
 import Button from '../components/ui/Button'
+import '../styles/pages/ContactsPage.css'
 
 const topicOptions = [
   { value: 'technical', label: 'Технические вопросы' },
@@ -40,7 +41,6 @@ export default function ContactsPage() {
   const contactEmails = settings.contact_emails as Record<string, string> | undefined
 
   const onSubmit = async (data: ContactCreateData) => {
-    // Check captcha if enabled
     if (captchaEnabled && !captchaToken) {
       toast.error('Пожалуйста, пройдите проверку капчи')
       return
@@ -66,220 +66,239 @@ export default function ContactsPage() {
   }
 
   return (
-    <>
-      <SEO
-        title="Контакты"
-        description="Свяжитесь с организаторами соревнований Евробот. Контактные данные и форма обратной связи."
-        url="/contacts"
-      />
+      <>
+        <SEO
+            title="Контакты"
+            description="Свяжитесь с организаторами соревнований Евробот. Контактные данные и форма обратной связи."
+            url="/contacts"
+        />
 
-      <div className="bg-eurobot-navy py-16">
-        <div className="container-custom">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Контакты
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Свяжитесь с нами любым удобным способом
-          </p>
+        <div className="contacts-header">
+          <div className="contacts-header-left">
+            <h1 className="contacts-title">
+              Контакты
+            </h1>
+            <p className="contacts-subtitle">
+              Свяжитесь любым удобным способом
+            </p>
+          </div>
+          <div className="contacts-header-right">
+            <h1 className="contacts-title">
+              Обратная связь
+            </h1>
+            <p className="contacts-subtitle">
+              Заполните форму для быстрого ответа
+            </p>
+          </div>
         </div>
-      </div>
 
-      <section className="py-12">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact info */}
-            <div>
-              <h2 className="section-title">Как с нами связаться</h2>
+        <section className="contacts-content">
+          <div className="contacts-container">
+            <div className="contacts-grid">
+              <div className="contacts-info-column">
+                {contactEmails &&
+                    (contactEmails.technical || contactEmails.registration || contactEmails.sponsorship || contactEmails.press
+                        || contactEmails.general) && (
+                        <div className="contacts-emails">
+                          {contactEmails.technical && (
+                              <div className="contacts-email-item">
+                                <EnvelopeIcon className="contacts-email-icon" />
+                                <div>
+                                  <h3 className="contacts-email-title">Технические вопросы</h3>
+                                  <a href={`mailto:${contactEmails.technical}`} className="contacts-email-link">
+                                    {contactEmails.technical}
+                                  </a>
+                                  <p className="contacts-email-description">
+                                    Вопросы по правилам, полю, роботам
+                                  </p>
+                                </div>
+                              </div>
+                          )}
 
-              {/* Email categories */}
-              {contactEmails && (
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <EnvelopeIcon className="w-6 h-6 text-eurobot-gold flex-shrink-0 mt-1" />
+                          {contactEmails.registration && (
+                              <div className="contacts-email-item">
+                                <EnvelopeIcon className="contacts-email-icon" />
+                                <div>
+                                  <h3 className="contacts-email-title">Регистрация и участие</h3>
+                                  <a href={`mailto:${contactEmails.registration}`} className="contacts-email-link">
+                                    {contactEmails.registration}
+                                  </a>
+                                  <p className="contacts-email-description">
+                                    Регистрация команд, организационные вопросы
+                                  </p>
+                                </div>
+                              </div>
+                          )}
+
+                          {contactEmails.sponsorship && (
+                              <div className="contacts-email-item">
+                                <EnvelopeIcon className="contacts-email-icon" />
+                                <div>
+                                  <h3 className="contacts-email-title">Спонсорство и партнерство</h3>
+                                  <a href={`mailto:${contactEmails.sponsorship}`} className="contacts-email-link">
+                                    {contactEmails.sponsorship}
+                                  </a>
+                                  <p className="contacts-email-description">
+                                    Сотрудничество, спонсорские предложения
+                                  </p>
+                                </div>
+                              </div>
+                          )}
+
+                          {contactEmails.press && (
+                              <div className="contacts-email-item">
+                                <EnvelopeIcon className="contacts-email-icon" />
+                                <div>
+                                  <h3 className="contacts-email-title">Пресса</h3>
+                                  <a href={`mailto:${contactEmails.press}`} className="contacts-email-link">
+                                    {contactEmails.press}
+                                  </a>
+                                  <p className="contacts-email-description">
+                                    Запросы от СМИ, аккредитация
+                                  </p>
+                                </div>
+                              </div>
+                          )}
+
+                          {contactEmails.general && (
+                              <div className="contacts-email-item">
+                                <EnvelopeIcon className="contacts-email-icon" />
+                                <div>
+                                  <h3 className="contacts-email-title">Общие вопросы</h3>
+                                  <a href={`mailto:${contactEmails.general}`} className="contacts-email-link">
+                                    {contactEmails.general}
+                                  </a>
+                                  <p className="contacts-email-description">
+                                    Для любых вопросов
+                                  </p>
+                                </div>
+                              </div>
+                          )}
+                        </div>
+                    )}
+
+                <div className="contacts-contact-info">
+                  <div className="contacts-email-item">
+                    <MapPinIcon className="contacts-contact-icon" />
                     <div>
-                      <h3 className="font-semibold mb-2">Технические вопросы</h3>
-                      <a href={`mailto:${contactEmails.technical}`} className="text-eurobot-blue hover:underline">
-                        {contactEmails.technical}
-                      </a>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Вопросы по правилам, полю, роботам
+                      <h3 className="contacts-contact-title">Адрес</h3>
+                      <p className="contacts-contact-text">
+                        Москва, ул. Косыгина, 17, корп. 1.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <EnvelopeIcon className="w-6 h-6 text-eurobot-gold flex-shrink-0 mt-1" />
+                  <div className="contacts-email-item">
+                    <PhoneIcon className="contacts-contact-icon" />
                     <div>
-                      <h3 className="font-semibold mb-2">Регистрация и участие</h3>
-                      <a href={`mailto:${contactEmails.registration}`} className="text-eurobot-blue hover:underline">
-                        {contactEmails.registration}
+                      <h3 className="contacts-contact-title">Телефон</h3>
+                      <a href="tel:+74951234567" className="contacts-contact-link">
+                        +7 (495) 123-45-67
                       </a>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Регистрация команд, организационные вопросы
-                      </p>
                     </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <EnvelopeIcon className="w-6 h-6 text-eurobot-gold flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-semibold mb-2">Спонсорство и партнерство</h3>
-                      <a href={`mailto:${contactEmails.sponsorship}`} className="text-eurobot-blue hover:underline">
-                        {contactEmails.sponsorship}
-                      </a>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Сотрудничество, спонсорские предложения
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <EnvelopeIcon className="w-6 h-6 text-eurobot-gold flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-semibold mb-2">Пресса</h3>
-                      <a href={`mailto:${contactEmails.press}`} className="text-eurobot-blue hover:underline">
-                        {contactEmails.press}
-                      </a>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Запросы от СМИ, аккредитация
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Address and phone */}
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4">
-                  <MapPinIcon className="w-6 h-6 text-eurobot-blue flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Адрес</h3>
-                    <p className="text-gray-600">
-                      ул. Косыгина, 17, корп. 1<br />
-                      Москва, Россия
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <PhoneIcon className="w-6 h-6 text-eurobot-blue flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Телефон</h3>
-                    <a href="tel:+74951234567" className="text-eurobot-blue hover:underline">
-                      +7 (495) 123-45-67
-                    </a>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contact form */}
-            <div>
-              <h2 className="section-title">Форма обратной связи</h2>
-              
-              {success ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="card p-8 text-center"
-                >
-                  <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Сообщение отправлено!</h3>
-                  <p className="text-gray-600 mb-4">
-                    Мы ответим вам в ближайшее время
-                  </p>
-                  <Button onClick={() => setSuccess(false)} variant="outline">
-                    Отправить ещё
-                  </Button>
-                </motion.div>
-              ) : (
-                <div className="card p-8">
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                    <Input
-                      label="Ваше имя"
-                      {...register('name', { required: 'Обязательное поле' })}
-                      error={errors.name?.message}
-                      placeholder="Иван Иванов"
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Input
-                        label="Email"
-                        type="email"
-                        {...register('email', { 
-                          required: 'Обязательное поле',
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'Некорректный email'
-                          }
-                        })}
-                        error={errors.email?.message}
-                        placeholder="email@example.com"
-                      />
-                      <PhoneInput
-                        label="Телефон (необязательно)"
-                        {...register('phone')}
-                      />
-                    </div>
-
-                    <Select
-                      label="Тема обращения"
-                      options={topicOptions}
-                      {...register('topic', { required: 'Обязательное поле' })}
-                      error={errors.topic?.message}
-                      placeholder="Выберите тему"
-                    />
-
-                    <Textarea
-                      label="Сообщение"
-                      rows={5}
-                      {...register('message', { 
-                        required: 'Обязательное поле',
-                        minLength: { value: 10, message: 'Минимум 10 символов' }
-                      })}
-                      error={errors.message?.message}
-                      placeholder="Опишите ваш вопрос..."
-                    />
-
-                    {/* Yandex SmartCaptcha */}
-                    <SmartCaptcha
-                      onVerify={(token) => setCaptchaToken(token)}
-                      className="mt-2"
-                    />
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      isLoading={submitting}
+              <div className="contacts-form-column">
+                {success ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="contacts-success-card"
                     >
-                      Отправить сообщение
-                    </Button>
-                  </form>
-                </div>
-              )}
+                      <CheckCircleIcon className="contacts-success-icon" />
+                      <h3 className="contacts-success-title">Сообщение отправлено!</h3>
+                      <p className="contacts-success-text">
+                        Мы ответим вам в ближайшее время
+                      </p>
+                      <Button onClick={() => setSuccess(false)} variant="outline">
+                        Отправить ещё
+                      </Button>
+                    </motion.div>
+                ) : (
+                    <div className="contacts-form-card">
+                      <form onSubmit={handleSubmit(onSubmit)} className="contacts-form">
+                        <Input
+                            label="Ваше имя"
+                            {...register('name', { required: 'Обязательное поле' })}
+                            error={errors.name?.message}
+                            placeholder="Иван Иванов"
+                        />
+
+                        <div className="contacts-form-grid">
+                          <Input
+                              label="Email"
+                              type="email"
+                              {...register('email', {
+                                required: 'Обязательное поле',
+                                pattern: {
+                                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                  message: 'Некорректный email'
+                                }
+                              })}
+                              error={errors.email?.message}
+                              placeholder="email@example.com"
+                          />
+                          <PhoneInput
+                              label="Телефон (необязательно)"
+                              {...register('phone')}
+                          />
+                        </div>
+
+                        <Select
+                            label="Тема обращения"
+                            options={topicOptions}
+                            {...register('topic', { required: 'Обязательное поле' })}
+                            error={errors.topic?.message}
+                            placeholder="Выберите тему"
+                        />
+
+                        <Textarea
+                            label="Сообщение"
+                            rows={5}
+                            {...register('message', {
+                              required: 'Обязательное поле',
+                              minLength: { value: 10, message: 'Минимум 10 символов' }
+                            })}
+                            error={errors.message?.message}
+                            placeholder="Опишите ваш вопрос..."
+                        />
+
+                        <SmartCaptcha
+                            onVerify={(token) => setCaptchaToken(token)}
+                            className="contacts-captcha"
+                        />
+
+                        <Button
+                            type="submit"
+                            className="contacts-submit-button"
+                            isLoading={submitting}
+                        >
+                          Отправить сообщение
+                        </Button>
+                      </form>
+                    </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Map */}
-      <section>
-        <YandexMap
-          center={[55.7025, 37.5547]}
-          zoom={16}
-          markers={[
-            {
-              coordinates: [55.7025, 37.5547],
-              title: 'EUROBOT Россия',
-              description: 'ул. Косыгина, 17, корп. 1, Москва'
-            }
-          ]}
-          height="400px"
-        />
-      </section>
-    </>
+        <section className="contacts-map-section">
+          <YandexMap
+              center={[55.7025, 37.5547]}
+              zoom={16}
+              markers={[
+                {
+                  coordinates: [55.7025, 37.5547],
+                  title: 'EUROBOT Россия',
+                  description: 'ул. Косыгина, 17, корп. 1, Москва'
+                }
+              ]}
+              height="400px"
+          />
+        </section>
+      </>
   )
 }
-
-
-

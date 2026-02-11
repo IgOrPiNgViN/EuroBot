@@ -1,0 +1,612 @@
+@import '../palettes/eurobot.css';
+
+.archive-page {
+    --archive-hero-bg: var(--color-navy);
+    --archive-text-primary: var(--color-gray-900);
+    --archive-text-secondary: var(--color-gray-500);
+    --archive-white: var(--color-white);
+    --archive-gray-light: var(--color-gray-100);
+    --archive-gray-medium: var(--color-gray-200);
+    --archive-gray-dark: var(--color-gray-700);
+    --archive-accent-blue: var(--color-blue);
+    --archive-accent-gold: var(--color-gold);
+    --archive-accent-green: var(--color-green);
+    --archive-accent-purple: var(--color-purple);
+    --archive-modal-overlay: rgba(0, 0, 0, 0.9);
+}
+
+
+.archive-container-custom {
+    max-width: 1200px;
+    margin: 0 auto;
+    align-self: center;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;   /* чтобы h1 и p шли вертикально */
+    justify-content: center;  /* по вертикали */
+    align-items: center;      /* по горизонтали */
+    flex-direction: column;
+}
+
+/* Hero Section */
+.archive-hero {
+    background-color: #0f3d63;
+    height: 160px;
+    display: flex;
+    flex-direction: column;   /* чтобы h1 и p шли вертикально */
+    justify-content: center;  /* по вертикали */
+    align-items: center;      /* по горизонтали */
+    flex-direction: column;
+}
+
+
+.archive-hero-title {
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: #F2F6FF;
+    margin-bottom: 1rem;
+    align-self: center;
+}
+
+@media (min-width: 768px) {
+    .archive-hero-title {
+        font-size: 3rem;
+        line-height: 1;
+    }
+}
+
+.archive-hero-subtitle {
+    color: #F2F6FF;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+/* Main Section */
+.archive-main {
+    padding: 1rem 0;
+}
+
+/* Empty State */
+.archive-empty {
+    text-align: center;
+    padding: 5rem 0;
+    color: var(--archive-text-secondary);
+}
+
+/* Layout */
+.archive-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .archive-container {
+        flex-direction: row;
+    }
+}
+
+/* Sidebar */
+.archive-sidebar {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+    .archive-sidebar {
+        width: 16rem;
+    }
+}
+
+.archive-sidebar-title {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    color: var(--archive-gray-dark);
+    margin-bottom: 1rem;
+}
+
+.archive-season-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archive-season-button {
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s, color 0.2s;
+    background-color: var(--archive-gray-light);
+    color: var(--archive-gray-dark);
+    border: none;
+    cursor: pointer;
+}
+
+.archive-season-button:hover {
+    background-color: var(--archive-gray-medium);
+}
+
+.archive-season-button.active {
+    background-color: #0f3d63;
+    color: white;
+}
+
+.archive-season-year {
+    font-weight: 600;
+    display: block;
+}
+
+.archive-season-name {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    opacity: 0.8;
+    display: block;
+    margin-top: 0.125rem;
+}
+
+/* Content Area */
+.archive-content {
+    flex-grow: 1;
+}
+
+/* Season Header */
+
+.archive-cover-image {
+    aspect-ratio: 16/9;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: var(--archive-gray-light);
+    margin-bottom: 1.5rem;
+}
+
+.archive-cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.archive-season-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--archive-hero-bg);
+    margin-bottom: 0.5rem;
+}
+
+.archive-season-theme {
+    color: var(--archive-accent-gold);
+    font-weight: 500;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    line-height: 1.5rem;
+    background-color: rgba(33, 127, 210, 0.2);
+    padding: 15px;
+}
+
+.archive-season-description {
+    color: var(--archive-text-secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1.625;
+}
+
+.archive-season-teams {
+    color: var(--archive-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.archive-season-header {
+    margin-bottom: 1rem;
+}
+/* Results Section */
+
+.archive-results {
+    background-color: rgba(237, 217, 0, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.archive-results-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+}
+
+.archive-winners-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.archive-winner-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.archive-winner-emoji {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.archive-winner-name {
+    font-weight: 500;
+}
+
+.archive-additional-info {
+    color: var(--archive-text-secondary);
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(var(--color-gold-rgb), 0.2);
+}
+
+/* Media Sections */
+.archive-media-section {
+    margin-bottom: 2rem;
+}
+
+.archive-section-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.archive-videos-title .archive-section-icon {
+    color: var(--archive-accent-blue);
+}
+
+.archive-photos-title .archive-section-icon {
+    color: var(--archive-accent-green);
+}
+
+.archive-documents-title .archive-section-icon {
+    color: var(--archive-accent-purple);
+}
+
+.archive-section-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* Videos Grid */
+.archive-videos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .archive-videos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.archive-video-card {
+    cursor: pointer;
+}
+
+.archive-video-preview {
+    aspect-ratio: 16/9;
+    background-color: var(--archive-gray-medium);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.archive-video-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.archive-video-preview:hover .archive-video-thumbnail {
+    transform: scale(1.05);
+}
+
+.archive-video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--archive-gray-medium);
+}
+
+.archive-video-placeholder-icon {
+    width: 4rem;
+    height: 4rem;
+    color: var(--archive-text-secondary);
+}
+
+.archive-video-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.archive-video-card:hover .archive-video-overlay {
+    opacity: 1;
+}
+
+.archive-video-overlay-icon {
+    width: 4rem;
+    height: 4rem;
+    color: var(--archive-white);
+}
+
+.archive-video-title {
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+/* Photos Grid */
+.archive-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .archive-photos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .archive-photos-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.archive-photo-card {
+    aspect-ratio: 1;
+    background-color: var(--archive-gray-medium);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.archive-photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.archive-photo-card:hover .archive-photo-image {
+    transform: scale(1.05);
+}
+
+/* Documents List */
+.archive-documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archive-document-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--archive-gray-light);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.archive-document-item:hover {
+    background-color: var(--archive-gray-medium);
+}
+
+.archive-document-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--archive-gray-dark);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.archive-document-name {
+    color: var(--archive-text-primary);
+    flex-grow: 1;
+}
+
+/* Media Modal */
+.archive-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--archive-modal-overlay);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.archive-modal-content {
+    max-width: 64rem;
+    width: 100%;
+    position: relative;
+}
+
+.archive-modal-close {
+    position: absolute;
+    top: -3rem;
+    right: 0;
+    color: var(--archive-white);
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+}
+
+.archive-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.archive-modal-close-icon {
+    width: 2rem;
+    height: 2rem;
+}
+
+.archive-video-player {
+    aspect-ratio: 16/9;
+    background-color: #000;
+}
+
+.archive-photo-modal {
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 0 auto;
+    display: block;
+}
+
+.archive-media-title {
+    color: var(--archive-white);
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Loading Spinner */
+.archive-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--archive-white);
+    z-index: 100;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .archive-hero {
+        padding: 3rem 0;
+    }
+
+    .archive-hero-title {
+        font-size: 1.875rem;
+    }
+
+    .archive-hero-subtitle {
+        font-size: 1rem;
+        width: fit-content;
+        max-width: 70%;
+        text-align: center;
+    }
+
+    .archive-season-title {
+        font-size: 1.5rem;
+    }
+
+    .archive-photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Обновленные стили для архива */
+
+/* Стили для боковой панели с логотипами */
+.archive-season-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.archive-season-logo {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.archive-season-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    flex-grow: 1;
+}
+
+/* Стили для шапки сезона */
+.archive-season-branding {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+
+.archive-season-logo-container {
+    width: 270px;
+    height: 270px;
+    display: block;
+}
+
+.archive-season-logo-large {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.archive-season-title-image-container {
+    max-width: 270px;
+    width: 100%;
+    display: block;
+}
+
+.archive-season-title-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.archive-season-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-top: 1rem;
+}
+
+.archive-description-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.archive-description-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4b5563;
+    white-space: pre-line;
+}

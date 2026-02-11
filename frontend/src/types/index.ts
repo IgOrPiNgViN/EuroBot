@@ -259,5 +259,21 @@ export interface DashboardStats {
   } | null
 }
 
+export interface FormatStructure {
+  logo_url: string;
+  title_url: string;
+  icon_url?: string;
+  tasks: string[];
+  documents: Array<{
+    url: string;
+    name: string;
+  }>;
+}
 
 
+export interface ArchiveSeasonDescriptionData {
+  mainDescription?: string;
+  logoUrl?: string;
+  titleImageUrl?: string;
+  [key: string]: any;
+}

@@ -2,29 +2,65 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
-import { 
-  CalendarIcon, 
-  MapPinIcon, 
+import {
+  CalendarIcon,
+  MapPinIcon,
   DocumentTextIcon,
   ArrowDownTrayIcon,
-  ClipboardDocumentCheckIcon
+  ClipboardDocumentCheckIcon,
+  DocumentIcon
 } from '@heroicons/react/24/outline'
 import { seasonsApi } from '../api/seasons'
-import { Season } from '../types'
+import { Season, FormatStructure } from '../types'
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Button from '../components/ui/Button'
+import '../styles/pages/CompetitionsPage.css'
 
 export default function CompetitionsPage() {
   const [currentSeason, setCurrentSeason] = useState<Season | null>(null)
+  const [formatData, setFormatData] = useState<FormatStructure | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const parseFormat = (formatString: string): FormatStructure => {
+    try {
+      return JSON.parse(formatString);
+    } catch (error) {
+      console.error('Failed to parse format JSON:', error);
+      return {
+        logo_url: '',
+        title_url: '',
+        icon_url: '',
+        tasks: [],
+        documents: []
+      };
+    }
+  };
+
+    const getFormatText = (formatString: string): string => {
+        try {
+            const parsed = JSON.parse(formatString);
+            // Если это JSON с нашими полями, но есть текстовое поле description
+            if (parsed.description) {
+                return parsed.description;
+            }
+            return '';
+        } catch (error) {
+            return formatString;
+        }
+    };
 
   useEffect(() => {
     const fetchSeason = async () => {
       try {
         const season = await seasonsApi.getCurrent()
         setCurrentSeason(season)
+        if (season.format) {
+          const parsedFormat = parseFormat(season.format)
+          setFormatData(parsedFormat)
+          console.log('Parsed format data:', parsedFormat)
+        }
       } catch (error) {
         console.error('Failed to fetch season:', error)
       } finally {
@@ -39,280 +75,432 @@ export default function CompetitionsPage() {
     return <LoadingSpinner fullScreen />
   }
 
-  if (!currentSeason) {
-    return (
-      <>
-        <Helmet>
-          <title>Соревнования — Евробот Россия</title>
-        </Helmet>
-        
-        <div className="bg-eurobot-navy py-16">
-          <div className="container-custom">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-white">
-              Соревнования
-            </h1>
-          </div>
-        </div>
+    if (!currentSeason) {
+        return (
+            <>
+                <Helmet>
+                    <title>Соревнования — Евробот Россия</title>
+                </Helmet>
 
-        <div className="container-custom py-20 text-center">
-          <p className="text-gray-500 text-lg">
-            Информация о текущем сезоне будет доступна позже
-          </p>
-        </div>
-      </>
-    )
-  }
+                <div style={{
+                    backgroundColor: '#0f3d63',
+                    height: '160px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <div style={{
+                        maxWidth: '1200px',
+                        width: '100%',
+                        padding: '0 1rem',
+                        textAlign: 'center'
+                    }}>
+                        <h1 style={{
+                            fontSize: '3rem',
+                            lineHeight: '1',
+                            fontWeight: 'bold',
+                            fontFamily: 'var(--font-heading)',
+                            color: '#F2F6FF',
+                            marginBottom: '1rem'
+                        }}>
+                            Соревнования
+                        </h1>
+                    </div>
+                </div>
+
+                <div style={{
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    padding: '5rem 1rem',
+                    textAlign: 'center'
+                }}>
+                    <p style={{
+                        color: '#4b5563',
+                        fontSize: '1.125rem',
+                        lineHeight: '1.75rem'
+                    }}>
+                        Информация о текущем сезоне будет доступна позже
+                    </p>
+                </div>
+            </>
+        )
+    }
 
   return (
-    <>
-      <Helmet>
-        <title>{currentSeason.name} — Соревнования Евробот Россия</title>
-        <meta name="description" content={`Информация о соревнованиях ${currentSeason.name}. Правила, даты, регистрация.`} />
-      </Helmet>
+      <>
+        <Helmet>
+          <title>{currentSeason.name} — Соревнования Евробот Россия</title>
+          <meta name="description" content={`Информация о соревнованиях ${currentSeason.name}. Правила, даты, регистрация.`} />
+        </Helmet>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-eurobot-navy to-eurobot-blue py-20">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl"
-          >
-            <span className="inline-block bg-eurobot-gold text-eurobot-navy px-4 py-1 rounded-full text-sm font-semibold mb-4">
-              Сезон {currentSeason.year}
-            </span>
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-              {currentSeason.name}
-            </h1>
-            {currentSeason.theme && (
-              <p className="text-xl text-gray-300">
-                Тема сезона: <span className="text-eurobot-gold">{currentSeason.theme}</span>
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Info cards */}
-      <section className="py-12 -mt-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Registration status */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="card p-6"
-            >
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                currentSeason.registration_open ? 'bg-green-100' : 'bg-gray-100'
-              }`}>
-                <ClipboardDocumentCheckIcon className={`w-6 h-6 ${
-                  currentSeason.registration_open ? 'text-green-600' : 'text-gray-400'
-                }`} />
-              </div>
-              <h3 className="font-semibold mb-2">Регистрация</h3>
-              <p className={`text-sm ${currentSeason.registration_open ? 'text-green-600' : 'text-gray-500'}`}>
-                {currentSeason.registration_open ? 'Открыта' : 'Закрыта'}
-              </p>
-              {currentSeason.registration_open && currentSeason.show_registration_deadline && currentSeason.registration_end && (
-                <p className="text-xs text-gray-400 mt-1">
-                  до {format(new Date(currentSeason.registration_end), 'd MMMM yyyy', { locale: ru })}
-                </p>
+        <section className="competitions-images-section">
+          <div className="container-custom">
+            <div className="competitions-images-container">
+              {formatData?.logo_url && (
+                  <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="competition-logo-container"
+                  >
+                    <img
+                        src={formatData.logo_url}
+                        alt={`Логотип ${currentSeason.name}`}
+                        className="competition-logo"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                    />
+                  </motion.div>
               )}
-            </motion.div>
 
-            {/* Dates */}
-            {currentSeason.show_dates && currentSeason.competition_date_start && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="card p-6"
-              >
-                <div className="w-12 h-12 bg-eurobot-gold/10 rounded-xl flex items-center justify-center mb-4">
-                  <CalendarIcon className="w-6 h-6 text-eurobot-gold" />
-                </div>
-                <h3 className="font-semibold mb-2">Даты проведения</h3>
-                <p className="text-sm text-gray-600">
-                  {format(new Date(currentSeason.competition_date_start), 'd MMMM', { locale: ru })}
-                  {currentSeason.competition_date_end && (
-                    <> — {format(new Date(currentSeason.competition_date_end), 'd MMMM yyyy', { locale: ru })}</>
-                  )}
-                </p>
-              </motion.div>
+              {formatData?.title_url && (
+                  <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="competition-title-container"
+                  >
+                    <img
+                        src={formatData.title_url}
+                        alt={currentSeason.name}
+                        className="competition-title-image"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                    />
+                  </motion.div>
+              )}
+            </div>
+
+            {currentSeason.registration_open && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="competitions-registration-button-container"
+                >
+                  <Link to="/registration" className="competitions-registration-button">
+                    Зарегистрировать команду
+                  </Link>
+                </motion.div>
             )}
-
-            {/* Location */}
-            {currentSeason.show_location && currentSeason.location && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="card p-6"
-              >
-                <div className="w-12 h-12 bg-eurobot-blue/10 rounded-xl flex items-center justify-center mb-4">
-                  <MapPinIcon className="w-6 h-6 text-eurobot-blue" />
-                </div>
-                <h3 className="font-semibold mb-2">Место проведения</h3>
-                <p className="text-sm text-gray-600">{currentSeason.location}</p>
-              </motion.div>
-            )}
-
-            {/* Format */}
-            {currentSeason.show_format && currentSeason.format && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="card p-6"
-              >
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <DocumentTextIcon className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold mb-2">Формат</h3>
-                <p className="text-sm text-gray-600">{currentSeason.format}</p>
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      {currentSeason.registration_open && (
-        <section className="py-12 bg-gray-50">
-          <div className="container-custom text-center">
-            <h2 className="text-2xl font-heading font-bold mb-4">
-              Готовы к участию?
-            </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Зарегистрируйте свою команду и станьте частью международного сообщества робототехников
-            </p>
-            <Link to="/registration">
-              <Button size="lg">Зарегистрировать команду</Button>
-            </Link>
           </div>
         </section>
-      )}
 
-      {/* Competitions and files */}
-      {currentSeason.competitions.length > 0 && (
-        <section className="py-12">
-          <div className="container-custom">
-            <h2 className="section-title">Материалы и документы</h2>
-            
-            <div className="space-y-6">
-              {currentSeason.competitions.map((competition, index) => (
-                <motion.div
-                  key={competition.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="card p-6"
-                >
-                  <h3 className="font-heading font-semibold text-xl mb-4">{competition.name}</h3>
-                  
-                  {competition.description && (
-                    <p className="text-gray-600 mb-4">{competition.description}</p>
+        {(currentSeason.theme || formatData) && (
+            <section className="competitions-theme-section">
+              <div className="container-custom">
+                <div className="competitions-theme-content">
+                  {currentSeason.theme && (
+                      <motion.h2
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          className="competitions-theme-title"
+                      >
+                        ТЕМА ПРЕДСТОЯЩИХ СОРЕВНОВАНИЙ:
+                      </motion.h2>
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Rules */}
-                    {competition.rules_file && (
-                      <a
-                        href={competition.rules_file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  {currentSeason.format && (
+                      <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.1 }}
+                          className="competitions-format-text"
                       >
-                        <DocumentTextIcon className="w-8 h-8 text-eurobot-blue mr-3" />
-                        <div>
-                          <p className="font-medium">Правила</p>
-                          <p className="text-xs text-gray-500">PDF документ</p>
-                        </div>
-                      </a>
-                    )}
+                          {currentSeason.theme}
+                      </motion.div>
+                  )}
+                </div>
+              </div>
+            </section>
+        )}
 
-                    {/* Field files */}
-                    {competition.field_files && competition.field_files.length > 0 && (
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center mb-2">
-                          <ArrowDownTrayIcon className="w-6 h-6 text-green-600 mr-2" />
-                          <p className="font-medium">Файлы поля</p>
-                        </div>
-                        <div className="space-y-1">
-                          {competition.field_files.map((file, i) => (
-                            <a
-                              key={i}
-                              href={file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-sm text-eurobot-blue hover:underline"
-                            >
-                              Скачать файл {i + 1}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+        {formatData?.tasks && formatData.tasks.length > 0 && (
+            <section className="competitions-tasks-section">
+              <div className="container-custom">
+                <div className="competitions-tasks-content">
+                  <motion.h3
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="competitions-tasks-title"
+                  >
+                    Задания сезона
+                  </motion.h3>
 
-                    {/* Vinyl files */}
-                    {competition.vinyl_files && competition.vinyl_files.length > 0 && (
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center mb-2">
-                          <ArrowDownTrayIcon className="w-6 h-6 text-purple-600 mr-2" />
-                          <p className="font-medium">Винил для печати</p>
-                        </div>
-                        <div className="space-y-1">
-                          {competition.vinyl_files.map((file, i) => (
-                            <a
-                              key={i}
-                              href={file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-sm text-eurobot-blue hover:underline"
-                            >
-                              Скачать файл {i + 1}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                  <motion.ul
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 }}
+                      className="competitions-tasks-list"
+                  >
+                    {formatData.tasks.map((task, index) => (
+                        <motion.li
+                            key={index}
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.05 }}
+                            className="competitions-task-item"
+                        >
+                          {formatData.icon_url ? (
+                              <img
+                                  src={formatData.icon_url}
+                                  alt=""
+                                  className="competitions-task-icon"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                              />
+                          ) : (
+                              <div className="competitions-task-bullet" />
+                          )}
+                          <span className="competitions-task-text">{task}</span>
+                        </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </div>
+            </section>
+        )}
 
-                    {/* 3D files */}
-                    {competition.drawings_3d && competition.drawings_3d.length > 0 && (
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center mb-2">
-                          <ArrowDownTrayIcon className="w-6 h-6 text-orange-600 mr-2" />
-                          <p className="font-medium">3D модели</p>
-                        </div>
-                        <div className="space-y-1">
-                          {competition.drawings_3d.map((file, i) => (
-                            <a
-                              key={i}
-                              href={file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-sm text-eurobot-blue hover:underline"
-                            >
-                              Скачать модель {i + 1}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+        {/* Блок 4: Документы с фоновым изображением */}
+        {formatData?.documents && formatData.documents.length > 0 && (
+            <section className="competitions-documents-section">
+              <div className="container-custom">
+                <div className="competitions-documents-content">
+                  <motion.h3
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="competitions-documents-title"
+                  >
+                    Документы сезона
+                  </motion.h3>
+
+                  <div className="competitions-documents-grid">
+                    {formatData.documents.map((doc, index) => (
+                        <motion.a
+                            key={index}
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="competitions-document-card"
+                        >
+                          <DocumentIcon className="competitions-document-icon" />
+                          <div className="competitions-document-info">
+                            <h4 className="competitions-document-name">{doc.name}</h4>
+                            <span className="competitions-document-link">Скачать документ</span>
+                          </div>
+                        </motion.a>
+                    ))}
                   </div>
+                </div>
+              </div>
+            </section>
+        )}
+
+        <section className="competitions-info-section">
+          <div className="container-custom">
+            <div className="competitions-info-grid">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="competitions-info-card"
+                >
+                    <div className={`competitions-info-icon ${
+                        currentSeason.registration_open ? 'competitions-info-icon-success' : 'competitions-info-icon-default'
+                    }`}>
+                        <ClipboardDocumentCheckIcon />
+                    </div>
+                    <h3 className="competitions-info-title">Регистрация</h3>
+                    <p className={`competitions-info-text ${
+                        currentSeason.registration_open ? 'competitions-info-text-success' : 'competitions-info-text-muted'
+                    }`}>
+                        {currentSeason.registration_open ? 'Открыта' : 'Закрыта'}
+                    </p>
+
+                    {(currentSeason.registration_start || currentSeason.registration_end) && (
+                        <div className="competitions-registration-dates">
+                            {currentSeason.registration_start && (
+                                <p className="competitions-info-date">
+                                    <span className="competitions-date-label">Начало:</span>{' '}
+                                    {format(new Date(currentSeason.registration_start), 'd MMMM yyyy', { locale: ru })}
+                                </p>
+                            )}
+                            {currentSeason.registration_end && (
+                                <p className="competitions-info-date">
+          <span className="competitions-date-label">
+            {currentSeason.registration_open ? 'До:' : 'Закрыта:'}
+          </span>{' '}
+                                    {format(new Date(currentSeason.registration_end), 'd MMMM yyyy', { locale: ru })}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </motion.div>
-              ))}
+
+              {currentSeason.show_dates && currentSeason.competition_date_start && (
+                  <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 }}
+                      className="competitions-info-card"
+                  >
+                    <div className="competitions-info-icon competitions-info-icon-gold">
+                      <CalendarIcon />
+                    </div>
+                    <h3 className="competitions-info-title">Даты проведения</h3>
+                    <p className="competitions-info-text">
+                      {format(new Date(currentSeason.competition_date_start), 'd MMMM', { locale: ru })}
+                      {currentSeason.competition_date_end && (
+                          <> — {format(new Date(currentSeason.competition_date_end), 'd MMMM yyyy', { locale: ru })}</>
+                      )}
+                    </p>
+                  </motion.div>
+              )}
+
+              {/* Location */}
+              {currentSeason.show_location && currentSeason.location && (
+                  <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 }}
+                      className="competitions-info-card"
+                  >
+                    <div className="competitions-info-icon competitions-info-icon-blue">
+                      <MapPinIcon />
+                    </div>
+                    <h3 className="competitions-info-title">Место проведения</h3>
+                    <p className="competitions-info-text">{currentSeason.location}</p>
+                  </motion.div>
+              )}
             </div>
           </div>
         </section>
-      )}
-    </>
+
+        {currentSeason.competitions.length > 0 && (
+            <section className="competitions-files-section">
+              <div className="container-custom">
+                <h2 className="section-title">Материалы и документы</h2>
+
+                <div className="competitions-files-list">
+                  {currentSeason.competitions.map((competition, index) => (
+                      <motion.div
+                          key={competition.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className="competition-files-card"
+                      >
+                        <h3 className="competition-files-title">{competition.name}</h3>
+
+                        {competition.description && (
+                            <p className="competition-files-description">{competition.description}</p>
+                        )}
+
+                        <div className="competition-files-grid">
+                          {competition.rules_file && (
+                              <a
+                                  href={competition.rules_file}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="competition-file-item"
+                              >
+                                <DocumentTextIcon className="competition-file-icon competition-file-icon-blue" />
+                                <div className="competition-file-info">
+                                  <p className="competition-file-name">Правила</p>
+                                  <p className="competition-file-type">PDF документ</p>
+                                </div>
+                              </a>
+                          )}
+
+                          {competition.field_files && competition.field_files.length > 0 && (
+                              <div className="competition-file-group">
+                                <div className="competition-file-group-header">
+                                  <ArrowDownTrayIcon className="competition-file-group-icon competition-file-icon-green" />
+                                  <p className="competition-file-group-title">Файлы поля</p>
+                                </div>
+                                <div className="competition-file-group-list">
+                                  {competition.field_files.map((file, i) => (
+                                      <a
+                                          key={i}
+                                          href={file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="competition-file-link"
+                                      >
+                                        Скачать файл {i + 1}
+                                      </a>
+                                  ))}
+                                </div>
+                              </div>
+                          )}
+
+                          {competition.vinyl_files && competition.vinyl_files.length > 0 && (
+                              <div className="competition-file-group">
+                                <div className="competition-file-group-header">
+                                  <ArrowDownTrayIcon className="competition-file-group-icon competition-file-icon-purple" />
+                                  <p className="competition-file-group-title">Винил для печати</p>
+                                </div>
+                                <div className="competition-file-group-list">
+                                  {competition.vinyl_files.map((file, i) => (
+                                      <a
+                                          key={i}
+                                          href={file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="competition-file-link"
+                                      >
+                                        Скачать файл {i + 1}
+                                      </a>
+                                  ))}
+                                </div>
+                              </div>
+                          )}
+
+                          {competition.drawings_3d && competition.drawings_3d.length > 0 && (
+                              <div className="competition-file-group">
+                                <div className="competition-file-group-header">
+                                  <ArrowDownTrayIcon className="competition-file-group-icon competition-file-icon-orange" />
+                                  <p className="competition-file-group-title">3D модели</p>
+                                </div>
+                                <div className="competition-file-group-list">
+                                  {competition.drawings_3d.map((file, i) => (
+                                      <a
+                                          key={i}
+                                          href={file}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="competition-file-link"
+                                      >
+                                        Скачать модель {i + 1}
+                                      </a>
+                                  ))}
+                                </div>
+                              </div>
+                          )}
+                        </div>
+                      </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+        )}
+      </>
   )
 }
-
-
-
-
-

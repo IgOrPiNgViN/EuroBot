@@ -1,0 +1,200 @@
+.footer {
+    display: flex;
+    width: 100%;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.footer-container {
+    max-width: 100%;
+    width: 100%;
+}
+
+.footer-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #0f3d63;
+    flex-direction: column;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.footer-top-title {
+    padding-bottom: 10px;
+    font-size: 32px;
+    text-align: center;
+}
+
+.footer-top-text {
+    font-size: 18px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("public/images/j5Z6XLapCTjQdGxPBh7pT456CXzbZfHXcHoUGhGWyBAZL1v1kv14f0imu77rKPzji3QXj63P_knQnb0vlVq4v7yP.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.footer-bottom-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    background-color: #0f3d63;
+    color: white;
+    width: 80%;
+    max-width: 1280px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.footer-bottom-title {
+    padding-bottom: 10px;
+    font-size: 32px;
+    text-align: center;
+}
+
+.footer-bottom-text {
+    font-size: 18px;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 90%;
+}
+
+.footer-vk-icon {
+    align-self: center;
+    margin-top: 10px;
+}
+
+.footer-vk-icon img {
+    width: 48px;
+    height: 48px;
+}
+
+.footer-admin {
+    width: 100%;
+    background-color: #cc0000;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.footer-admin-container {
+    width: 100%;
+    max-width: 1280px;
+    display: flex;
+    justify-content: center;
+}
+
+.admin-panel-button {
+    background-color: white;
+    color: #cc0000;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.admin-panel-button:hover {
+    background-color: #ffeeee;
+    color: #a00000;
+}
+
+@media (max-width: 1023px) {
+    .footer-bottom-container {
+        width: 90%;
+        margin-top: 60px;
+        margin-bottom: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-top {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .footer-top-title {
+        font-size: 24px;
+        padding-bottom: 8px;
+    }
+
+    .footer-top-text {
+        font-size: 16px;
+    }
+
+    .footer-bottom-container {
+        width: 95%;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .footer-bottom-title {
+        font-size: 24px;
+        padding-bottom: 8px;
+    }
+
+    .footer-bottom-text {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .footer-vk-icon img {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-top {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .footer-top-title {
+        font-size: 20px;
+        padding-bottom: 6px;
+    }
+
+    .footer-top-text {
+        font-size: 14px;
+        padding: 0 10px;
+    }
+
+    .footer-bottom-container {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 15px 10px;
+    }
+
+    .footer-bottom-title {
+        font-size: 20px;
+    }
+
+    .footer-bottom-text {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .footer-vk-icon img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .admin-panel-button {
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,459 @@
+/* Импортируем палитру */
+@import '../../palettes/eurobot.css';
+
+/* MessagesManagement Component Variables */
+.messages-management {
+    --messages-bg: var(--color-white);
+    --messages-text-primary: var(--color-gray-900);
+    --messages-text-secondary: var(--color-gray-500);
+    --messages-text-tertiary: var(--color-gray-400);
+    --messages-border: var(--color-gray-200);
+    --messages-border-light: var(--color-gray-100);
+    --messages-hover-bg: var(--color-gray-50);
+
+    /* Header Colors */
+    --messages-unread-count: var(--color-gray-500);
+
+    /* Filters Colors */
+    --messages-filters-bg: var(--color-white);
+    --messages-filters-shadow: var(--color-shadow-blue);
+
+    /* Message List Colors */
+    --messages-list-bg: var(--color-white);
+    --messages-list-shadow: var(--color-shadow-blue);
+    --messages-list-border: var(--color-gray-200);
+
+    /* Message Item Colors */
+    --messages-message-unread-bg: var(--color-blue-50);
+    --messages-message-name: var(--color-gray-700);
+    --messages-message-name-unread: var(--color-gray-900);
+    --messages-message-email: var(--color-gray-500);
+    --messages-message-preview: var(--color-gray-600);
+    --messages-message-topic-bg: var(--color-gray-100);
+    --messages-message-topic-text: var(--color-gray-700);
+    --messages-message-date: var(--color-gray-400);
+
+    /* Icon Colors */
+    --messages-icon-read: var(--color-gray-400);
+    --messages-icon-unread: var(--color-blue-500);
+    --messages-replied-icon: green;
+
+    /* Modal Colors */
+    --messages-modal-overlay: var(--color-overlay-black);
+    --messages-modal-bg: var(--color-white);
+    --messages-modal-border: var(--color-gray-200);
+    --messages-modal-title: var(--color-gray-900);
+    --messages-modal-email: var(--color-gray-500);
+    --messages-modal-phone: var(--color-gray-500);
+    --messages-modal-close: var(--color-gray-400);
+
+    /* Modal Content Colors */
+    --messages-modal-meta-bg: transparent;
+    --messages-modal-topic-bg: var(--color-gray-100);
+    --messages-modal-topic-text: var(--color-gray-700);
+    --messages-modal-date: var(--color-gray-400);
+    --messages-modal-message-bg: var(--color-gray-50);
+    --messages-modal-text: var(--color-gray-700);
+
+    /* Action Colors */
+    --messages-mark-replied-bg: var(--color-blue-600);
+    --messages-mark-replied-hover: var(--color-blue-700);
+    --messages-delete-button-text: var(--color-red-600);
+    --messages-delete-button-hover: var(--color-red-50);
+    --messages-reply-link-bg: var(--color-blue-600);
+    --messages-reply-link-hover: var(--color-blue-700);
+
+    /* Empty State Colors */
+    --messages-empty-text: var(--color-gray-500);
+}
+
+/* Main Container */
+.messages-management {
+    width: 100%;
+}
+
+/* Header */
+.messages-management-header {
+    margin-bottom: 1.5rem;
+}
+
+.messages-management-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--messages-text-primary);
+}
+
+.messages-management-unread-count {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-unread-count);
+    margin-top: 0.25rem;
+}
+
+/* Filters */
+.messages-management-filters {
+    background-color: var(--messages-filters-bg);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 1px 2px 0 var(--messages-filters-shadow);
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.messages-management-filter {
+    width: 12rem;
+}
+
+/* Messages List Container */
+.messages-management-list-container {
+    background-color: var(--messages-list-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--messages-list-shadow);
+    overflow: hidden;
+    border: 1px solid var(--messages-list-border);
+}
+
+/* Messages List */
+.messages-management-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message Item */
+.messages-management-message-item {
+    padding: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid var(--messages-border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.messages-management-message-item:last-child {
+    border-bottom: none;
+}
+
+.messages-management-message-item:hover {
+    background-color: var(--messages-hover-bg);
+}
+
+.messages-management-message-unread {
+    background-color: var(--messages-message-unread-bg);
+}
+
+.messages-management-message-unread:hover {
+    background-color: var(--color-blue-100);
+}
+
+/* Message Content */
+.messages-management-message-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.messages-management-message-icon {
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+.messages-management-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.messages-management-message-unread .messages-management-icon {
+    color: var(--messages-icon-unread);
+}
+
+.messages-management-message-item:not(.messages-management-message-unread) .messages-management-icon {
+    color: var(--messages-icon-read);
+}
+
+/* Message Details */
+.messages-management-message-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.messages-management-message-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.messages-management-message-name {
+    font-weight: 500;
+    color: var(--messages-message-name);
+}
+
+.messages-management-message-name-unread {
+    color: var(--messages-message-name-unread);
+}
+
+.messages-management-message-topic {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--messages-message-topic-bg);
+    color: var(--messages-message-topic-text);
+    border-radius: 9999px;
+}
+
+.messages-management-replied-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--messages-replied-icon);
+}
+
+.messages-management-message-email {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-message-email);
+}
+
+.messages-management-message-preview {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-message-preview);
+    margin-top: 0.25rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+/* Message Date */
+.messages-management-message-date {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-message-date);
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+/* Empty State */
+.messages-management-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--messages-empty-text);
+}
+
+/* Modal Overlay */
+.messages-management-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--messages-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+/* Modal */
+.messages-management-modal {
+    background-color: var(--messages-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.messages-management-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--messages-modal-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.messages-management-modal-header-content {
+    flex: 1;
+}
+
+.messages-management-modal-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--messages-modal-title);
+}
+
+.messages-management-modal-email {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-modal-email);
+    margin-top: 0.25rem;
+}
+
+.messages-management-modal-phone {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-modal-phone);
+    margin-top: 0.125rem;
+}
+
+.messages-management-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.messages-management-modal-close:hover {
+    background-color: var(--messages-hover-bg);
+}
+
+.messages-management-modal-close-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--messages-modal-close);
+}
+
+/* Modal Content */
+.messages-management-modal-content {
+    padding: 1.5rem;
+}
+
+.messages-management-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.messages-management-modal-topic {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--messages-modal-topic-bg);
+    color: var(--messages-modal-topic-text);
+    border-radius: 0.375rem;
+}
+
+.messages-management-modal-date {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--messages-modal-date);
+}
+
+.messages-management-modal-message {
+    background-color: var(--messages-modal-message-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.messages-management-modal-text {
+    color: var(--messages-modal-text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Modal Footer */
+.messages-management-modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--messages-modal-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.messages-management-modal-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.messages-management-mark-replied {
+    background-color: var(--messages-mark-replied-bg) !important;
+    color: var(--color-white) !important;
+    border-color: var(--messages-mark-replied-bg) !important;
+}
+
+.messages-management-mark-replied:hover:not(:disabled) {
+    background-color: var(--messages-mark-replied-hover) !important;
+    border-color: var(--messages-mark-replied-hover) !important;
+}
+
+.messages-management-delete-button {
+    color: var(--messages-delete-button-text) !important;
+    border-color: var(--color-gray-200) !important;
+}
+
+.messages-management-delete-button:hover:not(:disabled) {
+    background-color: var(--messages-delete-button-hover) !important;
+}
+
+.messages-management-action-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.25rem;
+}
+
+.messages-management-reply-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--messages-reply-link-bg);
+    color: var(--color-white);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.messages-management-reply-link:hover {
+    background-color: var(--messages-reply-link-hover);
+    color: var(--color-white);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .messages-management-filters {
+        flex-direction: column;
+    }
+
+    .messages-management-filter {
+        width: 100%;
+    }
+
+    .messages-management-message-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .messages-management-message-date {
+        align-self: flex-end;
+        margin-left: 2.25rem;
+    }
+
+    .messages-management-modal-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .messages-management-modal-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .messages-management-reply-link {
+        width: 100%;
+        text-align: center;
+    }
+}

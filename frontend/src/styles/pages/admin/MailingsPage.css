@@ -1,0 +1,1051 @@
+/* Импортируем палитру */
+@import '../../palettes/eurobot.css';
+
+/* MailingsPage Component Variables */
+.mailings-page {
+    --mailings-bg: var(--color-white);
+    --mailings-text-primary: var(--color-gray-900);
+    --mailings-text-secondary: var(--color-gray-500);
+    --mailings-border: var(--color-gray-200);
+    --mailings-border-light: var(--color-gray-100);
+    --mailings-hover-bg: var(--color-gray-50);
+
+    /* Tabs Colors */
+    --mailings-tab-active-border: var(--color-blue);
+    --mailings-tab-active-text: var(--color-blue);
+    --mailings-tab-inactive-text: var(--color-gray-500);
+    --mailings-tab-hover-text: var(--color-gray-700);
+
+    /* Campaign Colors */
+    --mailings-campaign-card-bg: var(--color-white);
+    --mailings-campaign-card-shadow: var(--color-shadow-blue);
+
+    /* Status Colors */
+    --mailings-status-sent-bg: var(--color-green-100);
+    --mailings-status-sent-text: var(--color-green-800);
+    --mailings-status-scheduled-bg: var(--color-blue-100);
+    --mailings-status-scheduled-text: var(--color-blue-800);
+    --mailings-status-draft-bg: var(--color-yellow-main-300);
+    --mailings-status-draft-text: var(--color-yellow-main-600);
+
+    /* Action Colors */
+    --mailings-action-send-bg: var(--color-blue-600);
+    --mailings-action-delete-text: var(--color-red-600);
+    --mailings-action-delete-border: var(--color-red-200);
+    --mailings-action-delete-hover: var(--color-red-50);
+
+    /* Stats Colors */
+    --mailings-stat-card-bg: var(--color-white);
+    --mailings-stat-card-shadow: var(--color-shadow-blue);
+    --mailings-stat-value: var(--color-gray-900);
+    --mailings-stat-label: var(--color-gray-500);
+    --mailings-stat-success: var(--color-green-600);
+    --mailings-stat-failed: var(--color-red-600);
+    --mailings-stat-pending: var(--color-yellow-main-500);
+
+    /* Logs Colors */
+    --mailings-logs-bg: var(--color-white);
+    --mailings-logs-header-bg: var(--color-gray-50);
+    --mailings-logs-table-border: var(--color-gray-200);
+    --mailings-logs-row-hover: var(--color-gray-50);
+
+    /* Logs Status Colors */
+    --mailings-logs-status-pending-bg: var(--color-yellow-main-300);
+    --mailings-logs-status-pending-text: var(--color-yellow-main-600);
+    --mailings-logs-status-sent-bg: var(--color-green-100);
+    --mailings-logs-status-sent-text: var(--color-green-800);
+    --mailings-logs-status-failed-bg: var(--color-red-100);
+    --mailings-logs-status-failed-text: var(--color-red-800);
+    --mailings-logs-status-default-bg: var(--color-gray-100);
+    --mailings-logs-status-default-text: var(--color-gray-800);
+    --mailings-logs-error-bg: var(--color-red-50);
+    --mailings-logs-error-text: var(--color-red-700);
+
+    /* Custom Email Colors */
+    --mailings-custom-bg: var(--color-white);
+    --mailings-custom-shadow: var(--color-shadow-blue);
+
+    /* Modal Colors */
+    --mailings-modal-overlay: var(--color-overlay-black);
+    --mailings-modal-bg: var(--color-white);
+    --mailings-modal-border: var(--color-gray-200);
+
+    /* Recipient Mode Colors */
+    --mailings-recipient-mode-bg: var(--color-white);
+    --mailings-recipient-mode-border: var(--color-gray-200);
+    --mailings-recipient-mode-hover: var(--color-gray-300);
+    --mailings-recipient-mode-active-bg: var(--color-blue-50);
+    --mailings-recipient-mode-active-border: var(--color-blue);
+    --mailings-recipient-mode-icon: var(--color-blue);
+
+    /* Recipient Section Colors */
+    --mailings-recipient-section-bg: var(--color-gray-50);
+    --mailings-recipient-hint: var(--color-gray-500);
+
+    /* Custom Emails Colors */
+    --mailings-custom-emails-label: var(--color-gray-700);
+    --mailings-custom-email-remove: var(--color-red-600);
+    --mailings-custom-email-remove-hover: var(--color-red-50);
+    --mailings-add-email-button: var(--color-blue);
+    --mailings-add-email-hover: var(--color-blue-700);
+
+    /* Teams Select Colors */
+    --mailings-teams-select-bg: var(--color-white);
+    --mailings-teams-select-border: var(--color-gray-200);
+    --mailings-teams-list-bg: var(--color-white);
+    --mailings-team-item-hover: var(--color-gray-50);
+    --mailings-team-item-selected-bg: var(--color-blue-50);
+    --mailings-team-name: var(--color-gray-900);
+    --mailings-team-email: var(--color-gray-500);
+    --mailings-team-add-button-bg: var(--color-blue-100);
+    --mailings-team-add-button-text: var(--color-blue-700);
+    --mailings-team-add-button-hover: var(--color-blue-200);
+    --mailings-team-remove-button-bg: var(--color-red-100);
+    --mailings-team-remove-button-text: var(--color-red-700);
+    --mailings-team-remove-button-hover: var(--color-red-200);
+
+    /* Scheduling Colors */
+    --mailings-scheduling-bg: var(--color-blue-50);
+    --mailings-scheduling-border: var(--color-blue-200);
+    --mailings-scheduling-checkbox: var(--color-blue);
+    --mailings-scheduling-icon: var(--color-gray-500);
+    --mailings-scheduling-title: var(--color-gray-700);
+
+    /* Warning Colors */
+    --mailings-warning-bg: var(--color-yellow-main-300);
+    --mailings-warning-border: var(--color-yellow-main-400);
+    --mailings-warning-icon: var(--color-yellow-main-600);
+    --mailings-warning-title: var(--color-gray-800);
+    --mailings-warning-text: var(--color-gray-700);
+
+    /* Pagination Colors */
+    --mailings-pagination-info: var(--color-gray-600);
+
+    /* Empty State Colors */
+    --mailings-empty-icon: var(--color-gray-400);
+    --mailings-empty-text: var(--color-gray-500);
+    --mailings-empty-button-border: var(--color-gray-200);
+
+    /* Loading Colors */
+    --mailings-loading-color: var(--color-blue);
+}
+
+/* Main Container */
+.mailings-page {
+    width: 100%;
+}
+
+/* Header */
+.mailings-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.mailings-page-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--mailings-text-primary);
+}
+
+.mailings-page-header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mailings-page-button-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+/* Tabs */
+.mailings-page-tabs {
+    border-bottom: 1px solid var(--mailings-border);
+    margin-bottom: 1.5rem;
+}
+
+.mailings-page-tabs-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.mailings-page-tab {
+    padding: 1rem 0;
+    border-bottom-width: 2px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mailings-page-tab-active {
+    border-color: var(--mailings-tab-active-border);
+    color: var(--mailings-tab-active-text);
+}
+
+.mailings-page-tab-inactive {
+    border-color: transparent;
+    color: var(--mailings-tab-inactive-text);
+}
+
+.mailings-page-tab-inactive:hover {
+    color: var(--mailings-tab-hover-text);
+}
+
+.mailings-page-tab-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+/* Loading State */
+.mailings-page-loading {
+    display: flex;
+    justify-content: center;
+    padding: 3rem;
+}
+
+/* Campaigns Tab */
+.mailings-page-campaigns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Campaign Card */
+.mailings-page-campaign-card {
+    background-color: var(--mailings-campaign-card-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--mailings-campaign-card-shadow);
+    border: 1px solid var(--mailings-border);
+    padding: 1.5rem;
+}
+
+.mailings-page-campaign-content {
+    width: 100%;
+}
+
+.mailings-page-campaign-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.mailings-page-campaign-info {
+    flex: 1;
+}
+
+.mailings-page-campaign-title-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.mailings-page-campaign-name {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: var(--mailings-text-primary);
+}
+
+.mailings-page-campaign-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mailings-page-campaign-status-sent {
+    background-color: var(--mailings-status-sent-bg);
+    color: var(--mailings-status-sent-text);
+}
+
+.mailings-page-campaign-status-scheduled {
+    background-color: var(--mailings-status-scheduled-bg);
+    color: var(--mailings-status-scheduled-text);
+}
+
+.mailings-page-campaign-status-draft {
+    background-color: var(--mailings-status-draft-bg);
+    color: var(--mailings-status-draft-text);
+}
+
+.mailings-page-status-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.mailings-page-campaign-subject {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.mailings-page-campaign-preview {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-text-secondary);
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.mailings-page-campaign-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-text-secondary);
+}
+
+.mailings-page-campaign-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mailings-page-campaign-meta-success {
+    color: var(--color-green-600);
+}
+
+.mailings-page-campaign-meta-failed {
+    color: var(--color-red-600);
+}
+
+.mailings-page-meta-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.mailings-page-campaign-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.mailings-page-action-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Empty State */
+.mailings-page-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--mailings-text-secondary);
+}
+
+.mailings-page-empty-icon {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    opacity: 0.5;
+    color: var(--mailings-empty-icon);
+}
+
+.mailings-page-empty-text {
+    margin-bottom: 1rem;
+}
+
+.mailings-page-empty-button {
+    border-color: var(--mailings-empty-button-border);
+}
+
+/* Logs Tab */
+.mailings-page-logs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.mailings-page-logs-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Stats */
+.mailings-page-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.mailings-page-stat-card {
+    background-color: var(--mailings-stat-card-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--mailings-stat-card-shadow);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.mailings-page-stat-value {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: bold;
+    color: var(--mailings-stat-value);
+}
+
+.mailings-page-stat-value-success {
+    color: var(--mailings-stat-success);
+}
+
+.mailings-page-stat-value-failed {
+    color: var(--mailings-stat-failed);
+}
+
+.mailings-page-stat-value-pending {
+    color: var(--mailings-stat-pending);
+}
+
+.mailings-page-stat-label {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-stat-label);
+}
+
+/* Logs Table */
+.mailings-page-logs-table-container {
+    background-color: var(--mailings-logs-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--mailings-campaign-card-shadow);
+    overflow-x: auto;
+}
+
+.mailings-page-logs-table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+}
+
+.mailings-page-logs-table-head {
+    background-color: var(--mailings-logs-header-bg);
+}
+
+.mailings-page-logs-table-header {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--mailings-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--mailings-logs-table-border);
+}
+
+.mailings-page-logs-table-recipient {
+    width: 14rem;
+}
+
+.mailings-page-logs-table-type {
+    width: 7rem;
+}
+
+.mailings-page-logs-table-status {
+    min-width: 19rem;
+}
+
+.mailings-page-logs-table-date {
+    width: 8rem;
+}
+
+.mailings-page-logs-table-body {
+    border-top: 1px solid var(--mailings-logs-table-border);
+}
+
+.mailings-page-logs-table-row {
+    border-bottom: 1px solid var(--mailings-logs-table-border);
+}
+
+.mailings-page-logs-table-row:hover {
+    background-color: var(--mailings-logs-row-hover);
+}
+
+.mailings-page-logs-table-cell {
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    vertical-align: top;
+}
+
+.mailings-page-logs-table-email {
+    color: var(--mailings-text-primary);
+    word-break: break-all;
+}
+
+.mailings-page-logs-table-type-cell {
+    color: var(--mailings-text-secondary);
+    white-space: nowrap;
+}
+
+.mailings-page-logs-table-date-cell {
+    color: var(--mailings-text-secondary);
+    white-space: nowrap;
+}
+
+.mailings-page-logs-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.mailings-page-logs-status-default {
+    background-color: var(--mailings-logs-status-default-bg);
+    color: var(--mailings-logs-status-default-text);
+}
+
+.mailings-page-logs-error {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--mailings-logs-error-text);
+    background-color: var(--mailings-logs-error-bg);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    word-break: break-word;
+}
+
+.mailings-page-logs-empty {
+    padding: 3rem;
+    text-align: center;
+    color: var(--mailings-text-secondary);
+}
+
+/* Pagination */
+.mailings-page-logs-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mailings-page-pagination-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mailings-page-pagination-info {
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-pagination-info);
+}
+
+/* Custom Email Tab */
+.mailings-page-custom {
+    background-color: var(--mailings-custom-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--mailings-custom-shadow);
+    padding: 1.5rem;
+    max-width: 42rem;
+}
+
+.mailings-page-custom-title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: var(--mailings-text-primary);
+    margin-bottom: 1rem;
+}
+
+.mailings-page-custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mailings-page-custom-send-button {
+    align-self: flex-start;
+}
+
+/* Modal */
+.mailings-page-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--mailings-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+.mailings-page-modal {
+    background-color: var(--mailings-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 64rem; /* Шире для двух колонок */
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.mailings-page-create-modal {
+    max-height: 95vh;
+}
+
+.mailings-page-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--mailings-modal-border);
+}
+
+.mailings-page-modal-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--mailings-text-primary);
+}
+
+/* Two Columns Layout */
+.mailings-page-modal-two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+}
+
+.mailings-page-modal-column-left,
+.mailings-page-modal-column-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Recipient Modes */
+.mailings-page-recipient-modes {
+    margin-top: 0.5rem;
+}
+
+.mailings-page-recipient-modes-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--mailings-text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.mailings-page-recipient-modes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.mailings-page-recipient-mode-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--mailings-recipient-mode-border);
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mailings-page-recipient-mode-card:hover {
+    border-color: var(--mailings-recipient-mode-hover);
+}
+
+.mailings-page-recipient-mode-active {
+    border-color: var(--mailings-recipient-mode-active-border);
+    background-color: var(--mailings-recipient-mode-active-bg);
+}
+
+.mailings-page-recipient-mode-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--mailings-recipient-mode-icon);
+}
+
+.mailings-page-recipient-mode-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--mailings-text-primary);
+}
+
+.mailings-page-recipient-mode-description {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--mailings-text-secondary);
+}
+
+/* Recipient Section */
+.mailings-page-recipient-section {
+    background-color: var(--mailings-recipient-section-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mailings-page-recipient-hint {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-recipient-hint);
+}
+
+/* Custom Emails */
+.mailings-page-custom-emails-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--mailings-custom-emails-label);
+    margin-bottom: 0.5rem;
+}
+
+.mailings-page-custom-emails-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mailings-page-custom-email-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.mailings-page-custom-email-input {
+    flex: 1;
+}
+
+.mailings-page-custom-email-remove {
+    padding: 0.5rem;
+    color: var(--mailings-custom-email-remove);
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.mailings-page-custom-email-remove:hover:not(:disabled) {
+    background-color: var(--mailings-custom-email-remove-hover);
+}
+
+.mailings-page-custom-email-remove:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.mailings-page-custom-email-remove-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.mailings-page-add-email-button {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-add-email-button);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    margin-top: 0.5rem;
+    transition: color 0.2s;
+}
+
+.mailings-page-add-email-button:hover {
+    color: var(--mailings-add-email-hover);
+}
+
+.mailings-page-add-email-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Teams Select */
+.mailings-page-teams-select {
+    border-top: 1px solid var(--mailings-teams-select-border);
+    padding-top: 1rem;
+}
+
+.mailings-page-teams-select-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--mailings-custom-emails-label);
+    margin-bottom: 0.5rem;
+}
+
+.mailings-page-teams-list {
+    max-height: 12rem;
+    overflow-y: auto;
+    border: 1px solid var(--mailings-teams-select-border);
+    border-radius: 0.5rem;
+    background-color: var(--mailings-teams-list-bg);
+}
+
+.mailings-page-team-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--mailings-teams-select-border);
+    transition: background-color 0.2s;
+}
+
+.mailings-page-team-item:last-child {
+    border-bottom: none;
+}
+
+.mailings-page-team-item:hover {
+    background-color: var(--mailings-team-item-hover);
+}
+
+.mailings-page-team-item-selected {
+    background-color: var(--mailings-team-item-selected-bg);
+}
+
+.mailings-page-team-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mailings-page-team-name {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--mailings-team-name);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mailings-page-team-email {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--mailings-team-email);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mailings-page-team-add-button,
+.mailings-page-team-remove-button {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.mailings-page-team-add-button {
+    background-color: var(--mailings-team-add-button-bg);
+    color: var(--mailings-team-add-button-text);
+}
+
+.mailings-page-team-add-button:hover {
+    background-color: var(--mailings-team-add-button-hover);
+}
+
+.mailings-page-team-remove-button {
+    background-color: var(--mailings-team-remove-button-bg);
+    color: var(--mailings-team-remove-button-text);
+}
+
+.mailings-page-team-remove-button:hover {
+    background-color: var(--mailings-team-remove-button-hover);
+}
+
+.mailings-page-teams-loading {
+    text-align: center;
+    padding: 1rem;
+    color: var(--mailings-text-secondary);
+}
+
+/* Scheduling */
+.mailings-page-scheduling {
+    border-top: 1px solid var(--mailings-border);
+    padding-top: 1rem;
+}
+
+.mailings-page-scheduling-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.mailings-page-scheduling-checkbox {
+    border-radius: 0.25rem;
+    border-color: var(--mailings-border);
+    color: var(--mailings-scheduling-checkbox);
+    margin-right: 0.75rem;
+}
+
+.mailings-page-scheduling-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    color: var(--mailings-scheduling-icon);
+}
+
+.mailings-page-scheduling-title {
+    font-weight: 500;
+    color: var(--mailings-scheduling-title);
+}
+
+.mailings-page-schedule-fields {
+    background-color: var(--mailings-scheduling-bg);
+    border: 1px solid var(--mailings-scheduling-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Warning */
+.mailings-page-warning {
+    background-color: var(--mailings-warning-bg);
+    border: 1px solid var(--mailings-warning-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.mailings-page-warning-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.mailings-page-warning-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--mailings-warning-icon);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.mailings-page-warning-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--mailings-warning-text);
+}
+
+.mailings-page-warning-title {
+    font-weight: 500;
+    color: var(--mailings-warning-title);
+}
+
+/* Modal Footer */
+.mailings-page-modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--mailings-modal-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.mailings-page-modal-cancel {
+    border-color: var(--mailings-border);
+}
+
+.mailings-page-modal-confirm {
+    background-color: var(--color-blue-600) !important;
+    color: var(--color-white) !important;
+    border-color: var(--color-blue-600) !important;
+}
+
+.mailings-page-modal-confirm:hover:not(:disabled) {
+    background-color: var(--color-blue-700) !important;
+    border-color: var(--color-blue-700) !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .mailings-page-modal-two-columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .mailings-page-recipient-modes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mailings-page-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mailings-page-modal {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .mailings-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .mailings-page-header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .mailings-page-tabs-nav {
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .mailings-page-campaign-header {
+        flex-direction: column;
+    }
+
+    .mailings-page-campaign-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .mailings-page-schedule-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .mailings-page-modal {
+        max-width: 100%;
+        margin: 0 0.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .mailings-page-stats {
+        grid-template-columns: 1fr;
+    }
+}

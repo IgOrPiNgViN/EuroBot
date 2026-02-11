@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { 
-  ArrowDownTrayIcon, 
-  CheckIcon, 
+import {
+  ArrowDownTrayIcon,
+  CheckIcon,
   XMarkIcon,
   EyeIcon,
   TrashIcon
@@ -16,6 +16,7 @@ import { ru } from 'date-fns/locale'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Select from '../../components/ui/Select'
+import '../../styles/pages/admin/TeamsManagement.css'
 
 const statusLabels: Record<TeamStatus, string> = {
   pending: 'Ожидает',
@@ -25,10 +26,21 @@ const statusLabels: Record<TeamStatus, string> = {
 }
 
 const statusColors: Record<TeamStatus, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
-  withdrawn: 'bg-gray-100 text-gray-800'
+  pending: 'teams-management-status-pending',
+  approved: 'teams-management-status-approved',
+  rejected: 'teams-management-status-rejected',
+  withdrawn: 'teams-management-status-withdrawn'
+}
+
+const leagueColors: Record<string, string> = {
+  junior: 'teams-management-league-junior',
+  main: 'teams-management-league-main'
+}
+
+const roleColors: Record<string, string> = {
+  'Капитан': 'teams-management-role-captain',
+  'Куратор': 'teams-management-role-curator',
+  'Участник': 'teams-management-role-member'
 }
 
 export default function TeamsManagement() {
@@ -126,278 +138,276 @@ export default function TeamsManagement() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold text-gray-900">
-          Управление командами
-        </h1>
-        <Button 
-          onClick={handleExport} 
-          isLoading={exporting}
-          leftIcon={<ArrowDownTrayIcon className="w-5 h-5" />}
-        >
-          Экспорт в Excel
-        </Button>
-      </div>
+      <div className="teams-management">
+        <div className="teams-management-header">
+          <h1 className="teams-management-title">
+            Управление командами
+          </h1>
+          <Button
+              onClick={handleExport}
+              isLoading={exporting}
+              leftIcon={<ArrowDownTrayIcon className="teams-management-button-icon" />}
+          >
+            Экспорт в Excel
+          </Button>
+        </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl p-4 shadow-sm mb-6 flex flex-wrap gap-4">
-        <div className="w-48">
-          <Select
-            label="Сезон"
-            options={seasons.map(s => ({ value: s.id.toString(), label: s.name }))}
-            value={selectedSeason?.toString() || ''}
-            onChange={(e) => setSelectedSeason(parseInt(e.target.value))}
-          />
+        {/* Filters */}
+        <div className="teams-management-filters">
+          <div className="teams-management-filter">
+            <Select
+                label="Сезон"
+                options={seasons.map(s => ({ value: s.id.toString(), label: s.name }))}
+                value={selectedSeason?.toString() || ''}
+                onChange={(e) => setSelectedSeason(parseInt(e.target.value))}
+            />
+          </div>
+          <div className="teams-management-filter">
+            <Select
+                label="Статус"
+                options={[
+                  { value: '', label: 'Все' },
+                  { value: 'pending', label: 'Ожидают' },
+                  { value: 'approved', label: 'Подтверждены' },
+                  { value: 'rejected', label: 'Отклонены' },
+                  { value: 'withdrawn', label: 'Сняты' }
+                ]}
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="w-48">
-          <Select
-            label="Статус"
-            options={[
-              { value: '', label: 'Все' },
-              { value: 'pending', label: 'Ожидают' },
-              { value: 'approved', label: 'Подтверждены' },
-              { value: 'rejected', label: 'Отклонены' },
-              { value: 'withdrawn', label: 'Сняты' }
-            ]}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          />
-        </div>
-      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-          <p className="text-2xl font-bold text-gray-900">{teams.length}</p>
-          <p className="text-sm text-gray-500">Всего команд</p>
+        {/* Stats */}
+        <div className="teams-management-stats">
+          <div className="teams-management-stat">
+            <p className="teams-management-stat-value">{teams.length}</p>
+            <p className="teams-management-stat-label">Всего команд</p>
+          </div>
+          <div className="teams-management-stat">
+            <p className="teams-management-stat-value teams-management-stat-pending">
+              {teams.filter(t => t.status === 'pending').length}
+            </p>
+            <p className="teams-management-stat-label">Ожидают</p>
+          </div>
+          <div className="teams-management-stat">
+            <p className="teams-management-stat-value teams-management-stat-approved">
+              {teams.filter(t => t.status === 'approved').length}
+            </p>
+            <p className="teams-management-stat-label">Подтверждены</p>
+          </div>
+          <div className="teams-management-stat">
+            <p className="teams-management-stat-value teams-management-stat-rejected">
+              {teams.filter(t => t.status === 'rejected').length}
+            </p>
+            <p className="teams-management-stat-label">Отклонены</p>
+          </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-          <p className="text-2xl font-bold text-yellow-600">
-            {teams.filter(t => t.status === 'pending').length}
-          </p>
-          <p className="text-sm text-gray-500">Ожидают</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-          <p className="text-2xl font-bold text-green-600">
-            {teams.filter(t => t.status === 'approved').length}
-          </p>
-          <p className="text-sm text-gray-500">Подтверждены</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-          <p className="text-2xl font-bold text-red-600">
-            {teams.filter(t => t.status === 'rejected').length}
-          </p>
-          <p className="text-sm text-gray-500">Отклонены</p>
-        </div>
-      </div>
 
-      {/* Teams list */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
+        {/* Teams list */}
+        <div className="teams-management-table-container">
+          <table className="teams-management-table">
+            <thead className="teams-management-table-header">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Команда</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Организация</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Лига</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Статус</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Дата</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Действия</th>
+              <th className="teams-management-table-header-cell">Команда</th>
+              <th className="teams-management-table-header-cell">Организация</th>
+              <th className="teams-management-table-header-cell">Лига</th>
+              <th className="teams-management-table-header-cell">Статус</th>
+              <th className="teams-management-table-header-cell">Дата</th>
+              <th className="teams-management-table-header-cell teams-management-table-header-actions">Действия</th>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
+            </thead>
+            <tbody className="teams-management-table-body">
             {teams.map((team) => (
-              <tr key={team.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <p className="font-medium text-gray-900">{team.name}</p>
-                  <p className="text-sm text-gray-500">{team.email}</p>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {team.organization}
-                  {team.city && <span className="block text-xs">{team.city}</span>}
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    team.league === 'junior' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
-                  }`}>
+                <tr key={team.id} className="teams-management-table-row">
+                  <td className="teams-management-table-cell">
+                    <p className="teams-management-team-name">{team.name}</p>
+                    <p className="teams-management-team-email">{team.email}</p>
+                  </td>
+                  <td className="teams-management-table-cell">
+                    <div className="teams-management-organization">
+                      {team.organization}
+                      {team.city && <span className="teams-management-team-city">{team.city}</span>}
+                    </div>
+                  </td>
+                  <td className="teams-management-table-cell">
+                  <span className={`teams-management-league-badge ${leagueColors[team.league]}`}>
                     {team.league === 'junior' ? 'Юниоры' : 'Основная'}
                   </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[team.status]}`}>
+                  </td>
+                  <td className="teams-management-table-cell">
+                  <span className={`teams-management-status-badge ${statusColors[team.status]}`}>
                     {statusLabels[team.status]}
                   </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {format(new Date(team.created_at), 'dd.MM.yyyy', { locale: ru })}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() => setSelectedTeam(team)}
-                      className="p-2 text-gray-400 hover:text-gray-600"
-                      title="Подробнее"
-                    >
-                      <EyeIcon className="w-5 h-5" />
-                    </button>
-                    {team.status === 'pending' && (
-                      <>
-                        <button
-                          onClick={() => handleStatusChange(team.id, 'approved')}
-                          className="p-2 text-green-500 hover:text-green-700"
-                          title="Подтвердить"
-                        >
-                          <CheckIcon className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleStatusChange(team.id, 'rejected')}
-                          className="p-2 text-red-500 hover:text-red-700"
-                          title="Отклонить"
-                        >
-                          <XMarkIcon className="w-5 h-5" />
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => handleDelete(team)}
-                      className="p-2 text-gray-400 hover:text-red-600"
-                      title="Удалить"
-                    >
-                      <TrashIcon className="w-5 h-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td className="teams-management-table-cell">
+                    <div className="teams-management-date">
+                      {format(new Date(team.created_at), 'dd.MM.yyyy', { locale: ru })}
+                    </div>
+                  </td>
+                  <td className="teams-management-table-cell">
+                    <div className="teams-management-actions">
+                      <button
+                          onClick={() => setSelectedTeam(team)}
+                          className="teams-management-action-button teams-management-view-button"
+                          title="Подробнее"
+                      >
+                        <EyeIcon className="teams-management-action-icon" />
+                      </button>
+                      {team.status === 'pending' && (
+                          <>
+                            <button
+                                onClick={() => handleStatusChange(team.id, 'approved')}
+                                className="teams-management-action-button teams-management-approve-button"
+                                title="Подтвердить"
+                            >
+                              <CheckIcon className="teams-management-action-icon" />
+                            </button>
+                            <button
+                                onClick={() => handleStatusChange(team.id, 'rejected')}
+                                className="teams-management-action-button teams-management-reject-button"
+                                title="Отклонить"
+                            >
+                              <XMarkIcon className="teams-management-action-icon" />
+                            </button>
+                          </>
+                      )}
+                      <button
+                          onClick={() => handleDelete(team)}
+                          className="teams-management-action-button teams-management-delete-button"
+                          title="Удалить"
+                      >
+                        <TrashIcon className="teams-management-action-icon" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
 
-        {teams.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            Команд не найдено
-          </div>
-        )}
-      </div>
-
-      {/* Team detail modal */}
-      {selectedTeam && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl w-full max-w-lg"
-          >
-            <div className="p-6 border-b flex justify-between items-center">
-              <h2 className="text-xl font-heading font-bold">{selectedTeam.name}</h2>
-              <button onClick={() => setSelectedTeam(null)}>
-                <XMarkIcon className="w-6 h-6 text-gray-400" />
-              </button>
-            </div>
-            
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-500">Email</p>
-                  <p className="font-medium">{selectedTeam.email}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Телефон</p>
-                  <p className="font-medium">{selectedTeam.phone}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Организация</p>
-                  <p className="font-medium">{selectedTeam.organization}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Город</p>
-                  <p className="font-medium">{selectedTeam.city || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Участников</p>
-                  <p className="font-medium">{selectedTeam.participants_count}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Лига</p>
-                  <p className="font-medium">
-                    {selectedTeam.league === 'junior' ? 'Юниоры' : 'Основная'}
-                  </p>
-                </div>
+          {teams.length === 0 && (
+              <div className="teams-management-empty">
+                Команд не найдено
               </div>
+          )}
+        </div>
 
-              {selectedTeam.poster_link && (
-                <div>
-                  <p className="text-gray-500 text-sm">Технический плакат</p>
-                  <a 
-                    href={selectedTeam.poster_link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-eurobot-blue hover:underline text-sm"
-                  >
-                    Открыть ссылку
-                  </a>
+        {/* Team detail modal */}
+        {selectedTeam && (
+            <div className="teams-management-modal-overlay">
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="teams-management-modal"
+              >
+                <div className="teams-management-modal-header">
+                  <h2 className="teams-management-modal-title">{selectedTeam.name}</h2>
+                  <button onClick={() => setSelectedTeam(null)} className="teams-management-modal-close">
+                    <XMarkIcon className="teams-management-modal-close-icon" />
+                  </button>
                 </div>
-              )}
 
-              {selectedTeam.members.length > 0 && (
-                <div>
-                  <p className="text-gray-500 text-sm mb-2">Участники команды ({selectedTeam.members.length})</p>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {selectedTeam.members.map((member) => (
-                      <div key={member.id} className="p-2 bg-gray-50 rounded text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">{member.full_name}</span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            member.role === 'Капитан' ? 'bg-blue-100 text-blue-800' :
-                            member.role === 'Куратор' ? 'bg-purple-100 text-purple-800' :
-                            'bg-gray-100 text-gray-600'
-                          }`}>
+                <div className="teams-management-modal-content">
+                  <div className="teams-management-team-details">
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Email</p>
+                      <p className="teams-management-detail-value">{selectedTeam.email}</p>
+                    </div>
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Телефон</p>
+                      <p className="teams-management-detail-value">{selectedTeam.phone}</p>
+                    </div>
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Организация</p>
+                      <p className="teams-management-detail-value">{selectedTeam.organization}</p>
+                    </div>
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Город</p>
+                      <p className="teams-management-detail-value">{selectedTeam.city || '—'}</p>
+                    </div>
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Участников</p>
+                      <p className="teams-management-detail-value">{selectedTeam.participants_count}</p>
+                    </div>
+                    <div className="teams-management-team-detail">
+                      <p className="teams-management-detail-label">Лига</p>
+                      <p className="teams-management-detail-value">
+                        {selectedTeam.league === 'junior' ? 'Юниоры' : 'Основная'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {selectedTeam.poster_link && (
+                      <div className="teams-management-poster">
+                        <p className="teams-management-poster-label">Технический плакат</p>
+                        <a
+                            href={selectedTeam.poster_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="teams-management-poster-link"
+                        >
+                          Открыть ссылку
+                        </a>
+                      </div>
+                  )}
+
+                  {selectedTeam.members.length > 0 && (
+                      <div className="teams-management-members">
+                        <p className="teams-management-members-label">
+                          Участники команды ({selectedTeam.members.length})
+                        </p>
+                        <div className="teams-management-members-list">
+                          {selectedTeam.members.map((member) => (
+                              <div key={member.id} className="teams-management-member">
+                                <div className="teams-management-member-header">
+                                  <span className="teams-management-member-name">{member.full_name}</span>
+                                  <span className={`teams-management-member-role ${roleColors[member.role || 'Участник']}`}>
                             {member.role || 'Участник'}
                           </span>
+                                </div>
+                                {(member.email || member.phone) && (
+                                    <div className="teams-management-member-contacts">
+                                      {member.email && <span className="teams-management-member-email">{member.email}</span>}
+                                      {member.phone && <span className="teams-management-member-phone">{member.phone}</span>}
+                                    </div>
+                                )}
+                              </div>
+                          ))}
                         </div>
-                        {(member.email || member.phone) && (
-                          <div className="mt-1 text-xs text-gray-500">
-                            {member.email && <span className="mr-3">{member.email}</span>}
-                            {member.phone && <span>{member.phone}</span>}
-                          </div>
-                        )}
                       </div>
-                    ))}
+                  )}
+                </div>
+
+                <div className="teams-management-modal-footer">
+                  <Select
+                      value={selectedTeam.status}
+                      onChange={(e) => handleStatusChange(selectedTeam.id, e.target.value as TeamStatus)}
+                      options={[
+                        { value: 'pending', label: 'Ожидает' },
+                        { value: 'approved', label: 'Подтверждена' },
+                        { value: 'rejected', label: 'Отклонена' },
+                        { value: 'withdrawn', label: 'Снята' }
+                      ]}
+                      className="teams-management-status-select"
+                  />
+                  <div className="teams-management-modal-actions">
+                    <Button
+                        variant="ghost"
+                        onClick={() => handleDelete(selectedTeam)}
+                        className="teams-management-modal-delete"
+                    >
+                      <TrashIcon className="teams-management-modal-delete-icon" />
+                      Удалить
+                    </Button>
+                    <Button variant="ghost" onClick={() => setSelectedTeam(null)}>
+                      Закрыть
+                    </Button>
                   </div>
                 </div>
-              )}
+              </motion.div>
             </div>
-
-            <div className="p-6 border-t flex justify-between items-center">
-              <Select
-                value={selectedTeam.status}
-                onChange={(e) => handleStatusChange(selectedTeam.id, e.target.value as TeamStatus)}
-                options={[
-                  { value: 'pending', label: 'Ожидает' },
-                  { value: 'approved', label: 'Подтверждена' },
-                  { value: 'rejected', label: 'Отклонена' },
-                  { value: 'withdrawn', label: 'Снята' }
-                ]}
-              />
-              <div className="flex space-x-2">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => handleDelete(selectedTeam)}
-                  className="text-red-600 hover:bg-red-50"
-                >
-                  <TrashIcon className="w-5 h-5 mr-1" />
-                  Удалить
-                </Button>
-                <Button variant="ghost" onClick={() => setSelectedTeam(null)}>
-                  Закрыть
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
   )
 }
-
-
-

@@ -1,0 +1,444 @@
+/* Импортируем палитру */
+@import '../../palettes/eurobot.css';
+
+/* NewsManagement Component Variables */
+.news-management {
+    --news-bg: var(--color-white);
+    --news-text-primary: var(--color-gray-900);
+    --news-text-secondary: var(--color-gray-500);
+    --news-text-tertiary: var(--color-gray-400);
+    --news-border: var(--color-gray-200);
+    --news-border-light: var(--color-gray-100);
+    --news-hover-bg: var(--color-gray-50);
+
+    /* Header Colors */
+    --news-header-bg: transparent;
+
+    /* Table Colors */
+    --news-table-bg: var(--color-white);
+    --news-table-shadow: var(--color-shadow-blue);
+    --news-table-head-bg: var(--color-gray-50);
+    --news-table-header: var(--color-gray-500);
+    --news-table-border: var(--color-gray-200);
+
+    /* News Item Colors */
+    --news-info-bg: transparent;
+    --news-image-border: var(--color-gray-200);
+    --news-title: var(--color-gray-900);
+    --news-category: var(--color-gray-500);
+    --news-date: var(--color-gray-500);
+
+    /* Status Colors */
+    --news-status-published-bg: var(--color-green-100);
+    --news-status-published-text: var(--color-green-800);
+    --news-status-draft-bg: var(--color-gray-100);
+    --news-status-draft-text: var(--color-gray-800);
+    --news-featured-badge: var(--color-yellow-main-500);
+
+    /* Action Colors */
+    --news-action-preview: var(--color-gray-400);
+    --news-action-preview-hover: var(--color-gray-600);
+    --news-action-edit: var(--color-gray-400);
+    --news-action-edit-hover: var(--color-blue-600);
+    --news-action-delete: var(--color-gray-400);
+    --news-action-delete-hover: var(--color-red-600);
+
+    /* Modal Colors */
+    --news-modal-overlay: var(--color-overlay-black);
+    --news-modal-bg: var(--color-white);
+    --news-modal-border: var(--color-gray-200);
+    --news-modal-title: var(--color-gray-900);
+
+    /* Preview Colors */
+    --news-preview-label: var(--color-gray-700);
+    --news-preview-bg: var(--color-gray-100);
+    --news-preview-border: var(--color-gray-200);
+
+    /* Checkbox Colors */
+    --news-checkbox-border: var(--color-gray-300);
+    --news-checkbox-checked: var(--color-blue);
+
+    /* Empty State Colors */
+    --news-empty-text: var(--color-gray-500);
+}
+
+/* Main Container */
+.news-management {
+    width: 100%;
+}
+
+/* Header */
+.news-management-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.news-management-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--news-text-primary);
+}
+
+.news-management-button-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+/* Table Container */
+.news-management-list-container {
+    background-color: var(--news-table-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--news-table-shadow);
+    overflow: hidden;
+}
+
+/* Table */
+.news-management-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table Head */
+.news-management-table-head {
+    background-color: var(--news-table-head-bg);
+}
+
+.news-management-table-header {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--news-table-header);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--news-table-border);
+}
+
+.news-management-table-header-actions {
+    text-align: right;
+}
+
+/* Table Body */
+.news-management-table-body {
+    border-top: 1px solid var(--news-table-border);
+}
+
+.news-management-table-row {
+    border-bottom: 1px solid var(--news-table-border);
+}
+
+.news-management-table-row:hover {
+    background-color: var(--news-hover-bg);
+}
+
+.news-management-table-cell {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+}
+
+/* News Info */
+.news-management-news-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.news-management-news-image {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.375rem;
+    object-fit: cover;
+    border: 1px solid var(--news-image-border);
+}
+
+.news-management-news-title {
+    font-weight: 500;
+    color: var(--news-title);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.news-management-featured-badge {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--news-featured-badge);
+}
+
+.news-management-news-category {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--news-category);
+}
+
+.news-management-news-date {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--news-date);
+}
+
+/* Status Badge */
+.news-management-status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+}
+
+.news-management-status-published {
+    background-color: var(--news-status-published-bg);
+    color: var(--news-status-published-text);
+}
+
+.news-management-status-draft {
+    background-color: var(--news-status-draft-bg);
+    color: var(--news-status-draft-text);
+}
+
+/* Actions */
+.news-management-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.news-management-action-button {
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.news-management-preview-button {
+    color: var(--news-action-preview);
+}
+
+.news-management-preview-button:hover {
+    color: var(--news-action-preview-hover);
+    background-color: var(--news-hover-bg);
+}
+
+.news-management-edit-button {
+    color: var(--news-action-edit);
+}
+
+.news-management-edit-button:hover {
+    color: var(--news-action-edit-hover);
+    background-color: var(--color-blue-50);
+}
+
+.news-management-delete-button {
+    color: var(--news-action-delete);
+}
+
+.news-management-delete-button:hover {
+    color: var(--news-action-delete-hover);
+    background-color: var(--color-red-50);
+}
+
+.news-management-action-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Empty State */
+.news-management-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--news-empty-text);
+}
+
+/* Modal Overlay */
+.news-management-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--news-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+/* Modal */
+.news-management-modal {
+    background-color: var(--news-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 64rem; /* Широкая для двух колонок */
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.news-management-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--news-modal-border);
+}
+
+.news-management-modal-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--news-modal-title);
+}
+
+/* Modal Content */
+.news-management-modal-content {
+    padding: 1.5rem;
+}
+
+/* Two Columns Layout */
+.news-management-modal-two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.news-management-modal-column-left,
+.news-management-modal-column-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Modal Grid */
+.news-management-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Preview Sections */
+.news-management-preview-section {
+    margin-top: 0.5rem;
+}
+
+.news-management-preview-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--news-preview-label);
+    margin-bottom: 0.5rem;
+}
+
+.news-management-video-preview {
+    aspect-ratio: 16/9;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: var(--news-preview-bg);
+    border: 1px solid var(--news-preview-border);
+}
+
+.news-management-video-iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.news-management-image-preview {
+    max-height: 10rem;
+    max-width: 100%;
+    border-radius: 0.5rem;
+    object-fit: contain;
+    border: 1px solid var(--news-preview-border);
+    background-color: var(--news-preview-bg);
+}
+
+/* Checkboxes */
+.news-management-checkboxes {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.news-management-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--news-text-primary);
+}
+
+.news-management-checkbox {
+    border-radius: 0.25rem;
+    border: 1px solid var(--news-checkbox-border);
+    color: var(--news-checkbox-checked);
+    margin-right: 0.5rem;
+}
+
+.news-management-checkbox:checked {
+    background-color: var(--news-checkbox-checked);
+    border-color: var(--news-checkbox-checked);
+}
+
+/* Modal Footer */
+.news-management-modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--news-modal-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .news-management-modal-two-columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .news-management-modal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-management-modal {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .news-management-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .news-management-news-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .news-management-news-image {
+        width: 100%;
+        height: auto;
+        max-height: 8rem;
+    }
+
+    .news-management-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .news-management-checkboxes {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .news-management-modal {
+        max-width: 100%;
+        margin: 0 0.5rem;
+    }
+}

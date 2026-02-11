@@ -11,7 +11,7 @@ interface SEOProps {
   keywords?: string[]
 }
 
-const DEFAULT_IMAGE = '/og-image.jpg' // Default OpenGraph image
+const DEFAULT_IMAGE = '/og-image.jpg'
 const SITE_NAME = 'Евробот Россия'
 const BASE_URL = 'https://eurobot.ru'
 

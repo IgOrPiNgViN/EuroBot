@@ -1,0 +1,409 @@
+/* Импортируем палитру */
+@import '../../palettes/eurobot.css';
+
+/* PartnersManagement Component Variables */
+.partners-management {
+    --partners-bg: var(--color-white);
+    --partners-text-primary: var(--color-gray-900);
+    --partners-text-secondary: var(--color-gray-500);
+    --partners-text-tertiary: var(--color-gray-400);
+    --partners-border: var(--color-gray-200);
+    --partners-border-light: var(--color-gray-100);
+    --partners-hover-bg: var(--color-gray-50);
+
+    /* Header Colors */
+    --partners-title: var(--color-gray-900);
+
+    /* Category Colors */
+    --partners-category-bg: var(--color-white);
+    --partners-category-shadow: var(--color-shadow-blue);
+    --partners-category-title: var(--color-gray-900);
+    --partners-empty-category: var(--color-gray-400);
+
+    /* Card Colors */
+    --partners-card-bg: var(--color-white);
+    --partners-card-border: var(--color-gray-200);
+    --partners-card-shadow: var(--color-shadow-gray-main);
+    --partners-card-hover: var(--color-gray-50);
+    --partners-card-inactive-bg: var(--color-red-50);
+    --partners-card-inactive-border: var(--color-red-200);
+    --partners-logo-bg: transparent;
+    --partners-name: var(--color-gray-600);
+
+    /* Action Colors */
+    --partners-action-bg: var(--color-white);
+    --partners-action-shadow: var(--color-shadow-blue);
+    --partners-edit-button: var(--color-gray-400);
+    --partners-edit-button-hover: var(--color-blue-600);
+    --partners-delete-button: var(--color-gray-400);
+    --partners-delete-button-hover: var(--color-red-600);
+
+    /* Modal Colors */
+    --partners-modal-overlay: var(--color-overlay-black);
+    --partners-modal-bg: var(--color-white);
+    --partners-modal-border: var(--color-gray-200);
+    --partners-modal-title: var(--color-gray-900);
+
+    /* Logo Preview Colors */
+    --partners-logo-preview-bg: var(--color-gray-50);
+    --partners-logo-preview-border: var(--color-gray-200);
+
+    /* Settings Colors */
+    --partners-checkbox-border: var(--color-gray-300);
+    --partners-checkbox-checked: var(--color-blue);
+    --partners-order-label: var(--color-gray-600);
+    --partners-order-input-border: var(--color-gray-300);
+    --partners-order-input-focus: var(--color-blue);
+
+    /* Button Icon Colors */
+    --partners-button-icon: var(--color-white);
+}
+
+/* Main Container */
+.partners-management {
+    width: 100%;
+}
+
+/* Header */
+.partners-management-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.partners-management-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--partners-title);
+}
+
+.partners-management-button-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    color: var(--partners-button-icon);
+}
+
+/* Categories Container */
+.partners-management-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Category Section */
+.partners-management-category {
+    background-color: var(--partners-category-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--partners-category-shadow);
+    padding: 1.5rem;
+}
+
+.partners-management-category-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: var(--partners-category-title);
+    margin-bottom: 1rem;
+}
+
+/* Partners Grid */
+.partners-management-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .partners-management-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .partners-management-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+/* Partner Card */
+.partners-management-card {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid var(--partners-card-border);
+    border-radius: 0.5rem;
+    background-color: var(--partners-card-bg);
+    box-shadow: 0 1px 2px 0 var(--partners-card-shadow);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 8rem;
+}
+
+.partners-management-card:hover {
+    background-color: var(--partners-card-hover);
+    box-shadow: 0 4px 6px -1px var(--partners-card-shadow);
+}
+
+.partners-management-card-active {
+    border-color: var(--partners-card-border);
+}
+
+.partners-management-card-inactive {
+    border-color: var(--partners-card-inactive-border);
+    background-color: var(--partners-card-inactive-bg);
+}
+
+.partners-management-logo {
+    height: 3rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+    background-color: var(--partners-logo-bg);
+}
+
+.partners-management-name {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    text-align: center;
+    color: var(--partners-name);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+/* Card Actions */
+.partners-management-card-actions {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.partners-management-card:hover .partners-management-card-actions {
+    opacity: 1;
+}
+
+.partners-management-action-button {
+    padding: 0.25rem;
+    background-color: var(--partners-action-bg);
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 2px 0 var(--partners-action-shadow);
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.partners-management-edit-button {
+    color: var(--partners-edit-button);
+}
+
+.partners-management-edit-button:hover {
+    color: var(--partners-edit-button-hover);
+}
+
+.partners-management-delete-button {
+    color: var(--partners-delete-button);
+}
+
+.partners-management-delete-button:hover {
+    color: var(--partners-delete-button-hover);
+}
+
+.partners-management-action-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Empty Category */
+.partners-management-empty-category {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--partners-empty-category);
+}
+
+/* Modal Overlay */
+.partners-management-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--partners-modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+
+/* Modal */
+.partners-management-modal {
+    background-color: var(--partners-modal-bg);
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 28rem;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.partners-management-modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--partners-modal-border);
+    flex-shrink: 0;
+}
+
+.partners-management-modal-title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--partners-modal-title);
+}
+
+/* Modal Content */
+.partners-management-modal-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Logo Preview */
+.partners-management-logo-preview {
+    padding: 0.5rem;
+    background-color: var(--partners-logo-preview-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--partners-logo-preview-border);
+    text-align: center;
+}
+
+.partners-management-logo-preview-image {
+    height: 3rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Settings */
+.partners-management-settings {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.partners-management-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--partners-text-primary);
+}
+
+.partners-management-checkbox {
+    border-radius: 0.25rem;
+    border: 1px solid var(--partners-checkbox-border);
+    color: var(--partners-checkbox-checked);
+    margin-right: 0.5rem;
+}
+
+.partners-management-checkbox:checked {
+    background-color: var(--partners-checkbox-checked);
+    border-color: var(--partners-checkbox-checked);
+}
+
+.partners-management-order {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.partners-management-order-label {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--partners-order-label);
+}
+
+.partners-management-order-input {
+    width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--partners-order-input-border);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--partners-text-primary);
+    transition: border-color 0.2s;
+}
+
+.partners-management-order-input:focus {
+    outline: none;
+    border-color: var(--partners-order-input-focus);
+    box-shadow: 0 0 0 2px rgba(var(--partners-order-input-focus), 0.1);
+}
+
+/* Modal Footer */
+.partners-management-modal-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--partners-modal-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .partners-management-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .partners-management-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .partners-management-settings {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .partners-management-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .partners-management-card-actions {
+        opacity: 1; /* Always show on mobile */
+    }
+}
+
+/* Добавьте в PartnersManagement.css */
+.partners-management-background-preview {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--color-gray-50);
+    border-radius: 0.375rem;
+}
+
+.partners-management-background-preview-image {
+    max-height: 6rem;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}

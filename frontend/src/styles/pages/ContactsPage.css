@@ -1,0 +1,491 @@
+.contacts-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 160px;
+    overflow: hidden;
+    background-color: #0f3d63;
+}
+
+.contacts-header-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.contacts-header-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.contacts-title {
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: bold;
+    color: #F2F6FF;
+    margin-bottom: 1rem;
+}
+
+.contacts-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 400px;
+}
+
+.contacts-content {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.contacts-container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.contacts-info-column {
+    padding: 2rem;
+    justify-items: center;
+}
+
+.contacts-form-column {
+    padding: 2rem;
+}
+
+.contacts-section-title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    font-weight: bold;
+    color: #F2F6FF;
+    margin-bottom: 2rem;
+}
+
+.contacts-emails {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.contacts-email-item {
+    display: flex;
+    align-items: flex-start;
+    justify-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.contacts-email-item:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.contacts-email-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.contacts-email-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.contacts-email-link {
+    font-size: 1rem;
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+.contacts-email-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+.contacts-email-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.contacts-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contacts-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.contacts-contact-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.contacts-contact-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.contacts-contact-text {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.contacts-contact-link {
+    font-size: 1rem;
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.contacts-contact-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+.contacts-form-card {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.contacts-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contacts-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.contacts-captcha {
+    margin-top: 0.5rem;
+}
+
+.contacts-submit-button {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.contacts-success-card {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.contacts-success-icon {
+    width: 4rem;
+    height: 4rem;
+    color: #10b981;
+    margin: 0 auto 1.5rem;
+}
+
+.contacts-success-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.contacts-success-text {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+}
+
+.contacts-map-section {
+    width: 100%;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1024px) {
+    .contacts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contacts-info-column {
+        padding-right: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .contacts-form-column {
+        padding-left: 2rem;
+    }
+
+    .contacts-container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contacts-header {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 200px;
+    }
+
+    .contacts-header-left,
+    .contacts-header-right {
+        padding: 1.5rem;
+        align-items: center;
+        text-align: center;
+    }
+
+    .contacts-header-left {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .contacts-title {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .contacts-subtitle {
+        font-size: 1rem;
+        max-width: 300px;
+    }
+
+    .contacts-content {
+        padding: 1.5rem 0;
+    }
+
+    .contacts-container {
+        padding: 0 1rem;
+    }
+
+    .contacts-info-column,
+    .contacts-form-column {
+        padding: 1rem 0;
+        border: none;
+    }
+
+    .contacts-email-item {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.75rem;
+    }
+
+    .contacts-email-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .contacts-email-title {
+        font-size: 1rem;
+    }
+
+    .contacts-email-link {
+        font-size: 0.875rem;
+    }
+
+    .contacts-email-description {
+        font-size: 0.75rem;
+    }
+
+    .contacts-contact-info {
+        gap: 1rem;
+    }
+
+    .contacts-contact-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .contacts-contact-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .contacts-contact-title {
+        font-size: 1rem;
+    }
+
+    .contacts-contact-text,
+    .contacts-contact-link {
+        font-size: 0.875rem;
+    }
+
+    .contacts-form-card,
+    .contacts-success-card {
+        padding: 1.5rem;
+    }
+
+    .contacts-form {
+        gap: 1rem;
+    }
+
+    .contacts-form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .contacts-success-title {
+        font-size: 1.25rem;
+    }
+
+    .contacts-success-text {
+        font-size: 0.875rem;
+    }
+
+    .contacts-map-section {
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .contacts-header {
+        min-height: 180px;
+    }
+
+    .contacts-title {
+        font-size: 1.5rem;
+    }
+
+    .contacts-subtitle {
+        font-size: 0.875rem;
+        max-width: 250px;
+    }
+
+    .contacts-email-item {
+        padding: 0.875rem;
+    }
+
+    .contacts-email-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .contacts-email-title {
+        font-size: 0.875rem;
+    }
+
+    .contacts-email-link {
+        font-size: 0.75rem;
+    }
+
+    .contacts-email-description {
+        font-size: 0.625rem;
+        line-height: 1.3;
+    }
+
+    .contacts-contact-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .contacts-contact-title {
+        font-size: 0.875rem;
+    }
+
+    .contacts-contact-text,
+    .contacts-contact-link {
+        font-size: 0.75rem;
+    }
+
+    .contacts-form-card,
+    .contacts-success-card {
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .contacts-success-icon {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .contacts-success-title {
+        font-size: 1rem;
+    }
+
+    .contacts-success-text {
+        font-size: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .contacts-map-section {
+        height: auto;
+    }
+}
+
+@media (max-width: 360px) {
+    .contacts-title {
+        font-size: 1.25rem;
+    }
+
+    .contacts-subtitle {
+        font-size: 0.75rem;
+        max-width: 200px;
+    }
+
+    .contacts-email-item {
+        padding: 0.75rem;
+    }
+
+    .contacts-emails {
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .contacts-form-card,
+    .contacts-success-card {
+        padding: 0.75rem;
+    }
+}

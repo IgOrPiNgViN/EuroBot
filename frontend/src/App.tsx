@@ -5,7 +5,6 @@ import AdminLayout from './components/admin/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoadingSpinner from './components/ui/LoadingSpinner'
 
-// Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage'))
 const NewsPage = lazy(() => import('./pages/NewsPage'))
 const NewsDetailPage = lazy(() => import('./pages/NewsDetailPage'))
@@ -15,9 +14,7 @@ const RegistrationPage = lazy(() => import('./pages/RegistrationPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const ContactsPage = lazy(() => import('./pages/ContactsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
-const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 
-// Admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminNews = lazy(() => import('./pages/admin/NewsManagement'))
 const AdminTeams = lazy(() => import('./pages/admin/TeamsManagement'))
@@ -46,7 +43,6 @@ function App() {
           <Route path="about" element={<AboutPage />} />
           <Route path="contacts" element={<ContactsPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
         </Route>
         
         {/* Admin routes */}

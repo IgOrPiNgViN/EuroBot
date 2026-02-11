@@ -9,6 +9,7 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
 import Select from '../../components/ui/Select'
+import '../../styles/pages/admin/PartnersManagement.css'
 
 const categoryOptions = [
   { value: 'general', label: 'Генеральный партнёр' },
@@ -18,6 +19,31 @@ const categoryOptions = [
   { value: 'media', label: 'СМИ партнёр' }
 ]
 
+// Парсер для URL генерального партнера
+const parseGeneralPartnerUrl = (url: string): { logo: string; background?: string } => {
+  if (!url) return { logo: '', background: undefined }
+
+  // Проверяем наличие разделителя "|"
+  if (url.includes('|')) {
+    const [logo, background] = url.split('|').map(s => s.trim())
+    return { logo, background }
+  }
+
+  // Если нет разделителя, возвращаем весь URL как логотип
+  return { logo: url, background: undefined }
+}
+
+// Сборщик URL для генерального партнера
+const buildGeneralPartnerUrl = (logo: string, background?: string): string => {
+  if (!logo) return ''
+
+  if (background && background.trim()) {
+    return `${logo.trim()}|${background.trim()}`
+  }
+
+  return logo.trim()
+}
+
 export default function PartnersManagement() {
   const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,6 +51,10 @@ export default function PartnersManagement() {
   const [editingPartner, setEditingPartner] = useState<Partner | null>(null)
   const [formData, setFormData] = useState<Partial<PartnerCreateData>>({})
   const [saving, setSaving] = useState(false)
+
+  // Дополнительные поля для генерального партнера
+  const [generalPartnerLogo, setGeneralPartnerLogo] = useState('')
+  const [generalPartnerBackground, setGeneralPartnerBackground] = useState('')
 
   const fetchPartners = async () => {
     try {
@@ -44,15 +74,33 @@ export default function PartnersManagement() {
   const handleCreate = () => {
     setEditingPartner(null)
     setFormData({ is_active: true, display_order: 0 })
+    setGeneralPartnerLogo('')
+    setGeneralPartnerBackground('')
     setShowModal(true)
   }
 
   const handleEdit = (partner: Partner) => {
     setEditingPartner(partner)
+
+    // Для генеральных партнеров парсим URL
+    let logoUrl = partner.logo
+    let backgroundUrl = undefined
+
+    if (partner.category === 'general') {
+      const parsed = parseGeneralPartnerUrl(partner.logo)
+      logoUrl = parsed.logo
+      backgroundUrl = parsed.background
+      setGeneralPartnerLogo(parsed.logo)
+      setGeneralPartnerBackground(parsed.background || '')
+    } else {
+      setGeneralPartnerLogo('')
+      setGeneralPartnerBackground('')
+    }
+
     setFormData({
       name: partner.name,
       category: partner.category,
-      logo: partner.logo,
+      logo: logoUrl,
       website: partner.website || '',
       description: partner.description || '',
       is_active: partner.is_active,
@@ -74,18 +122,38 @@ export default function PartnersManagement() {
   }
 
   const handleSave = async () => {
-    if (!formData.name || !formData.logo || !formData.category) {
+    if (!formData.name || !formData.category) {
       toast.error('Заполните обязательные поля')
+      return
+    }
+
+    // Проверка URL для всех партнеров
+    let logoUrl = formData.logo || ''
+
+    // Для генеральных партнеров собираем URL с разделителем
+    if (formData.category === 'general') {
+      if (!generalPartnerLogo) {
+        toast.error('Заполните URL логотипа для генерального партнера')
+        return
+      }
+      logoUrl = buildGeneralPartnerUrl(generalPartnerLogo, generalPartnerBackground)
+    } else if (!formData.logo) {
+      toast.error('Заполните URL логотипа')
       return
     }
 
     setSaving(true)
     try {
+      const dataToSave = {
+        ...formData,
+        logo: logoUrl
+      }
+
       if (editingPartner) {
-        await partnersApi.update(editingPartner.id, formData)
+        await partnersApi.update(editingPartner.id, dataToSave)
         toast.success('Партнёр обновлён')
       } else {
-        await partnersApi.create(formData as PartnerCreateData)
+        await partnersApi.create(dataToSave as PartnerCreateData)
         toast.success('Партнёр добавлен')
       }
       setShowModal(false)
@@ -108,162 +176,198 @@ export default function PartnersManagement() {
   })
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold text-gray-900">
-          Управление партнёрами
-        </h1>
-        <Button onClick={handleCreate} leftIcon={<PlusIcon className="w-5 h-5" />}>
-          Добавить партнёра
-        </Button>
-      </div>
+      <div className="partners-management">
+        <div className="partners-management-header">
+          <h1 className="partners-management-title">
+            Управление партнёрами
+          </h1>
+          <Button onClick={handleCreate} leftIcon={<PlusIcon className="partners-management-button-icon" />}>
+            Добавить партнёра
+          </Button>
+        </div>
 
-      {/* Partners by category */}
-      <div className="space-y-6">
-        {categoryOptions.map((category) => (
-          <div key={category.value} className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="font-heading font-semibold text-lg mb-4">{category.label}</h3>
-            
-            {groupedPartners[category.value].length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {groupedPartners[category.value].map((partner) => (
-                  <div
-                    key={partner.id}
-                    className={`relative group p-4 border rounded-lg ${
-                      partner.is_active ? 'border-gray-200' : 'border-red-200 bg-red-50'
-                    }`}
-                  >
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="h-12 object-contain mx-auto mb-2"
-                    />
-                    <p className="text-xs text-center text-gray-600 truncate">{partner.name}</p>
-                    
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
-                      <button
-                        onClick={() => handleEdit(partner)}
-                        className="p-1 bg-white rounded shadow text-gray-400 hover:text-blue-600"
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(partner.id)}
-                        className="p-1 bg-white rounded shadow text-gray-400 hover:text-red-600"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
+        {/* Partners by category */}
+        <div className="partners-management-categories">
+          {categoryOptions.map((category) => (
+              <div key={category.value} className="partners-management-category">
+                <h3 className="partners-management-category-title">{category.label}</h3>
+
+                {groupedPartners[category.value].length > 0 ? (
+                    <div className="partners-management-grid">
+                      {groupedPartners[category.value].map((partner) => (
+                          <div
+                              key={partner.id}
+                              className={`partners-management-card ${partner.is_active ? 'partners-management-card-active' : 'partners-management-card-inactive'}`}
+                          >
+                            <img
+                                src={parseGeneralPartnerUrl(partner.logo).logo}
+                                alt={partner.name}
+                                className="partners-management-logo"
+                            />
+                            <p className="partners-management-name">{partner.name}</p>
+
+                            <div className="partners-management-card-actions">
+                              <button
+                                  onClick={() => handleEdit(partner)}
+                                  className="partners-management-action-button partners-management-edit-button"
+                              >
+                                <PencilIcon className="partners-management-action-icon" />
+                              </button>
+                              <button
+                                  onClick={() => handleDelete(partner.id)}
+                                  className="partners-management-action-button partners-management-delete-button"
+                              >
+                                <TrashIcon className="partners-management-action-icon" />
+                              </button>
+                            </div>
+                          </div>
+                      ))}
+                    </div>
+                ) : (
+                    <p className="partners-management-empty-category">Нет партнёров в этой категории</p>
+                )}
+              </div>
+          ))}
+        </div>
+
+        {/* Modal */}
+        {showModal && (
+            <div className="partners-management-modal-overlay">
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="partners-management-modal"
+              >
+                <div className="partners-management-modal-header">
+                  <h2 className="partners-management-modal-title">
+                    {editingPartner ? 'Редактировать партнёра' : 'Новый партнёр'}
+                  </h2>
+                </div>
+
+                <div className="partners-management-modal-content">
+                  <Input
+                      label="Название"
+                      required
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+
+                  <Select
+                      label="Категория"
+                      required
+                      options={categoryOptions}
+                      value={formData.category || ''}
+                      onChange={(e) => {
+                        const category = e.target.value as PartnerCategory
+                        setFormData({ ...formData, category })
+                        // Сбрасываем URL при смене категории
+                        if (category !== 'general') {
+                          setGeneralPartnerLogo('')
+                          setGeneralPartnerBackground('')
+                        }
+                      }}
+                      placeholder="Выберите категорию"
+                  />
+
+                  {/* Для генеральных партнеров - два поля */}
+                  {formData.category === 'general' ? (
+                      <>
+                        <Input
+                            label="URL логотипа (обязательно)"
+                            required
+                            value={generalPartnerLogo || ''}
+                            onChange={(e) => setGeneralPartnerLogo(e.target.value)}
+                            placeholder="https://..."
+                        />
+
+                        <Input
+                            label="URL фона (необязательно)"
+                            value={generalPartnerBackground || ''}
+                            onChange={(e) => setGeneralPartnerBackground(e.target.value)}
+                            placeholder="https://..."
+                        />
+
+                        {generalPartnerLogo && (
+                            <div className="partners-management-logo-preview">
+                              <img
+                                  src={generalPartnerLogo}
+                                  alt="Preview логотипа"
+                                  className="partners-management-logo-preview-image"
+                                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                              />
+                            </div>
+                        )}
+                      </>
+                  ) : (
+                      <>
+                        <Input
+                            label="URL логотипа"
+                            required
+                            value={formData.logo || ''}
+                            onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
+                            placeholder="https://..."
+                        />
+
+                        {formData.logo && (
+                            <div className="partners-management-logo-preview">
+                              <img
+                                  src={formData.logo}
+                                  alt="Preview"
+                                  className="partners-management-logo-preview-image"
+                                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                              />
+                            </div>
+                        )}
+                      </>
+                  )}
+
+                  <Input
+                      label="Сайт"
+                      value={formData.website || ''}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      placeholder="https://..."
+                  />
+
+                  <Textarea
+                      label="Описание"
+                      rows={2}
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
+
+                  <div className="partners-management-settings">
+                    <label className="partners-management-checkbox-label">
+                      <input
+                          type="checkbox"
+                          checked={formData.is_active}
+                          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                          className="partners-management-checkbox"
+                      />
+                      Активен
+                    </label>
+                    <div className="partners-management-order">
+                      <span className="partners-management-order-label">Порядок:</span>
+                      <input
+                          type="number"
+                          value={formData.display_order || 0}
+                          onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
+                          className="partners-management-order-input"
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-400 text-sm">Нет партнёров в этой категории</p>
-            )}
-          </div>
-        ))}
+                </div>
+
+                <div className="partners-management-modal-footer">
+                  <Button variant="ghost" onClick={() => setShowModal(false)}>
+                    Отмена
+                  </Button>
+                  <Button onClick={handleSave} isLoading={saving}>
+                    {editingPartner ? 'Сохранить' : 'Добавить'}
+                  </Button>
+                </div>
+              </motion.div>
+            </div>
+        )}
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl w-full max-w-md max-h-[90vh] flex flex-col"
-          >
-            <div className="p-4 border-b flex-shrink-0">
-              <h2 className="text-lg font-heading font-bold">
-                {editingPartner ? 'Редактировать партнёра' : 'Новый партнёр'}
-              </h2>
-            </div>
-            
-            <div className="p-4 space-y-3 overflow-y-auto flex-1">
-              <Input
-                label="Название"
-                required
-                value={formData.name || ''}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-
-              <Select
-                label="Категория"
-                required
-                options={categoryOptions}
-                value={formData.category || ''}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value as PartnerCategory })}
-                placeholder="Выберите категорию"
-              />
-
-              <Input
-                label="URL логотипа"
-                required
-                value={formData.logo || ''}
-                onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
-                placeholder="https://..."
-              />
-
-              {formData.logo && (
-                <div className="p-2 bg-gray-50 rounded-lg text-center">
-                  <img
-                    src={formData.logo}
-                    alt="Preview"
-                    className="h-12 object-contain mx-auto"
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                  />
-                </div>
-              )}
-
-              <Input
-                label="Сайт"
-                value={formData.website || ''}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                placeholder="https://..."
-              />
-
-              <Textarea
-                label="Описание"
-                rows={2}
-                value={formData.description || ''}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-
-              <div className="flex items-center space-x-6">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="mr-2"
-                  />
-                  Активен
-                </label>
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600 mr-2">Порядок:</span>
-                  <input
-                    type="number"
-                    value={formData.display_order || 0}
-                    onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
-                    className="w-16 input py-1"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border-t flex justify-end space-x-3 flex-shrink-0">
-              <Button variant="ghost" onClick={() => setShowModal(false)}>
-                Отмена
-              </Button>
-              <Button onClick={handleSave} isLoading={saving}>
-                {editingPartner ? 'Сохранить' : 'Добавить'}
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
   )
 }
-
-
-
