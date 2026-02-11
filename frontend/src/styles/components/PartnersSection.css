@@ -1,0 +1,202 @@
+/* PartnersSection Component */
+.partners-section {
+    background-color: var(--color-gray-50);
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    width: 100%;
+}
+
+.partners-container {
+    max-width: var(--container-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+}
+
+.partners-title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    text-align: center;
+    color: var(--color-gray-900);
+    margin-bottom: 3rem;
+}
+
+/* Category styles */
+.partners-category {
+    margin-bottom: 2.5rem;
+}
+
+.partners-category:last-child {
+    margin-bottom: 0;
+}
+
+.partners-category-title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: var(--color-blue);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Grid styles */
+.partners-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.partners-grid-general {
+    gap: 3rem;
+}
+
+/* Partner item */
+.partner-item {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.partner-item-general {
+    width: 12rem;
+    height: 8rem;
+}
+
+.partner-item-regular {
+    width: 8rem;
+    height: 5rem;
+}
+
+/* Background for general partners */
+.partner-background {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    border-radius: 0.5rem;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+/* Partner link */
+.partner-link {
+    display: block;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.partner-link:hover {
+    filter: grayscale(0%);
+}
+
+.partner-link-with-bg {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--color-gray-200);
+}
+
+/* Partner logo */
+.partner-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.5rem;
+}
+
+/* Fallback when logo fails to load */
+.partner-fallback {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-gray-100);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--color-gray-500);
+    text-align: center;
+    padding: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .partners-section {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .partners-title {
+        font-size: 1.875rem;
+        margin-bottom: 2rem;
+    }
+
+    .partners-category {
+        margin-bottom: 2rem;
+    }
+
+    .partners-category-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .partners-grid {
+        gap: 1rem;
+    }
+
+    .partners-grid-general {
+        gap: 1.5rem;
+    }
+
+    .partner-item-general {
+        width: 10rem;
+        height: 6rem;
+    }
+
+    .partner-item-regular {
+        width: 6rem;
+        height: 4rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .partners-title {
+        font-size: 1.5rem;
+    }
+
+    .partner-item-general {
+        width: 8rem;
+        height: 5rem;
+    }
+
+    .partner-item-regular {
+        width: 5rem;
+        height: 3rem;
+    }
+
+    .partners-grid {
+        gap: 0.75rem;
+    }
+
+    .partners-grid-general {
+        gap: 1rem;
+    }
+}
+
+/* Animation for motion */
+.partner-item {
+    opacity: 0;
+    transform: translateY(20px);
+}
