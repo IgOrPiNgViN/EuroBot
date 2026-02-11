@@ -237,7 +237,7 @@ export default function RegistrationFieldsManagement() {
           ...field,
           display_order: i,
           is_active: true,
-          options: field.options || null
+          options: (field as Record<string, unknown>).options || null
         })
       }
       toast.success('Стандартные поля добавлены!')
@@ -375,7 +375,7 @@ export default function RegistrationFieldsManagement() {
         <div className="registration-fields-list-container">
           {fields.length > 0 ? (
               <div className="registration-fields-list">
-                {fields.sort((a, b) => a.display_order - b.display_order).map((field, index) => (
+                {fields.sort((a, b) => a.display_order - b.display_order).map((field, _index) => (
                     <motion.div
                         key={field.id}
                         initial={{ opacity: 0 }}

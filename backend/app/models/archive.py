@@ -20,7 +20,7 @@ class ArchiveSeason(Base):
     id = Column(Integer, primary_key=True, index=True)
     year = Column(Integer, unique=True, nullable=False)
     name = Column(String(255), nullable=False)
-    theme = Column(String(255), nullable=True)
+    theme = Column(Text, nullable=True)
     description = Column(Text, nullable=True)
     
     # Cover image

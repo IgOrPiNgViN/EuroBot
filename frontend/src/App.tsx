@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
-import { Suspense, lazy } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { Suspense, lazy, useEffect } from 'react'
 import Layout from './components/Layout'
 import AdminLayout from './components/admin/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoadingSpinner from './components/ui/LoadingSpinner'
+import { useLoginModalStore } from './store/loginModalStore'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const NewsPage = lazy(() => import('./pages/NewsPage'))
@@ -13,7 +14,12 @@ const ArchivePage = lazy(() => import('./pages/ArchivePage'))
 const RegistrationPage = lazy(() => import('./pages/RegistrationPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const ContactsPage = lazy(() => import('./pages/ContactsPage'))
-const LoginPage = lazy(() => import('./pages/LoginPage'))
+
+function LoginRedirect() {
+  const open = useLoginModalStore((s) => s.open)
+  useEffect(() => { open('/admin') }, [open])
+  return <Navigate to="/" replace />
+}
 
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminNews = lazy(() => import('./pages/admin/NewsManagement'))
@@ -42,7 +48,7 @@ function App() {
           <Route path="registration" element={<RegistrationPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contacts" element={<ContactsPage />} />
-          <Route path="login" element={<LoginPage />} />
+          <Route path="login" element={<LoginRedirect />} />
         </Route>
         
         {/* Admin routes */}

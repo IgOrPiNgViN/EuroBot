@@ -124,7 +124,9 @@
     white 50%,
     #92A6B5 100%
     );
+    font-family: 'FunnyFont', sans-serif;
     font-size: 12px;
+    font-weight: 600;
     color: #0f3d63;
     cursor: pointer;
     transition: 0.25s;
@@ -189,7 +191,7 @@
 }
 
 .header-mobile-content {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -197,37 +199,36 @@
 
 .header-mobile-link {
     display: block;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
+    padding: 0.625rem 1rem;
+    border-radius: 25px;
+    border: 2px solid #E2E2E2;
+    outline: 1px solid #0e3a60;
+    background: linear-gradient(180deg, white 0%, white 50%, #92A6B5 100%);
+    font-family: 'FunnyFont', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f3d63;
     text-decoration: none;
-    transition: all 0.2s;
     text-align: center;
+    transition: all 0.25s;
 }
 
 .header-mobile-link-inactive {
     color: #0f3d63;
-    background-color: transparent;
-    border: 1px solid #e2e2e2;
 }
 
 .header-mobile-link-inactive:hover {
-    color: #0a2a4a;
-    background-color: #f0f0f0;
+    transform: translateY(-2px);
 }
 
 .header-mobile-link-active {
-    background: linear-gradient(180deg,
-    #90B6D2 0%,
-    #204465 35%,
-    #204465 100%
-    );
+    background: linear-gradient(180deg, #90B6D2 0%, #204465 35%, #204465 100%);
     color: white;
 }
 
 .header-mobile-auth {
-    padding-top: 1rem;
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
     border-top: 1px solid #e2e2e2;
     display: flex;
     flex-direction: column;
@@ -237,58 +238,48 @@
 .header-mobile-registration {
     display: block;
     width: 100%;
-    background-color: #fbbf24;
+    padding: 0.625rem 1rem;
+    border-radius: 25px;
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+    border: 2px solid #E2E2E2;
+    outline: 1px solid #b45309;
+    font-family: 'FunnyFont', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: #0f3d63;
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
     text-decoration: none;
     text-align: center;
-    transition: background-color 0.2s;
+    transition: all 0.25s;
 }
 
 .header-mobile-registration:hover {
-    background-color: #f59e0b;
+    transform: translateY(-2px);
 }
 
 .header-mobile-admin-link,
 .header-mobile-logout,
 .header-mobile-login {
     display: block;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    padding: 0.625rem 1rem;
+    border-radius: 25px;
+    border: 2px solid #E2E2E2;
+    outline: 1px solid #0e3a60;
+    background: linear-gradient(180deg, white 0%, white 50%, #92A6B5 100%);
+    font-family: 'FunnyFont', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f3d63;
     text-decoration: none;
-    background: transparent;
-    border: none;
-    cursor: pointer;
     text-align: center;
-    transition: color 0.2s;
+    cursor: pointer;
+    transition: all 0.25s;
     width: 100%;
 }
 
-.header-mobile-admin-link {
-    color: #0f3d63;
-}
-
-.header-mobile-admin-link:hover {
-    color: #0a2a4a;
-}
-
-.header-mobile-logout {
-    color: #0f3d63;
-}
-
-.header-mobile-logout:hover {
-    color: #0a2a4a;
-}
-
-.header-mobile-login {
-    color: #0f3d63;
-}
-
+.header-mobile-admin-link:hover,
+.header-mobile-logout:hover,
 .header-mobile-login:hover {
-    color: #0a2a4a;
+    transform: translateY(-2px);
 }
 
 @media (max-width: 1023px) {
@@ -364,23 +355,23 @@
     }
 
     .header-mobile-content {
-        padding: 0.75rem;
+        padding: 0.75rem 1rem;
     }
 
     .header-mobile-link {
         padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .header-mobile-registration {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         padding: 0.5rem 0.75rem;
     }
 
     .header-mobile-admin-link,
     .header-mobile-logout,
     .header-mobile-login {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         padding: 0.5rem 0.75rem;
     }
 }

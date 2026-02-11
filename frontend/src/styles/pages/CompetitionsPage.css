@@ -42,6 +42,7 @@
     color: white;
     padding: 1rem 2rem;
     border-radius: 0.5rem;
+    font-family: 'FunnyFont', sans-serif;
     font-weight: 600;
     font-size: 1.125rem;
     text-decoration: none;
@@ -141,85 +142,94 @@
     max-width: 600px;
 }
 
+/* ===== DOCUMENTS SECTION (PDF grid with orange overlay) ===== */
+
 .competitions-documents-section {
-    background: url("../../public/images/j5Z6XLapCTjQdGxPBh7pT456CXzbZfHXcHoUGhGWyBAZL1v1kv14f0imu77rKPzji3QXj63P_knQnb0vlVq4v7yP.jpg") no-repeat center center;
     background-size: cover;
-    padding: 6rem 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 5rem 0;
     position: relative;
 }
 
 .competitions-documents-section::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    inset: 0;
+    background: rgba(15, 35, 60, 0.65);
     z-index: 1;
 }
 
 .competitions-documents-content {
     position: relative;
     z-index: 2;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .competitions-documents-title {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 2.75rem;
+    font-weight: 800;
     color: white;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
     font-family: 'FunnyFont', sans-serif;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .competitions-documents-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 2rem;
+    justify-items: center;
 }
 
 .competitions-document-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 1rem;
-    padding: 1.5rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 1rem;
     text-decoration: none;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.35s ease;
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
 }
 
 .competitions-document-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    background: white;
+    transform: translateY(-6px) scale(1.03);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.competitions-document-icon {
-    width: 3rem;
-    height: 3rem;
-    color: #1e40af;
-    flex-shrink: 0;
+/* PDF icon */
+.competitions-document-pdf-icon {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.35s ease;
 }
 
-.competitions-document-info {
-    flex: 1;
+.competitions-document-card:hover .competitions-document-pdf-icon {
+    transform: scale(1.08);
 }
 
+.competitions-document-pdf-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Document name */
 .competitions-document-name {
+    font-size: 1.05rem;
     font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.25rem;
-}
-
-.competitions-document-link {
-    color: #3b82f6;
-    font-size: 0.875rem;
-    text-decoration: underline;
+    color: white;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 200px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 /* Существующие стили для инфо-карточек */
@@ -430,6 +440,18 @@
 }
 
 /* Адаптивность */
+@media (max-width: 1024px) {
+    .competitions-documents-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem 1.5rem;
+    }
+
+    .competitions-document-pdf-icon {
+        width: 100px;
+        height: 100px;
+    }
+}
+
 @media (max-width: 768px) {
     .competitions-images-container {
         gap: 2rem;
@@ -444,13 +466,31 @@
     }
 
     .competitions-theme-title,
-    .competitions-tasks-title,
-    .competitions-documents-title {
+    .competitions-tasks-title {
         font-size: 2rem;
     }
 
+    .competitions-documents-title {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .competitions-documents-section {
+        padding: 3.5rem 0;
+    }
+
     .competitions-documents-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem 1rem;
+    }
+
+    .competitions-document-pdf-icon {
+        width: 90px;
+        height: 90px;
+    }
+
+    .competitions-document-name {
+        font-size: 0.95rem;
     }
 
     .competitions-info-grid {
@@ -464,9 +504,40 @@
 
 @media (max-width: 480px) {
     .competitions-theme-title,
-    .competitions-tasks-title,
-    .competitions-documents-title {
+    .competitions-tasks-title {
         font-size: 1.75rem;
+    }
+
+    .competitions-documents-title {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .competitions-documents-section {
+        padding: 2.5rem 0;
+    }
+
+    .competitions-documents-content {
+        padding: 0 1rem;
+    }
+
+    .competitions-documents-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem 0.75rem;
+    }
+
+    .competitions-document-pdf-icon {
+        width: 75px;
+        height: 75px;
+    }
+
+    .competitions-document-card {
+        padding: 1rem 0.5rem;
+    }
+
+    .competitions-document-name {
+        font-size: 0.85rem;
+        max-width: 150px;
     }
 
     .competitions-task-item {

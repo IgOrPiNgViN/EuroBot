@@ -267,7 +267,7 @@ export default function RegistrationPage() {
                 fontSize: '3rem',
                 lineHeight: '1',
                 fontWeight: 'bold',
-                fontFamily: 'var(--font-heading)',
+                fontFamily: "'FunnyFont', sans-serif",
                 color: '#F2F6FF',
                 marginBottom: '1rem'
               }}>
@@ -348,7 +348,6 @@ export default function RegistrationPage() {
               fontSize: '3rem',
               lineHeight: '1',
               fontWeight: 'bold',
-              fontFamily: 'var(--font-heading)',
               color: 'white',
               marginBottom: '1rem'
             }}>
@@ -511,7 +510,7 @@ export default function RegistrationPage() {
                   {/* Yandex SmartCaptcha */}
                   <SmartCaptcha
                       onVerify={(token) => setCaptchaToken(token)}
-                      style={{ marginTop: '1rem' }}
+                      className="mt-4"
                   />
 
                   <Button

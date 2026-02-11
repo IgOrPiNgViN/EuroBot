@@ -7,59 +7,36 @@ import {
   MapPinIcon,
   DocumentTextIcon,
   ArrowDownTrayIcon,
-  ClipboardDocumentCheckIcon,
-  DocumentIcon
+  ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline'
 import { seasonsApi } from '../api/seasons'
+import { settingsApi } from '../api/settings'
 import { Season, FormatStructure } from '../types'
+import { parseFormat } from '../utils/parseFormat'
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-import Button from '../components/ui/Button'
 import '../styles/pages/CompetitionsPage.css'
 
 export default function CompetitionsPage() {
   const [currentSeason, setCurrentSeason] = useState<Season | null>(null)
   const [formatData, setFormatData] = useState<FormatStructure | null>(null)
   const [loading, setLoading] = useState(true)
-
-  const parseFormat = (formatString: string): FormatStructure => {
-    try {
-      return JSON.parse(formatString);
-    } catch (error) {
-      console.error('Failed to parse format JSON:', error);
-      return {
-        logo_url: '',
-        title_url: '',
-        icon_url: '',
-        tasks: [],
-        documents: []
-      };
-    }
-  };
-
-    const getFormatText = (formatString: string): string => {
-        try {
-            const parsed = JSON.parse(formatString);
-            // Если это JSON с нашими полями, но есть текстовое поле description
-            if (parsed.description) {
-                return parsed.description;
-            }
-            return '';
-        } catch (error) {
-            return formatString;
-        }
-    };
+  const [docsBg, setDocsBg] = useState<string>('')
 
   useEffect(() => {
     const fetchSeason = async () => {
       try {
-        const season = await seasonsApi.getCurrent()
+        const [season, settings] = await Promise.all([
+          seasonsApi.getCurrent(),
+          settingsApi.getPublic()
+        ])
         setCurrentSeason(season)
-        if (season.format) {
-          const parsedFormat = parseFormat(season.format)
-          setFormatData(parsedFormat)
-          console.log('Parsed format data:', parsedFormat)
+        if (season && season.format) {
+          setFormatData(parseFormat(season.format))
+        }
+        if (settings.bg_competitions_docs) {
+          setDocsBg(settings.bg_competitions_docs as string)
         }
       } catch (error) {
         console.error('Failed to fetch season:', error)
@@ -203,7 +180,7 @@ export default function CompetitionsPage() {
                       </motion.h2>
                   )}
 
-                  {currentSeason.format && (
+                  {currentSeason.theme && (
                       <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -272,39 +249,46 @@ export default function CompetitionsPage() {
 
         {/* Блок 4: Документы с фоновым изображением */}
         {formatData?.documents && formatData.documents.length > 0 && (
-            <section className="competitions-documents-section">
-              <div className="container-custom">
-                <div className="competitions-documents-content">
-                  <motion.h3
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      className="competitions-documents-title"
-                  >
-                    Документы сезона
-                  </motion.h3>
+            <section className="competitions-documents-section" style={docsBg ? { backgroundImage: `url(${docsBg})` } : undefined}>
+              <div className="competitions-documents-content">
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="competitions-documents-title"
+                >
+                  Документы российского этапа {currentSeason.year}
+                </motion.h2>
 
-                  <div className="competitions-documents-grid">
-                    {formatData.documents.map((doc, index) => (
-                        <motion.a
-                            key={index}
-                            href={doc.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            className="competitions-document-card"
-                        >
-                          <DocumentIcon className="competitions-document-icon" />
-                          <div className="competitions-document-info">
-                            <h4 className="competitions-document-name">{doc.name}</h4>
-                            <span className="competitions-document-link">Скачать документ</span>
-                          </div>
-                        </motion.a>
-                    ))}
-                  </div>
+                <div className="competitions-documents-grid">
+                  {formatData.documents.map((doc, index) => (
+                      <motion.a
+                          key={index}
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.08, duration: 0.4 }}
+                          className="competitions-document-card"
+                      >
+                        <div className="competitions-document-pdf-icon">
+                          <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Back page */}
+                            <rect x="14" y="0" width="56" height="72" rx="4" stroke="white" strokeWidth="2.5" fill="none" />
+                            {/* Front page */}
+                            <rect x="10" y="8" width="56" height="72" rx="4" stroke="white" strokeWidth="2.5" fill="none" />
+                            {/* Page fold */}
+                            <path d="M46 8V28H66" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                            <path d="M46 8L66 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                            {/* PDF text */}
+                            <text x="38" y="58" textAnchor="middle" fill="white" fontSize="18" fontWeight="700" fontFamily="sans-serif">PDF</text>
+                          </svg>
+                        </div>
+                        <span className="competitions-document-name">{doc.name}</span>
+                      </motion.a>
+                  ))}
                 </div>
               </div>
             </section>

@@ -84,12 +84,10 @@ export default function PartnersManagement() {
 
     // Для генеральных партнеров парсим URL
     let logoUrl = partner.logo
-    let backgroundUrl = undefined
 
     if (partner.category === 'general') {
       const parsed = parseGeneralPartnerUrl(partner.logo)
       logoUrl = parsed.logo
-      backgroundUrl = parsed.background
       setGeneralPartnerLogo(parsed.logo)
       setGeneralPartnerBackground(parsed.background || '')
     } else {

@@ -33,12 +33,26 @@
 }
 
 .footer-bottom {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url("public/images/j5Z6XLapCTjQdGxPBh7pT456CXzbZfHXcHoUGhGWyBAZL1v1kv14f0imu77rKPzji3QXj63P_knQnb0vlVq4v7yP.jpg");
     background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.footer-bottom::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 35, 60, 0.65);
+    z-index: 0;
+}
+
+.footer-bottom > * {
+    position: relative;
+    z-index: 1;
 }
 
 .footer-bottom-container {

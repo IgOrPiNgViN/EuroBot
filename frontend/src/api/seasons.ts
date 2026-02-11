@@ -1,5 +1,5 @@
 import apiClient from './client'
-import { Season, Competition, RegistrationField } from '../types'
+import { Season, Competition } from '../types'
 
 export interface SeasonCreateData {
   year: number

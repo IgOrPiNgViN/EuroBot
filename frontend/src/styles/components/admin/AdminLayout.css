@@ -80,6 +80,22 @@
     gap: 0.25rem;
     overflow-y: auto;
     flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.admin-layout-mobile-nav::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+}
+
+.admin-layout-mobile-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-layout-mobile-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
 }
 
 /* Добавлен стиль для мобильного футера */
@@ -147,6 +163,27 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.admin-layout-desktop-nav::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+}
+
+.admin-layout-desktop-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-layout-desktop-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.admin-layout-desktop-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .admin-layout-desktop-footer {

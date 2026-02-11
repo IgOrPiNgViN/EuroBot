@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     # Database
-    DATABASE_URL: str = "mysql+aiomysql://root:igor1412@localhost:3306/eurobot"
+    DATABASE_URL: str = "mysql+aiomysql://root:igor1412@localhost:3306/eurobot?charset=utf8mb4"
     
     # JWT
     SECRET_KEY: str = "your-super-secret-key-change-in-production"

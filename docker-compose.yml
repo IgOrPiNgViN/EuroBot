@@ -1,53 +1,34 @@
-version: '3.8'
-
 services:
   # ===========================================
-  # ВАРИАНТ 1: PostgreSQL (по умолчанию)
+  # MySQL Database
   # ===========================================
   db:
-    image: postgres:16-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: eurobot
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-eurobot}
-      POSTGRES_DB: eurobot
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U eurobot"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    profiles:
-      - postgres
-
-  # ===========================================
-  # ВАРИАНТ 2: MySQL
-  # ===========================================
-  db-mysql:
     image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "3307:3306"  # 3307 снаружи, чтобы не конфликтовать с локальным MySQL
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-eurobot}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-igor1412}
       MYSQL_DATABASE: eurobot
-      MYSQL_USER: eurobot
-      MYSQL_PASSWORD: ${DB_PASSWORD:-eurobot}
+      MYSQL_USER: eurobot_user
+      MYSQL_PASSWORD: ${DB_PASSWORD:-igor1412}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./backend/backups:/backups
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+      --max-allowed-packet=64M
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
-    profiles:
-      - mysql
 
   # ===========================================
-  # Backend
+  # Backend (FastAPI)
   # ===========================================
   backend:
     build:
@@ -56,57 +37,61 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # База данных (выберите одну)
-      # Для PostgreSQL:
-      # DATABASE_URL: postgresql+asyncpg://eurobot:${DB_PASSWORD:-eurobot}@db:5432/eurobot
-      # Для MySQL:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://eurobot:eurobot@db:5432/eurobot}
-      
+      # В Docker контейнере хост БД = "db" (имя сервиса), не localhost
+      DATABASE_URL: mysql+aiomysql://root:${DB_ROOT_PASSWORD:-igor1412}@db:3306/eurobot
+
       # JWT
-      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
-      
+      SECRET_KEY: ${SECRET_KEY:-your-super-secret-key-change-in-production}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+
       # Админ
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@eurobot.ru}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-eurobotrussia@yandex.ru}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
-      
-      # CORS
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
-      
-      # Yandex SmartCaptcha (опционально)
+
+      # Email (Yandex)
+      SMTP_HOST: smtp.yandex.ru
+      SMTP_PORT: 465
+      SMTP_USER: ${SMTP_USER:-eurobotrussia@yandex.ru}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      FROM_EMAIL: eurobotrussia@yandex.ru
+
+      # Yandex SmartCaptcha
       SMARTCAPTCHA_SERVER_KEY: ${SMARTCAPTCHA_SERVER_KEY:-}
       SMARTCAPTCHA_CLIENT_KEY: ${SMARTCAPTCHA_CLIENT_KEY:-}
-      
-      # Email (опционально)
-      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      FROM_EMAIL: ${FROM_EMAIL:-noreply@eurobot.ru}
+
+      # Файлы
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: 10485760
+
+      # CORS — укажи свой домен при деплое
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     volumes:
-      - ./backend/uploads:/app/uploads
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
 
   # ===========================================
-  # Frontend
+  # Frontend (React + Nginx)
   # ===========================================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        VITE_YANDEX_MAPS_API_KEY: ${VITE_YANDEX_MAPS_API_KEY:-}
     ports:
-      - "5173:80"
+      - "80:80"
     depends_on:
       - backend
     restart: unless-stopped
 
 volumes:
-  postgres_data:
   mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
 
 networks:
   default:

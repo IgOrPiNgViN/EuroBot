@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Header from './Header'
 import Footer from './Footer'
 import PartnersSection from './PartnersSection'
+import LoginModal from './LoginModal'
 import { useAuthStore } from '../store/authStore'
 import { useSettingsStore } from '../store/settingsStore'
 
@@ -27,6 +28,7 @@ export default function Layout() {
 
       <PartnersSection />
       <Footer />
+      <LoginModal />
     </div>
   )
 }

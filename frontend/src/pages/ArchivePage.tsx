@@ -3,15 +3,19 @@ import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PlayIcon, PhotoIcon, DocumentIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { archiveApi } from '../api/archive'
-import {ArchiveSeason, ArchiveMedia, ArchiveSeasonDescriptionData} from '../types'
+import {ArchiveSeason, ArchiveSeasonDescriptionData} from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+
+interface ProcessedArchiveSeason extends ArchiveSeason {
+  parsedDescription: ArchiveSeasonDescriptionData
+}
 import ReactPlayer from 'react-player'
 import '../styles/pages/ArchivePage.css'
 
 export default function ArchivePage() {
-  const [seasons, setSeasons] = useState<ArchiveSeason[]>([])
-  const [selectedSeason, setSelectedSeason] = useState<ArchiveSeason | null>(null)
-  const [selectedMedia, setSelectedMedia] = useState<ArchiveMedia | null>(null)
+  const [seasons, setSeasons] = useState<ProcessedArchiveSeason[]>([])
+  const [selectedSeason, setSelectedSeason] = useState<ProcessedArchiveSeason | null>(null)
+  const [selectedMedia, setSelectedMedia] = useState<ArchiveSeason['media'][number] | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -36,17 +40,6 @@ export default function ArchivePage() {
 
     fetchSeasons()
   }, [])
-
-  function encodeDescriptionData(data: ArchiveSeasonDescriptionData): string {
-    const { mainDescription = '', ...extraData } = data;
-
-    if (Object.keys(extraData).length > 0) {
-      const encodedData = JSON.stringify(extraData);
-      return `{MAIN}${mainDescription}{JSON}${encodedData}`;
-    }
-
-    return mainDescription;
-  }
 
   function decodeDescriptionData(description: string): ArchiveSeasonDescriptionData {
     if (!description) {
@@ -74,7 +67,7 @@ export default function ArchivePage() {
   }
 
   // Функция для получения логотипа и названия из описания
-  const getSeasonLogoAndTitle = (season: ArchiveSeason) => {
+  const getSeasonLogoAndTitle = (season: ProcessedArchiveSeason) => {
     if (!season.parsedDescription) {
       return { logoUrl: '', titleImageUrl: '' };
     }

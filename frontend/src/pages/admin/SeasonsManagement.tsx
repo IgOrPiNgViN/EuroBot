@@ -4,7 +4,6 @@ import toast from 'react-hot-toast'
 import { PlusIcon, PencilIcon, TrashIcon, StarIcon, ArchiveBoxIcon, XMarkIcon, DocumentIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
 import { seasonsApi, SeasonCreateData, FinalizeSeasonData } from '../../api/seasons'
 import { Season } from '../../types'
-import { format } from 'date-fns'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
@@ -278,13 +277,13 @@ export default function SeasonsManagement() {
     setSaving(true)
     try {
       // 1. Сохраняем оригинальный format (если есть)
-      let originalFormatData = {}
+      let originalFormatData: Record<string, unknown> = {}
       if (editingSeason && editingSeason.format) {
         try {
           originalFormatData = JSON.parse(editingSeason.format)
 
           // Удаляем наши кастомные поля из оригинала, чтобы избежать дублирования
-          const { logo_url, title_url, icon_url, tasks, documents, ...rest } = originalFormatData
+          const { logo_url: _l, title_url: _t, icon_url: _i, tasks: _tk, documents: _d, ...rest } = originalFormatData
           originalFormatData = rest
         } catch (error) {
           console.error('Error parsing original format:', error)

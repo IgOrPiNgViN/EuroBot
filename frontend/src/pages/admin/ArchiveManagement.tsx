@@ -5,12 +5,11 @@ import {
   PlusIcon,
   PencilIcon,
   TrashIcon,
-  PhotoIcon,
   PlayIcon,
   DocumentIcon
 } from '@heroicons/react/24/outline'
 import { archiveApi, ArchiveSeasonCreateData, ArchiveMediaCreateData } from '../../api/archive'
-import { ArchiveSeason, ArchiveMedia, MediaType, ArchiveSeasonDescriptionData } from '../../types'
+import { ArchiveSeason, MediaType, ArchiveSeasonDescriptionData } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'

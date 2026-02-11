@@ -12,7 +12,7 @@ class Season(Base):
     id = Column(Integer, primary_key=True, index=True)
     year = Column(Integer, unique=True, nullable=False)
     name = Column(String(255), nullable=False)  # e.g., "EUROBOT 2025"
-    theme = Column(String(255), nullable=True)  # Тема сезона
+    theme = Column(Text, nullable=True)  # Тема сезона
     
     # Registration
     registration_open = Column(Boolean, default=False)

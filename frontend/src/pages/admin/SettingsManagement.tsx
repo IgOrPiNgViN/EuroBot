@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { settingsApi } from '../../api/settings'
+import apiClient from '../../api/client'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
-import { PlusIcon, TrashIcon, XMarkIcon, UserIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon, XMarkIcon, UserIcon, UserGroupIcon, PhotoIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import '../../styles/pages/admin/SettingsManagement.css'
 
 interface SettingItem {
@@ -35,7 +36,10 @@ const settingLabels: Record<string, string> = {
   site_title: 'Название сайта',
   site_description: 'Описание сайта',
   site_keywords: 'Ключевые слова (SEO)',
-  about_history: 'История (О нас)',
+  about_hero_title: 'Заголовок Hero-секции (О нас)',
+  about_hero_subtitle: 'Подзаголовок Hero-секции (О нас)',
+  about_history: 'Текст «Евробот в мире»',
+  about_russia: 'Текст «Евробот в России»',
   about_goals: 'Комитеты и организаторы',
   about_organizers: 'Организаторы',
   about_team: 'Команда',
@@ -76,13 +80,88 @@ export default function SettingsManagement() {
       members: [{ id: 1, name: '', position: '', photo_url: '' }]
     }
   ])
-  const [showCommitteeModal, setShowCommitteeModal] = useState(false)
-  const [editingCommittee, setEditingCommittee] = useState<Committee | null>(null)
+  // Состояние для фоновых изображений
+  interface BgImageConfig {
+    key: string
+    label: string
+    description: string
+  }
+
+  const defaultBgImages: Record<string, string> = {}
+
+  const bgImageConfigs: BgImageConfig[] = [
+    { key: 'bg_hero', label: 'Главная страница (hero)', description: 'Фон верхней секции на главной странице' },
+    { key: 'bg_competitions_docs', label: 'Соревнования (документы)', description: 'Фон секции документов на странице соревнований' },
+    { key: 'bg_footer', label: 'Футер', description: 'Фон нижней части сайта' },
+  ]
+
+  const [bgImages, setBgImages] = useState<Record<string, string>>({})
+  const [bgUploading, setBgUploading] = useState<string | null>(null)
+
+  const handleBgImageUpload = async (key: string, file: File) => {
+    setBgUploading(key)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const uploadResponse = await apiClient.post('/upload/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      const imageUrl = uploadResponse.data.url
+      await settingsApi.update(key, imageUrl)
+      setBgImages(prev => ({ ...prev, [key]: imageUrl }))
+      toast.success('Фоновое изображение обновлено')
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error('Ошибка загрузки изображения')
+    } finally {
+      setBgUploading(null)
+    }
+  }
+
+  const handleBgImageUrlSave = async (key: string, url: string) => {
+    setBgUploading(key)
+    try {
+      await settingsApi.update(key, url)
+      setBgImages(prev => ({ ...prev, [key]: url }))
+      toast.success('Фоновое изображение обновлено')
+    } catch (error) {
+      toast.error('Ошибка сохранения')
+    } finally {
+      setBgUploading(null)
+    }
+  }
+
+  const handleBgImageRemove = async (key: string) => {
+    setBgUploading(key)
+    try {
+      await settingsApi.update(key, '')
+      setBgImages(prev => {
+        const updated = { ...prev }
+        delete updated[key]
+        return updated
+      })
+      toast.success('Фоновое изображение удалено')
+    } catch (error) {
+      toast.error('Ошибка удаления')
+    } finally {
+      setBgUploading(null)
+    }
+  }
 
   const fetchSettings = async () => {
     try {
       const data = await settingsApi.getAll()
       setSettings(data as unknown as SettingItem[])
+
+      // Load background image settings
+      const bgKeys = bgImageConfigs.map(c => c.key)
+      const bgData: Record<string, string> = {}
+      data.forEach((s: any) => {
+        if (bgKeys.includes(s.key) && s.value) {
+          bgData[s.key] = s.value
+        }
+      })
+      setBgImages(bgData)
 
       // Initialize edited values
       const values: Record<string, string> = {}
@@ -253,26 +332,41 @@ export default function SettingsManagement() {
     )
   }
 
-  useEffect(() => {
-    console.log('Current committees:', committees)
-  }, [committees])
-
   if (loading) {
     return <LoadingSpinner />
   }
 
+  // Функции для сохранения полей "О нас"
+  const handleSaveAboutField = async (key: string) => {
+    setSaving(key)
+    try {
+      await settingsApi.update(key, editedValues[key] || '')
+      toast.success('Сохранено')
+    } catch (error) {
+      toast.error('Ошибка сохранения')
+    } finally {
+      setSaving(null)
+    }
+  }
+
   // Group settings by category
   const aboutSettings = settings.filter(s =>
-      s.key.startsWith('about_') && s.key !== 'about_goals' ||
+      s.key.startsWith('about_') &&
+      s.key !== 'about_goals' &&
+      s.key !== 'about_hero_title' &&
+      s.key !== 'about_hero_subtitle' &&
+      s.key !== 'about_history' &&
+      s.key !== 'about_russia' ||
       s.key === 'show_advantages'
   )
 
-  const contactSettings = settings.filter(s => s.key.startsWith('contact_'))
   const seoSettings = settings.filter(s => s.key.startsWith('site_'))
+  const bgKeys = bgImageConfigs.map(c => c.key)
   const otherSettings = settings.filter(s =>
       !s.key.startsWith('about_') &&
       !s.key.startsWith('contact_') &&
       !s.key.startsWith('site_') &&
+      !bgKeys.includes(s.key) &&
       s.key !== 'show_advantages'
   )
 
@@ -330,6 +424,194 @@ export default function SettingsManagement() {
         </h1>
 
         {renderSettingGroup('SEO и общие настройки', seoSettings)}
+
+        {/* Фоновые изображения */}
+        <div className="settings-management-group">
+          <h2 className="settings-management-group-title">Фоновые изображения</h2>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>
+            Управляйте фоновыми изображениями на всех страницах сайта. Загрузите файл или укажите URL.
+          </p>
+          <div className="bg-images-grid">
+            {bgImageConfigs.map((config) => (
+                <div key={config.key} className="bg-image-card">
+                  <div className="bg-image-card-title">{config.label}</div>
+                  <div className="bg-image-card-description">{config.description}</div>
+
+                  <div className="bg-image-preview-container">
+                    {(bgImages[config.key] || defaultBgImages[config.key]) ? (
+                        <>
+                          <img
+                              src={bgImages[config.key] || defaultBgImages[config.key]}
+                              alt={config.label}
+                              className="bg-image-preview"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                          />
+                          {!bgImages[config.key] && defaultBgImages[config.key] && (
+                              <span className="bg-image-default-label">По умолчанию</span>
+                          )}
+                        </>
+                    ) : (
+                        <div className="bg-image-placeholder">
+                          <PhotoIcon style={{ width: '2rem', height: '2rem' }} />
+                          <span>Не задано</span>
+                        </div>
+                    )}
+                  </div>
+
+                  <div className="bg-image-url-row">
+                    <Input
+                        placeholder="URL изображения или загрузите файл"
+                        value={bgImages[config.key] || ''}
+                        onChange={(e) => setBgImages(prev => ({ ...prev, [config.key]: e.target.value }))}
+                        className="bg-image-url-input"
+                    />
+                    <Button
+                        size="sm"
+                        onClick={() => handleBgImageUrlSave(config.key, bgImages[config.key] || '')}
+                        isLoading={bgUploading === config.key}
+                    >
+                      OK
+                    </Button>
+                  </div>
+
+                  <div className="bg-image-actions">
+                    <label className="bg-image-upload-label">
+                      <ArrowUpTrayIcon style={{ width: '1rem', height: '1rem' }} />
+                      Загрузить файл
+                      <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          className="bg-image-upload-input"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              handleBgImageUpload(config.key, file)
+                              e.target.value = ''
+                            }
+                          }}
+                      />
+                    </label>
+                    {bgImages[config.key] && (
+                        <button
+                            className="bg-image-remove-btn"
+                            onClick={() => handleBgImageRemove(config.key)}
+                            disabled={bgUploading === config.key}
+                        >
+                          <TrashIcon style={{ width: '1rem', height: '1rem' }} />
+                          Удалить
+                        </button>
+                    )}
+                  </div>
+                </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Страница "О нас" — текстовые секции */}
+        <div className="settings-management-group">
+          <h2 className="settings-management-group-title">Страница «О нас»</h2>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+            Управляйте содержимым страницы «О соревнованиях EUROBOT». Все поля поддерживают HTML-разметку для текстовых секций.
+          </p>
+
+          {/* Hero заголовок */}
+          <div className="settings-management-setting" style={{ marginBottom: '1.5rem' }}>
+            <div className="settings-management-setting-header">
+              <div>
+                <label className="settings-management-setting-label">Заголовок Hero-секции</label>
+                <p className="settings-management-setting-description">Главный заголовок на странице «О нас». По умолчанию: «О соревнованиях EUROBOT»</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => handleSaveAboutField('about_hero_title')}
+                isLoading={saving === 'about_hero_title'}
+              >
+                Сохранить
+              </Button>
+            </div>
+            <Input
+              value={editedValues['about_hero_title'] || ''}
+              onChange={(e) => setEditedValues({ ...editedValues, about_hero_title: e.target.value })}
+              placeholder="О соревнованиях EUROBOT"
+            />
+          </div>
+
+          {/* Hero подзаголовок */}
+          <div className="settings-management-setting" style={{ marginBottom: '1.5rem' }}>
+            <div className="settings-management-setting-header">
+              <div>
+                <label className="settings-management-setting-label">Подзаголовок Hero-секции</label>
+                <p className="settings-management-setting-description">Подзаголовок под основным заголовком.</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => handleSaveAboutField('about_hero_subtitle')}
+                isLoading={saving === 'about_hero_subtitle'}
+              >
+                Сохранить
+              </Button>
+            </div>
+            <Textarea
+              value={editedValues['about_hero_subtitle'] || ''}
+              onChange={(e) => setEditedValues({ ...editedValues, about_hero_subtitle: e.target.value })}
+              placeholder="Международные молодёжные робототехнические соревнования..."
+              rows={2}
+            />
+          </div>
+
+          {/* Евробот в мире */}
+          <div className="settings-management-setting" style={{ marginBottom: '1.5rem' }}>
+            <div className="settings-management-setting-header">
+              <div>
+                <label className="settings-management-setting-label">Текст «Евробот в мире»</label>
+                <p className="settings-management-setting-description">
+                  HTML-текст секции «ЕВРОБОТ В МИРЕ». Используйте {'<p>'} для абзацев, {'<a>'} для ссылок.
+                  Если оставить пустым — отображается текст по умолчанию.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => handleSaveAboutField('about_history')}
+                isLoading={saving === 'about_history'}
+              >
+                Сохранить
+              </Button>
+            </div>
+            <Textarea
+              value={editedValues['about_history'] || ''}
+              onChange={(e) => setEditedValues({ ...editedValues, about_history: e.target.value })}
+              placeholder="<p>Международные молодежные робототехнические соревнования EUROBOT...</p>"
+              rows={10}
+            />
+          </div>
+
+          {/* Евробот в России */}
+          <div className="settings-management-setting" style={{ marginBottom: '1.5rem' }}>
+            <div className="settings-management-setting-header">
+              <div>
+                <label className="settings-management-setting-label">Текст «Евробот в России»</label>
+                <p className="settings-management-setting-description">
+                  HTML-текст секции «ЕВРОБОТ В РОССИИ». Если оставить пустым — отображается текст по умолчанию.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => handleSaveAboutField('about_russia')}
+                isLoading={saving === 'about_russia'}
+              >
+                Сохранить
+              </Button>
+            </div>
+            <Textarea
+              value={editedValues['about_russia'] || ''}
+              onChange={(e) => setEditedValues({ ...editedValues, about_russia: e.target.value })}
+              placeholder="<p>Российский этап EUROBOT проводится с 2006 года...</p>"
+              rows={10}
+            />
+          </div>
+        </div>
 
         {/* Комитеты и организаторы */}
         <div className="settings-management-group">

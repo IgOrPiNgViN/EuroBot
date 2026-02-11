@@ -14,7 +14,6 @@ import {
 } from '@heroicons/react/24/outline'
 import apiClient from '../../api/client'
 import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
 import '../../styles/pages/admin/DatabaseManagement.css'
 
 // Категории данных с понятными названиями
@@ -312,7 +311,7 @@ export default function DatabaseManagement() {
                         <div className="database-management-item-additional">
                           {selectedCategory.displayColumns.slice(2).map((col) => (
                               <span key={col} className="database-management-item-additional-field">
-                        {selectedCategory.columnLabels[col]}: {formatValue(item[col], col)}
+                        {(selectedCategory.columnLabels as unknown as Record<string, string>)[col]}: {formatValue(item[col], col)}
                       </span>
                           ))}
                         </div>

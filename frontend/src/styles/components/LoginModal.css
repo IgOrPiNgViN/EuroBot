@@ -1,0 +1,107 @@
+/* Login Modal */
+.login-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.login-modal {
+    position: relative;
+    background: white;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.login-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+}
+
+.login-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.login-modal-close-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.login-modal-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-modal-logo {
+    width: 60px;
+    height: auto;
+    margin: 0 auto 1rem;
+    display: block;
+}
+
+.login-modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'FunnyFont', sans-serif;
+    color: #0f3d63;
+    margin-bottom: 0.35rem;
+}
+
+.login-modal-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.login-modal-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.login-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-modal-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+    .login-modal {
+        padding: 1.5rem;
+        margin: 0.5rem;
+    }
+
+    .login-modal-title {
+        font-size: 1.25rem;
+    }
+
+    .login-modal-logo {
+        width: 48px;
+    }
+}

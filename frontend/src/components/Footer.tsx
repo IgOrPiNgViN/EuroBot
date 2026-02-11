@@ -1,16 +1,16 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useSettingsStore } from '../store/settingsStore'
-import {
-  EnvelopeIcon,
-  PhoneIcon,
-  MapPinIcon
-} from '@heroicons/react/24/outline'
+import { useAuthStore } from '../store/authStore'
+import { useLoginModalStore } from '../store/loginModalStore'
 import '../styles/components/Footer.css'
 
 export default function Footer() {
   const { settings } = useSettingsStore()
+  const { isAuthenticated, isAdmin } = useAuthStore()
+  const openLoginModal = useLoginModalStore((s) => s.open)
+  const navigate = useNavigate()
 
-  const contactEmails = settings.contact_emails as Record<string, string> | undefined
+  const footerBg = (settings.bg_footer as string) || ''
 
   return (
       <footer className="footer">
@@ -27,7 +27,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="footer-bottom">
+          <div className="footer-bottom" style={footerBg ? { backgroundImage: `url(${footerBg})` } : undefined}>
             <div className="footer-bottom-container">
               <div className="footer-bottom-title">
                 EUROBOT RUSSIA
@@ -54,12 +54,18 @@ export default function Footer() {
 
           <div className="footer-admin">
             <div className="footer-admin-container">
-              <Link
-                  to="/admin"
+              <button
                   className="admin-panel-button"
+                  onClick={() => {
+                    if (isAuthenticated && isAdmin) {
+                      navigate('/admin')
+                    } else {
+                      openLoginModal('/admin')
+                    }
+                  }}
               >
                 Админ-панель
-              </Link>
+              </button>
             </div>
           </div>
         </div>

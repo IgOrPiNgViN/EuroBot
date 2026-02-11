@@ -27,21 +27,36 @@ from app.routers import (
 
 
 async def run_migrations():
-    """Run database migrations for new columns."""
+    """Run database migrations for new columns (MySQL)."""
     from sqlalchemy import text
     from app.database import async_session_maker
     
     async with async_session_maker() as session:
         try:
+            # Helper: check if column exists before adding (MySQL compatible)
+            async def add_column_if_not_exists(table: str, column: str, col_type: str):
+                check = text(
+                    "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                    "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table AND COLUMN_NAME = :column"
+                )
+                result = await session.execute(check, {"table": table, "column": column})
+                count = result.scalar()
+                if count == 0:
+                    await session.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"))
+                    logger.info(f"Added column {table}.{column}")
+
             # Add missing columns to mass_mailing_campaigns
-            migrations = [
-                "ALTER TABLE mass_mailing_campaigns ADD COLUMN IF NOT EXISTS custom_emails TEXT",
-                "ALTER TABLE mass_mailing_campaigns ADD COLUMN IF NOT EXISTS recipients_limit INTEGER",
-                "ALTER TABLE mass_mailing_campaigns ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMP WITH TIME ZONE",
-                "ALTER TABLE mass_mailing_campaigns ADD COLUMN IF NOT EXISTS is_scheduled BOOLEAN DEFAULT FALSE",
-            ]
+            await add_column_if_not_exists("mass_mailing_campaigns", "custom_emails", "TEXT")
+            await add_column_if_not_exists("mass_mailing_campaigns", "recipients_limit", "INTEGER")
+            await add_column_if_not_exists("mass_mailing_campaigns", "scheduled_at", "DATETIME")
+            await add_column_if_not_exists("mass_mailing_campaigns", "is_scheduled", "BOOLEAN DEFAULT FALSE")
             
-            for migration in migrations:
+            # Expand theme columns from VARCHAR(255) to TEXT
+            modify_migrations = [
+                "ALTER TABLE seasons MODIFY COLUMN theme TEXT",
+                "ALTER TABLE archive_seasons MODIFY COLUMN theme TEXT",
+            ]
+            for migration in modify_migrations:
                 try:
                     await session.execute(text(migration))
                 except Exception as e:

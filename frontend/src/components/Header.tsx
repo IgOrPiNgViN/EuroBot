@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAuthStore } from '../store/authStore'
+import { useLoginModalStore } from '../store/loginModalStore'
 import '../styles/components/Header.css'
 
 const navigation = [
@@ -17,6 +18,7 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isAuthenticated, isAdmin, logout } = useAuthStore()
+  const openLoginModal = useLoginModalStore((s) => s.open)
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -155,13 +157,15 @@ export default function Header() {
                           </button>
                         </>
                     ) : (
-                        <Link
-                            to="/login"
-                            onClick={() => setMobileMenuOpen(false)}
+                        <button
+                            onClick={() => {
+                              setMobileMenuOpen(false)
+                              openLoginModal('/admin')
+                            }}
                             className="header-mobile-login"
                         >
                           Войти
-                        </Link>
+                        </button>
                     )}
                   </div>
                 </div>
