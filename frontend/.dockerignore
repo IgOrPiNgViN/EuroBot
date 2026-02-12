@@ -4,3 +4,6 @@ dist
 *.log
 .env
 .env.local
+*.ttf
+*.woff2
+public/fonts

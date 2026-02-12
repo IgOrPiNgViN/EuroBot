@@ -47,6 +47,7 @@ export interface News {
   is_published: boolean
   is_featured: boolean
   publish_date: string | null
+  scheduled_publish_at: string | null
   views_count: number
   author_id: number | null
   created_at: string

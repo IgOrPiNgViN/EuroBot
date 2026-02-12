@@ -5,6 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import os
+import asyncio
+from datetime import datetime
 from loguru import logger
 
 from app.config import settings
@@ -69,6 +71,37 @@ async def run_migrations():
             await session.rollback()
 
 
+async def scheduled_news_publisher():
+    """Background task that publishes scheduled news every 30 seconds."""
+    from sqlalchemy import select, update
+    from app.database import async_session_maker
+    from app.models.news import News
+    
+    while True:
+        try:
+            await asyncio.sleep(30)
+            async with async_session_maker() as session:
+                now = datetime.now()
+                query = select(News).where(
+                    News.is_published == False,
+                    News.scheduled_publish_at != None,
+                    News.scheduled_publish_at <= now
+                )
+                result = await session.execute(query)
+                scheduled_news = result.scalars().all()
+                
+                if scheduled_news:
+                    for news in scheduled_news:
+                        news.is_published = True
+                        news.publish_date = now
+                        logger.info(f"Auto-published scheduled news: {news.title}")
+                    await session.commit()
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Scheduled publisher error: {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
@@ -79,9 +112,18 @@ async def lifespan(app: FastAPI):
     await create_initial_data()
     logger.info("Database initialized")
     
+    # Start background task for scheduled news
+    publisher_task = asyncio.create_task(scheduled_news_publisher())
+    logger.info("Scheduled news publisher started (every 30s)")
+    
     yield
     
     # Shutdown
+    publisher_task.cancel()
+    try:
+        await publisher_task
+    except asyncio.CancelledError:
+        pass
     logger.info("Shutting down Eurobot API...")
     await engine.dispose()
 

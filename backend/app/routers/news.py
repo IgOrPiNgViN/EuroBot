@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.database import get_db
 from app.models.news import News, NewsCategory, NewsTag, NewsCategoryType
@@ -38,7 +38,7 @@ async def list_news(
         selectinload(News.tags)
     ).where(
         News.is_published == True,
-        or_(News.publish_date <= datetime.utcnow(), News.publish_date == None)
+        or_(News.publish_date <= datetime.now(), News.publish_date == None)
     )
     
     # Filters
@@ -92,7 +92,7 @@ async def get_featured_news(
     ).where(
         News.is_published == True,
         News.is_featured == True,
-        or_(News.publish_date <= datetime.utcnow(), News.publish_date == None)
+        or_(News.publish_date <= datetime.now(), News.publish_date == None)
     ).order_by(News.publish_date.desc()).limit(limit)
     
     result = await db.execute(query)
@@ -171,7 +171,7 @@ async def create_news(
     # Check if slug exists
     result = await db.execute(select(News).where(News.slug == slug))
     if result.scalar_one_or_none():
-        slug = f"{slug}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
+        slug = f"{slug}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
     
     # Get tags
     tags = []
@@ -185,9 +185,12 @@ async def create_news(
     scheduled_publish_at = news_data.scheduled_publish_at
     
     # If scheduled for future, don't publish yet
-    if scheduled_publish_at and scheduled_publish_at > datetime.utcnow():
-        is_published = False
-        publish_date = None  # Will be set when auto-published
+    if scheduled_publish_at:
+        now = datetime.now()
+        sched = scheduled_publish_at.replace(tzinfo=None) if scheduled_publish_at.tzinfo else scheduled_publish_at
+        if sched > now:
+            is_published = False
+            publish_date = None  # Will be set when auto-published
     
     # Create news
     news = News(
@@ -201,7 +204,7 @@ async def create_news(
         category_id=news_data.category_id,
         is_published=is_published,
         is_featured=news_data.is_featured,
-        publish_date=publish_date or (datetime.utcnow() if is_published else None),
+        publish_date=publish_date or (datetime.now() if is_published else None),
         scheduled_publish_at=scheduled_publish_at,
         meta_title=news_data.meta_title,
         meta_description=news_data.meta_description,
@@ -308,7 +311,7 @@ async def publish_scheduled_news(
     Publish all scheduled news that are due (admin only).
     This can be called manually or by a cron job.
     """
-    now = datetime.utcnow()
+    now = datetime.now()
     
     # Find all news scheduled for publishing before now
     query = select(News).where(

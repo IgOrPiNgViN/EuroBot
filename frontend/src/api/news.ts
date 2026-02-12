@@ -21,6 +21,7 @@ export interface NewsCreateData {
   is_published?: boolean
   is_featured?: boolean
   publish_date?: string
+  scheduled_publish_at?: string | null
   meta_title?: string
   meta_description?: string
   tag_ids?: number[]
