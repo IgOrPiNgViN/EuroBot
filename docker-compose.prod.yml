@@ -1,0 +1,125 @@
+# ============================================
+# EuroBot — Production Docker Compose
+# ============================================
+# Использование:
+#   docker-compose -f docker-compose.prod.yml up -d
+# ============================================
+
+services:
+  # ===========================================
+  # MySQL Database
+  # ===========================================
+  db:
+    image: mysql:8.0
+    # НЕ открываем порт наружу в проде!
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: eurobot
+      MYSQL_USER: eurobot_user
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/backups:/backups
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+      --max-allowed-packet=64M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ===========================================
+  # Backend (FastAPI)
+  # ===========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # НЕ открываем порт наружу — nginx проксирует внутри сети
+    expose:
+      - "8000"
+    environment:
+      DATABASE_URL: mysql+aiomysql://root:${DB_ROOT_PASSWORD}@db:3306/eurobot?charset=utf8mb4
+
+      # JWT — ОБЯЗАТЕЛЬНО сгенерируй уникальный ключ!
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+
+      # Админ
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
+      # Email (Yandex)
+      SMTP_HOST: smtp.yandex.ru
+      SMTP_PORT: 465
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      FROM_EMAIL: ${FROM_EMAIL:-eurobotrussia@yandex.ru}
+
+      # Yandex SmartCaptcha
+      SMARTCAPTCHA_SERVER_KEY: ${SMARTCAPTCHA_SERVER_KEY:-}
+      SMARTCAPTCHA_CLIENT_KEY: ${SMARTCAPTCHA_CLIENT_KEY:-}
+
+      # Файлы
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: 10485760
+
+      # CORS — оба домена через запятую
+      FRONTEND_URL: ${FRONTEND_URL:-https://eurobot-noc.ru}
+      FRONTEND_URL_2: ${FRONTEND_URL_2:-https://xn--90abi1bbjr.xn--p1ai}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ===========================================
+  # Frontend (Nginx + SSL)
+  # ===========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ===========================================
+  # Certbot (Let's Encrypt SSL)
+  # ===========================================
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    # Авто-обновление сертификатов каждые 12 часов
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done;'"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
+  certbot_conf:
+    driver: local
+  certbot_www:
+    driver: local
+
+networks:
+  default:
+    name: eurobot-network

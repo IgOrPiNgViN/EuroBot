@@ -137,9 +137,19 @@ app = FastAPI(
 )
 
 # CORS middleware
+cors_origins = [
+    settings.FRONTEND_URL,
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+# Поддержка второго домена (для продакшна с двумя доменами)
+frontend_url_2 = os.environ.get("FRONTEND_URL_2")
+if frontend_url_2:
+    cors_origins.append(frontend_url_2)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "http://localhost:3000"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
