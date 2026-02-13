@@ -67,6 +67,9 @@ services:
       SMARTCAPTCHA_SERVER_KEY: ${SMARTCAPTCHA_SERVER_KEY:-}
       SMARTCAPTCHA_CLIENT_KEY: ${SMARTCAPTCHA_CLIENT_KEY:-}
 
+      # Часовой пояс (для корректной работы отложенных публикаций)
+      TZ: Europe/Moscow
+
       # Файлы
       UPLOAD_DIR: /app/uploads
       MAX_FILE_SIZE: 10485760

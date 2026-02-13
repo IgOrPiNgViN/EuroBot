@@ -6,8 +6,11 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import os
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from loguru import logger
+
+# Московский часовой пояс (UTC+3) — для корректной работы отложенных публикаций
+MOSCOW_TZ = timezone(timedelta(hours=3))
 
 from app.config import settings
 from app.database import init_db, engine
@@ -81,7 +84,8 @@ async def scheduled_news_publisher():
         try:
             await asyncio.sleep(30)
             async with async_session_maker() as session:
-                now = datetime.now()
+                # Используем московское время (naive) — совпадает с тем, что отправляет фронтенд
+                now = datetime.now(MOSCOW_TZ).replace(tzinfo=None)
                 query = select(News).where(
                     News.is_published == False,
                     News.scheduled_publish_at != None,
@@ -94,8 +98,9 @@ async def scheduled_news_publisher():
                     for news in scheduled_news:
                         news.is_published = True
                         news.publish_date = now
-                        logger.info(f"Auto-published scheduled news: {news.title}")
+                        logger.info(f"Auto-published scheduled news: {news.title} (Moscow time: {now})")
                     await session.commit()
+                    logger.info(f"Published {len(scheduled_news)} scheduled news articles")
         except asyncio.CancelledError:
             break
         except Exception as e:
