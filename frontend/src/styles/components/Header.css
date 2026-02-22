@@ -127,6 +127,9 @@
     font-family: 'FunnyFont', sans-serif;
     font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.04em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     color: #0f3d63;
     cursor: pointer;
     transition: 0.25s;

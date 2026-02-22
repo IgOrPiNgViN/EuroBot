@@ -32,6 +32,10 @@ const isRutubeUrl = (url: string): boolean => {
   return url.includes('rutube.ru')
 }
 
+const isVkVideoUrl = (url: string): boolean => {
+  return url.includes('vk.com/video_ext.php') || url.includes('vk.com/video')
+}
+
 export default function NewsDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const [news, setNews] = useState<News | null>(null)
@@ -163,6 +167,15 @@ export default function NewsDetailPage() {
                     height="100%"
                     frameBorder="0"
                     allow="clipboard-write; autoplay"
+                    allowFullScreen
+                  />
+                ) : isVkVideoUrl(news.video_url) ? (
+                  <iframe
+                    src={news.video_url}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock"
                     allowFullScreen
                   />
                 ) : (

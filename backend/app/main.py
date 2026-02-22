@@ -27,7 +27,8 @@ from app.routers import (
     upload_router,
     admin_router,
     email_router,
-    database_router
+    database_router,
+    vk_integration_router
 )
 
 
@@ -121,12 +122,22 @@ async def lifespan(app: FastAPI):
     publisher_task = asyncio.create_task(scheduled_news_publisher())
     logger.info("Scheduled news publisher started (every 30s)")
     
+    # Start background task for VK integration
+    from app.routers.vk_integration import vk_fetch_task
+    vk_task = asyncio.create_task(vk_fetch_task())
+    logger.info("VK integration fetch task started (every 60s)")
+    
     yield
     
     # Shutdown
     publisher_task.cancel()
+    vk_task.cancel()
     try:
         await publisher_task
+    except asyncio.CancelledError:
+        pass
+    try:
+        await vk_task
     except asyncio.CancelledError:
         pass
     logger.info("Shutting down Eurobot API...")
@@ -179,6 +190,7 @@ app.include_router(upload_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
 app.include_router(email_router, prefix="/api")
 app.include_router(database_router, prefix="/api")
+app.include_router(vk_integration_router, prefix="/api")
 
 
 @app.get("/")

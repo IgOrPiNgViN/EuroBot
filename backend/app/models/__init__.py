@@ -9,6 +9,7 @@ from app.models.contact import ContactMessage
 from app.models.settings import SiteSettings
 from app.models.admin_log import AdminLog
 from app.models.email_log import EmailLog, MassMailingCampaign
+from app.models.vk_integration import VKIntegration, VKImportedPost
 
 __all__ = [
     "User",
@@ -20,7 +21,8 @@ __all__ = [
     "ContactMessage",
     "SiteSettings",
     "AdminLog",
-    "EmailLog", "MassMailingCampaign"
+    "EmailLog", "MassMailingCampaign",
+    "VKIntegration", "VKImportedPost"
 ]
 
 

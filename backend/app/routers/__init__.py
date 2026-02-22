@@ -12,6 +12,7 @@ from app.routers.upload import router as upload_router
 from app.routers.admin import router as admin_router
 from app.routers.email import router as email_router
 from app.routers.database import router as database_router
+from app.routers.vk_integration import router as vk_integration_router
 
 __all__ = [
     "auth_router",
@@ -26,7 +27,8 @@ __all__ = [
     "upload_router",
     "admin_router",
     "email_router",
-    "database_router"
+    "database_router",
+    "vk_integration_router"
 ]
 
 

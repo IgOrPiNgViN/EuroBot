@@ -18,7 +18,8 @@ import {
   CircleStackIcon,
   PaperAirplaneIcon,
   ClipboardDocumentListIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  ShareIcon
 } from '@heroicons/react/24/outline'
 import { useAuthStore } from '../../store/authStore'
 import '../../styles/components/admin/AdminLayout.css'
@@ -40,6 +41,7 @@ const navigation: NavItem[] = [
   { name: 'Поля регистрации', href: '/admin/registration-fields', icon: ClipboardDocumentListIcon },
   { name: 'Сообщения', href: '/admin/messages', icon: EnvelopeIcon },
   { name: 'Рассылки', href: '/admin/mailings', icon: PaperAirplaneIcon },
+  { name: 'VK Интеграция', href: '/admin/vk-integration', icon: ShareIcon },
   { name: 'Настройки', href: '/admin/settings', icon: Cog6ToothIcon },
   { name: 'Администраторы', href: '/admin/admins', icon: UsersIcon, superAdminOnly: true },
   { name: 'База данных', href: '/admin/database', icon: CircleStackIcon, superAdminOnly: true },
