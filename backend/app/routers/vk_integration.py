@@ -27,30 +27,33 @@ VK_API_VERSION = "5.199"
 class VKIntegrationCreate(BaseModel):
     group_id: str
     access_token: str
-    is_enabled: bool = False
+    mode: str = "off"
     default_category_id: Optional[int] = None
     auto_publish: bool = True
-    check_interval_minutes: int = 5
+    check_interval_minutes: int = 10
+    fetch_count: int = 20
     hashtag_category_map: Optional[Dict[str, int]] = None
 
 
 class VKIntegrationUpdate(BaseModel):
     group_id: Optional[str] = None
     access_token: Optional[str] = None
-    is_enabled: Optional[bool] = None
+    mode: Optional[str] = None
     default_category_id: Optional[int] = None
     auto_publish: Optional[bool] = None
     check_interval_minutes: Optional[int] = None
+    fetch_count: Optional[int] = None
     hashtag_category_map: Optional[Dict[str, int]] = None
 
 
 class VKIntegrationResponse(BaseModel):
     id: int
     group_id: str
-    is_enabled: bool
+    mode: str = "off"
     default_category_id: Optional[int] = None
     auto_publish: bool
     check_interval_minutes: int
+    fetch_count: int = 20
     hashtag_category_map: Optional[Dict[str, int]] = None
     last_checked_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
@@ -297,7 +300,7 @@ async def vk_fetch_task():
             await asyncio.sleep(60)
             async with async_session_maker() as session:
                 result = await session.execute(
-                    select(VKIntegration).where(VKIntegration.is_enabled == True)
+                    select(VKIntegration).where(VKIntegration.mode == "auto")
                 )
                 integrations = result.scalars().all()
 
@@ -311,7 +314,8 @@ async def vk_fetch_task():
                             continue
 
                     try:
-                        data = await fetch_vk_posts(integration.group_id, integration.access_token)
+                        count = integration.fetch_count or 20
+                        data = await fetch_vk_posts(integration.group_id, integration.access_token, count=count)
                         if "error" in data:
                             logger.error(f"VK API error for group {integration.group_id}: {data['error']}")
                             continue
@@ -358,29 +362,31 @@ async def get_vk_integration(
     if not integration:
         return None
 
-    count_result = await db.execute(
-        select(func.count(VKImportedPost.id)).where(
-            VKImportedPost.vk_integration_id == integration.id
-        )
-    )
-    imported_count = count_result.scalar() or 0
+    imported_count = await _get_imported_count(integration.id, db)
+    return await _build_response(integration, imported_count)
 
-    hashtag_map = None
+
+async def _parse_hashtag_map(integration: VKIntegration) -> Optional[Dict[str, int]]:
     if integration.hashtag_category_map:
         try:
-            hashtag_map = json.loads(integration.hashtag_category_map) if isinstance(
+            return json.loads(integration.hashtag_category_map) if isinstance(
                 integration.hashtag_category_map, str
             ) else integration.hashtag_category_map
         except (json.JSONDecodeError, TypeError):
-            hashtag_map = None
+            pass
+    return None
 
+
+async def _build_response(integration: VKIntegration, imported_count: int = 0) -> VKIntegrationResponse:
+    hashtag_map = await _parse_hashtag_map(integration)
     return VKIntegrationResponse(
         id=integration.id,
         group_id=integration.group_id,
-        is_enabled=integration.is_enabled,
+        mode=integration.mode or "off",
         default_category_id=integration.default_category_id,
         auto_publish=integration.auto_publish,
         check_interval_minutes=integration.check_interval_minutes,
+        fetch_count=integration.fetch_count or 20,
         hashtag_category_map=hashtag_map,
         last_checked_at=integration.last_checked_at,
         created_at=integration.created_at,
@@ -388,6 +394,15 @@ async def get_vk_integration(
         imported_count=imported_count,
         has_token=bool(integration.access_token),
     )
+
+
+async def _get_imported_count(integration_id: int, db: AsyncSession) -> int:
+    result = await db.execute(
+        select(func.count(VKImportedPost.id)).where(
+            VKImportedPost.vk_integration_id == integration_id
+        )
+    )
+    return result.scalar() or 0
 
 
 @router.post("", response_model=VKIntegrationResponse, status_code=status.HTTP_201_CREATED)
@@ -408,30 +423,17 @@ async def create_vk_integration(
     integration = VKIntegration(
         group_id=data.group_id,
         access_token=data.access_token,
-        is_enabled=data.is_enabled,
+        mode=data.mode,
         default_category_id=data.default_category_id,
         auto_publish=data.auto_publish,
         check_interval_minutes=data.check_interval_minutes,
+        fetch_count=data.fetch_count,
         hashtag_category_map=hashtag_json,
     )
     db.add(integration)
     await db.flush()
     await db.refresh(integration)
-
-    return VKIntegrationResponse(
-        id=integration.id,
-        group_id=integration.group_id,
-        is_enabled=integration.is_enabled,
-        default_category_id=integration.default_category_id,
-        auto_publish=integration.auto_publish,
-        check_interval_minutes=integration.check_interval_minutes,
-        hashtag_category_map=data.hashtag_category_map,
-        last_checked_at=None,
-        created_at=integration.created_at,
-        updated_at=None,
-        imported_count=0,
-        has_token=True,
-    )
+    return await _build_response(integration, 0)
 
 
 @router.put("", response_model=VKIntegrationResponse)
@@ -450,97 +452,48 @@ async def update_vk_integration(
         integration.group_id = data.group_id
     if data.access_token is not None:
         integration.access_token = data.access_token
-    if data.is_enabled is not None:
-        integration.is_enabled = data.is_enabled
     if data.default_category_id is not None:
         integration.default_category_id = data.default_category_id
+    if data.mode is not None and data.mode in ("off", "auto", "manual"):
+        integration.mode = data.mode
     if data.auto_publish is not None:
         integration.auto_publish = data.auto_publish
     if data.check_interval_minutes is not None:
         integration.check_interval_minutes = data.check_interval_minutes
+    if data.fetch_count is not None:
+        integration.fetch_count = max(1, min(100, data.fetch_count))
     if data.hashtag_category_map is not None:
         integration.hashtag_category_map = json.dumps(data.hashtag_category_map)
 
     await db.flush()
     await db.refresh(integration)
 
-    count_result = await db.execute(
-        select(func.count(VKImportedPost.id)).where(
-            VKImportedPost.vk_integration_id == integration.id
-        )
-    )
-    imported_count = count_result.scalar() or 0
-
-    hashtag_map = None
-    if integration.hashtag_category_map:
-        try:
-            hashtag_map = json.loads(integration.hashtag_category_map) if isinstance(
-                integration.hashtag_category_map, str
-            ) else integration.hashtag_category_map
-        except (json.JSONDecodeError, TypeError):
-            hashtag_map = None
-
-    return VKIntegrationResponse(
-        id=integration.id,
-        group_id=integration.group_id,
-        is_enabled=integration.is_enabled,
-        default_category_id=integration.default_category_id,
-        auto_publish=integration.auto_publish,
-        check_interval_minutes=integration.check_interval_minutes,
-        hashtag_category_map=hashtag_map,
-        last_checked_at=integration.last_checked_at,
-        created_at=integration.created_at,
-        updated_at=integration.updated_at,
-        imported_count=imported_count,
-        has_token=bool(integration.access_token),
-    )
+    imported_count = await _get_imported_count(integration.id, db)
+    return await _build_response(integration, imported_count)
 
 
-@router.patch("/toggle", response_model=VKIntegrationResponse)
-async def toggle_vk_integration(
+@router.patch("/mode/{new_mode}", response_model=VKIntegrationResponse)
+async def set_vk_mode(
+    new_mode: str,
     db: AsyncSession = Depends(get_db),
     _admin=Depends(get_current_admin)
 ):
-    """Toggle VK integration on/off."""
+    """Set VK integration mode: off, auto, manual."""
+    if new_mode not in ("off", "auto", "manual"):
+        raise HTTPException(status_code=400, detail="Mode must be: off, auto, manual")
+
     result = await db.execute(select(VKIntegration).limit(1))
     integration = result.scalar_one_or_none()
     if not integration:
         raise HTTPException(status_code=404, detail="VK integration not configured")
 
-    integration.is_enabled = not integration.is_enabled
+    integration.mode = new_mode
+    integration.is_enabled = new_mode != "off"
     await db.flush()
     await db.refresh(integration)
 
-    count_result = await db.execute(
-        select(func.count(VKImportedPost.id)).where(
-            VKImportedPost.vk_integration_id == integration.id
-        )
-    )
-    imported_count = count_result.scalar() or 0
-
-    hashtag_map = None
-    if integration.hashtag_category_map:
-        try:
-            hashtag_map = json.loads(integration.hashtag_category_map) if isinstance(
-                integration.hashtag_category_map, str
-            ) else integration.hashtag_category_map
-        except (json.JSONDecodeError, TypeError):
-            hashtag_map = None
-
-    return VKIntegrationResponse(
-        id=integration.id,
-        group_id=integration.group_id,
-        is_enabled=integration.is_enabled,
-        default_category_id=integration.default_category_id,
-        auto_publish=integration.auto_publish,
-        check_interval_minutes=integration.check_interval_minutes,
-        hashtag_category_map=hashtag_map,
-        last_checked_at=integration.last_checked_at,
-        created_at=integration.created_at,
-        updated_at=integration.updated_at,
-        imported_count=imported_count,
-        has_token=bool(integration.access_token),
-    )
+    imported_count = await _get_imported_count(integration.id, db)
+    return await _build_response(integration, imported_count)
 
 
 @router.post("/test", response_model=VKTestResult)
@@ -595,9 +548,12 @@ async def fetch_now(
     integration = result.scalar_one_or_none()
     if not integration:
         raise HTTPException(status_code=404, detail="VK integration not configured")
+    if integration.mode == "off":
+        raise HTTPException(status_code=400, detail="Интеграция выключена. Выберите режим Авто или Вручную.")
 
     try:
-        data = await fetch_vk_posts(integration.group_id, integration.access_token)
+        count = integration.fetch_count or 20
+        data = await fetch_vk_posts(integration.group_id, integration.access_token, count=count)
         if "error" in data:
             error_msg = data["error"].get("error_msg", "Unknown error")
             raise HTTPException(status_code=400, detail=f"VK API: {error_msg}")

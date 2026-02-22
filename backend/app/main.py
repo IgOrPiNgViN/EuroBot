@@ -57,6 +57,10 @@ async def run_migrations():
             await add_column_if_not_exists("mass_mailing_campaigns", "scheduled_at", "DATETIME")
             await add_column_if_not_exists("mass_mailing_campaigns", "is_scheduled", "BOOLEAN DEFAULT FALSE")
             
+            # VK integration: add mode and fetch_count columns
+            await add_column_if_not_exists("vk_integrations", "mode", "VARCHAR(20) DEFAULT 'off'")
+            await add_column_if_not_exists("vk_integrations", "fetch_count", "INTEGER DEFAULT 20")
+
             # Expand theme columns from VARCHAR(255) to TEXT
             modify_migrations = [
                 "ALTER TABLE seasons MODIFY COLUMN theme TEXT",

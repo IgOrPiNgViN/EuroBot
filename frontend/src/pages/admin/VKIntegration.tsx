@@ -14,13 +14,16 @@ import {
 } from '@heroicons/react/24/outline'
 import '../../styles/pages/admin/VKIntegration.css'
 
+type VKMode = 'off' | 'auto' | 'manual'
+
 interface VKIntegrationData {
   id: number
   group_id: string
-  is_enabled: boolean
+  mode: VKMode
   default_category_id: number | null
   auto_publish: boolean
   check_interval_minutes: number
+  fetch_count: number
   hashtag_category_map: Record<string, number> | null
   last_checked_at: string | null
   created_at: string | null
@@ -61,7 +64,8 @@ export default function VKIntegration() {
   const [accessToken, setAccessToken] = useState('')
   const [defaultCategoryId, setDefaultCategoryId] = useState<number | null>(null)
   const [autoPublish, setAutoPublish] = useState(true)
-  const [checkInterval, setCheckInterval] = useState(5)
+  const [checkInterval, setCheckInterval] = useState(10)
+  const [fetchCount, setFetchCount] = useState(20)
   const [hashtagMappings, setHashtagMappings] = useState<HashtagMapping[]>([])
 
   const loadData = useCallback(async () => {
@@ -79,6 +83,7 @@ export default function VKIntegration() {
         setDefaultCategoryId(data.default_category_id)
         setAutoPublish(data.auto_publish)
         setCheckInterval(data.check_interval_minutes)
+        setFetchCount(data.fetch_count || 20)
 
         if (data.hashtag_category_map) {
           const mappings = Object.entries(data.hashtag_category_map).map(
@@ -133,6 +138,7 @@ export default function VKIntegration() {
           default_category_id: defaultCategoryId,
           auto_publish: autoPublish,
           check_interval_minutes: checkInterval,
+          fetch_count: fetchCount,
           hashtag_category_map: hashtagMap,
         }
         if (accessToken.trim()) {
@@ -145,10 +151,11 @@ export default function VKIntegration() {
         const res = await apiClient.post('/vk-integration', {
           group_id: groupId,
           access_token: accessToken,
-          is_enabled: false,
+          mode: 'off',
           default_category_id: defaultCategoryId,
           auto_publish: autoPublish,
           check_interval_minutes: checkInterval,
+          fetch_count: fetchCount,
           hashtag_category_map: hashtagMap,
         })
         setIntegration(res.data)
@@ -162,11 +169,16 @@ export default function VKIntegration() {
     }
   }
 
-  const handleToggle = async () => {
+  const handleSetMode = async (mode: VKMode) => {
     try {
-      const res = await apiClient.patch('/vk-integration/toggle')
+      const res = await apiClient.patch(`/vk-integration/mode/${mode}`)
       setIntegration(res.data)
-      toast.success(res.data.is_enabled ? 'Интеграция включена' : 'Интеграция выключена')
+      const labels: Record<VKMode, string> = {
+        off: 'Интеграция выключена',
+        auto: 'Автоматический импорт включён',
+        manual: 'Ручной режим включён',
+      }
+      toast.success(labels[mode])
     } catch (err: any) {
       toast.error(err.response?.data?.detail || 'Ошибка переключения')
     }
@@ -218,7 +230,8 @@ export default function VKIntegration() {
       setAccessToken('')
       setDefaultCategoryId(null)
       setAutoPublish(true)
-      setCheckInterval(5)
+      setCheckInterval(10)
+      setFetchCount(20)
       setHashtagMappings([])
       setTestResult(null)
       toast.success('Интеграция удалена')
@@ -259,15 +272,24 @@ export default function VKIntegration() {
         <h1 className="vk-title">Интеграция с ВКонтакте</h1>
         {integration && (
           <div className="vk-header-actions">
-            <button
-              onClick={handleToggle}
-              className={`vk-toggle-btn ${integration.is_enabled ? 'vk-toggle-on' : 'vk-toggle-off'}`}
-            >
-              <span className="vk-toggle-dot" />
-              <span className="vk-toggle-label">
-                {integration.is_enabled ? 'Включено' : 'Выключено'}
-              </span>
-            </button>
+            <div className="vk-mode-switcher">
+              {(['off', 'auto', 'manual'] as VKMode[]).map((mode) => {
+                const labels: Record<VKMode, string> = {
+                  off: 'Выкл',
+                  auto: 'Авто',
+                  manual: 'Вручную',
+                }
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => handleSetMode(mode)}
+                    className={`vk-mode-btn ${integration.mode === mode ? `vk-mode-btn--active vk-mode-btn--${mode}` : ''}`}
+                  >
+                    {labels[mode]}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -277,9 +299,15 @@ export default function VKIntegration() {
         <div className="vk-card vk-status-card">
           <div className="vk-status-grid">
             <div className="vk-status-item">
-              <span className="vk-status-label">Статус</span>
-              <span className={`vk-status-badge ${integration.is_enabled ? 'vk-badge-active' : 'vk-badge-inactive'}`}>
-                {integration.is_enabled ? 'Активно' : 'Неактивно'}
+              <span className="vk-status-label">Режим</span>
+              <span className={`vk-status-badge ${
+                integration.mode === 'auto' ? 'vk-badge-auto' :
+                integration.mode === 'manual' ? 'vk-badge-manual' :
+                'vk-badge-inactive'
+              }`}>
+                {integration.mode === 'auto' ? 'Авто' :
+                 integration.mode === 'manual' ? 'Вручную' :
+                 'Выключено'}
               </span>
             </div>
             <div className="vk-status-item">
@@ -318,7 +346,7 @@ export default function VKIntegration() {
               onClick={handleFetchNow}
               isLoading={fetching}
               leftIcon={<PlayIcon className="w-4 h-4" />}
-              disabled={!integration.is_enabled}
+              disabled={integration.mode === 'off'}
             >
               Загрузить сейчас
             </Button>
@@ -397,16 +425,31 @@ export default function VKIntegration() {
             </div>
 
             <div className="vk-form-field">
-              <label className="vk-label">Интервал проверки (мин)</label>
+              <label className="vk-label">Кол-во постов для импорта</label>
+              <input
+                type="number"
+                className="vk-input-number"
+                value={fetchCount}
+                onChange={(e) => setFetchCount(Math.max(1, Math.min(100, Number(e.target.value) || 20)))}
+                min={1}
+                max={100}
+              />
+              <p className="vk-helper">Сколько последних постов загружать (1–100)</p>
+            </div>
+          </div>
+
+          <div className="vk-form-row">
+            <div className="vk-form-field">
+              <label className="vk-label">Интервал автопроверки (мин)</label>
               <input
                 type="number"
                 className="vk-input-number"
                 value={checkInterval}
-                onChange={(e) => setCheckInterval(Number(e.target.value) || 5)}
+                onChange={(e) => setCheckInterval(Number(e.target.value) || 10)}
                 min={1}
                 max={1440}
               />
-              <p className="vk-helper">Как часто проверять новые посты</p>
+              <p className="vk-helper">Работает только в режиме «Авто»</p>
             </div>
           </div>
 

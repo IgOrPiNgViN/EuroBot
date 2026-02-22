@@ -34,42 +34,63 @@
   gap: 0.75rem;
 }
 
-/* Toggle Button */
-.vk-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Mode Switcher (3-state) */
+.vk-mode-switcher {
+  display: inline-flex;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200, #e5e7eb);
+  background-color: var(--color-gray-100, #f3f4f6);
+}
+
+.vk-mode-btn {
   padding: 0.5rem 1rem;
-  border-radius: 9999px;
   border: none;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  background: transparent;
+  color: var(--color-gray-500, #6b7280);
   transition: all 0.2s;
+  position: relative;
 }
 
-.vk-toggle-on {
-  background-color: var(--color-green-100, #dcfce7);
-  color: var(--color-green-800, #166534);
+.vk-mode-btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: var(--color-gray-300, #d1d5db);
 }
 
-.vk-toggle-off {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-600);
+.vk-mode-btn--active::after,
+.vk-mode-btn--active + .vk-mode-btn::after {
+  display: none;
 }
 
-.vk-toggle-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
+.vk-mode-btn:hover:not(.vk-mode-btn--active) {
+  background-color: var(--color-gray-200, #e5e7eb);
+  color: var(--color-gray-700, #374151);
 }
 
-.vk-toggle-on .vk-toggle-dot {
-  background-color: var(--color-green-500, #22c55e);
+.vk-mode-btn--active {
+  color: #fff;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.vk-toggle-off .vk-toggle-dot {
-  background-color: var(--color-gray-400);
+.vk-mode-btn--active.vk-mode-btn--off {
+  background-color: var(--color-gray-500, #6b7280);
+}
+
+.vk-mode-btn--active.vk-mode-btn--auto {
+  background-color: var(--color-green-600, #16a34a);
+}
+
+.vk-mode-btn--active.vk-mode-btn--manual {
+  background-color: var(--color-blue, #2563eb);
 }
 
 /* Cards */
@@ -138,9 +159,15 @@
   width: fit-content;
 }
 
-.vk-badge-active {
+.vk-badge-active,
+.vk-badge-auto {
   background-color: var(--color-green-100, #dcfce7);
   color: var(--color-green-800, #166534);
+}
+
+.vk-badge-manual {
+  background-color: #dbeafe;
+  color: #1e40af;
 }
 
 .vk-badge-inactive {
