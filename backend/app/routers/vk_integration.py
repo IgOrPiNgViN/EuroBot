@@ -258,7 +258,6 @@ async def import_vk_post(
         slug = f"vk-post-{post_id}"
     slug = await ensure_unique_slug(slug, db)
 
-    now = datetime.now(MOSCOW_TZ).replace(tzinfo=None)
     news = News(
         title=title,
         slug=slug,
@@ -270,7 +269,7 @@ async def import_vk_post(
         category_id=category_id,
         is_published=integration.auto_publish,
         is_featured=integration.auto_publish,
-        publish_date=now if integration.auto_publish else None,
+        publish_date=post_date if integration.auto_publish else None,
         created_at=post_date,
     )
     db.add(news)
