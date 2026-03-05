@@ -25,6 +25,7 @@
     display: flex;
     align-items: center;
     overflow: hidden;
+    background: #0a1e3d;
 }
 
 .home-hero-bg {
