@@ -8,11 +8,14 @@
     # Uploads → proxy
     RewriteRule ^uploads/(.*)$ proxy.php [L,QSA]
 
-    # SPA routing: if not a real file/dir → index.html
+    # SPA routing: if not a real file/dir → index.php (which serves index.html)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.html [L]
+    RewriteRule . /index.php [L]
 </IfModule>
+
+# Fallback for nginx (custom error page)
+ErrorDocument 404 /index.php
 
 # Gzip compression
 <IfModule mod_deflate.c>
