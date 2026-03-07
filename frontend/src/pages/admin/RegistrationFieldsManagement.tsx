@@ -12,6 +12,7 @@ import {
   EyeIcon
 } from '@heroicons/react/24/outline'
 import { seasonsApi } from '../../api/seasons'
+import { settingsApi } from '../../api/settings'
 import apiClient from '../../api/client'
 import { Season } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
@@ -106,9 +107,35 @@ export default function RegistrationFieldsManagement() {
   })
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(true)
+  const [formType, setFormType] = useState<'new' | 'old'>('new')
+  const [formTypeSaving, setFormTypeSaving] = useState(false)
+
+  const fetchFormType = async () => {
+    try {
+      const value = await settingsApi.get('registration_form_type')
+      if (value === 'old') setFormType('old')
+      else setFormType('new')
+    } catch {
+      setFormType('new')
+    }
+  }
+
+  const handleFormTypeToggle = async (type: 'new' | 'old') => {
+    setFormTypeSaving(true)
+    try {
+      await settingsApi.update('registration_form_type', type)
+      setFormType(type)
+      toast.success(type === 'old' ? 'Включена старая форма регистрации' : 'Включена новая форма регистрации')
+    } catch {
+      toast.error('Ошибка сохранения')
+    } finally {
+      setFormTypeSaving(false)
+    }
+  }
 
   useEffect(() => {
     fetchSeasons()
+    fetchFormType()
   }, [])
 
   useEffect(() => {
@@ -264,6 +291,49 @@ export default function RegistrationFieldsManagement() {
               Просмотр и настройка формы регистрации команд
             </p>
           </div>
+        </div>
+
+        {/* Form Type Toggle */}
+        <div className="registration-form-type-toggle">
+          <h3 className="registration-form-type-title">Тип формы регистрации</h3>
+          <p className="registration-form-type-description">
+            Выберите, какая форма регистрации будет отображаться на сайте
+          </p>
+          <div className="registration-form-type-options">
+            <button
+                className={`registration-form-type-option ${formType === 'new' ? 'registration-form-type-option-active' : ''}`}
+                onClick={() => handleFormTypeToggle('new')}
+                disabled={formTypeSaving}
+            >
+              <div className="registration-form-type-option-indicator">
+                <div className={`registration-form-type-option-dot ${formType === 'new' ? 'registration-form-type-option-dot-active' : ''}`} />
+              </div>
+              <div className="registration-form-type-option-content">
+                <span className="registration-form-type-option-label">Новая форма</span>
+                <span className="registration-form-type-option-desc">
+                  Форма регистрации на нашем сайте с кастомными полями
+                </span>
+              </div>
+            </button>
+            <button
+                className={`registration-form-type-option ${formType === 'old' ? 'registration-form-type-option-active' : ''}`}
+                onClick={() => handleFormTypeToggle('old')}
+                disabled={formTypeSaving}
+            >
+              <div className="registration-form-type-option-indicator">
+                <div className={`registration-form-type-option-dot ${formType === 'old' ? 'registration-form-type-option-dot-active' : ''}`} />
+              </div>
+              <div className="registration-form-type-option-content">
+                <span className="registration-form-type-option-label">Старая форма (eurobotrussia.ru)</span>
+                <span className="registration-form-type-option-desc">
+                  Перенаправление на форму старого сайта eurobotrussia.ru/eurobot2026#reg
+                </span>
+              </div>
+            </button>
+          </div>
+          {formTypeSaving && (
+              <p className="registration-form-type-saving">Сохранение...</p>
+          )}
         </div>
 
         {/* Current Form Preview */}

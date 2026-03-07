@@ -129,6 +129,120 @@
     margin-top: 0.25rem;
 }
 
+/* Form Type Toggle */
+.registration-form-type-toggle {
+    background-color: var(--fields-preview-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 var(--fields-preview-shadow);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.registration-form-type-title {
+    font-weight: 600;
+    color: var(--fields-title);
+    margin-bottom: 0.25rem;
+}
+
+.registration-form-type-description {
+    font-size: 0.875rem;
+    color: var(--fields-subtitle);
+    margin-bottom: 1rem;
+}
+
+.registration-form-type-options {
+    display: flex;
+    gap: 1rem;
+}
+
+.registration-form-type-option {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 2px solid var(--fields-border);
+    border-radius: 0.75rem;
+    background: var(--fields-bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.registration-form-type-option:hover {
+    border-color: var(--color-blue-300, #93c5fd);
+    background: var(--color-blue-50, #eff6ff);
+}
+
+.registration-form-type-option-active {
+    border-color: var(--color-blue, #2563eb);
+    background: var(--color-blue-50, #eff6ff);
+}
+
+.registration-form-type-option:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.registration-form-type-option-indicator {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border: 2px solid var(--fields-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.registration-form-type-option-active .registration-form-type-option-indicator {
+    border-color: var(--color-blue, #2563eb);
+}
+
+.registration-form-type-option-dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.2s;
+}
+
+.registration-form-type-option-dot-active {
+    background: var(--color-blue, #2563eb);
+}
+
+.registration-form-type-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.registration-form-type-option-label {
+    font-weight: 600;
+    color: var(--fields-title);
+    font-size: 0.9375rem;
+}
+
+.registration-form-type-option-desc {
+    font-size: 0.8125rem;
+    color: var(--fields-subtitle);
+    line-height: 1.4;
+}
+
+.registration-form-type-saving {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-blue, #2563eb);
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .registration-form-type-options {
+        flex-direction: column;
+    }
+}
+
 /* Preview Container */
 .registration-fields-preview-container {
     background-color: var(--fields-preview-bg);

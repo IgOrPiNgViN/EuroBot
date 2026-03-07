@@ -192,8 +192,8 @@ export default function ContactsPage() {
                     <PhoneIcon className="contacts-contact-icon" />
                     <div>
                       <h3 className="contacts-contact-title">Телефон</h3>
-                      <a href="tel:+74951234567" className="contacts-contact-link">
-                        +7 (495) 123-45-67
+                      <a href="tel:+79067127744" className="contacts-contact-link">
+                        +7 (906) 712‑7744
                       </a>
                     </div>
                   </div>

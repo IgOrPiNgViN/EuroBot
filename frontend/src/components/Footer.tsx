@@ -23,7 +23,7 @@ export default function Footer() {
               Председатель орг. комитета: 8 (906) 712 77-44
             </div>
             <div className="footer-top-text">
-              msalmina@yandex.ru
+              eurobotrussia@yandex.ru
             </div>
           </div>
 

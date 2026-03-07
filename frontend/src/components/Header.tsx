@@ -55,7 +55,7 @@ export default function Header() {
                   <br />
                   КОМИТЕТ (НОК) ЕВРОБОТ РОССИЯ
                   <br />
-                  info@eurobot-russia.org
+                  eurobotrussia@yandex.ru
                   <br />
                   +7 (906) 712‑7744
                 </div>

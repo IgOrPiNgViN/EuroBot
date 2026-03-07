@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import { teamsApi, TeamRegisterData } from '../api/teams'
 import { seasonsApi } from '../api/seasons'
+import { useSettingsStore } from '../store/settingsStore'
 import { Season, RegistrationField } from '../types'
 import { useSmartCaptcha } from '../hooks/useSmartCaptcha'
 import SmartCaptcha from '../components/ui/SmartCaptcha'
@@ -25,11 +26,12 @@ interface RegistrationFormData {
   participants_count: number
   league: 'junior' | 'senior'
   rules_accepted: boolean
-  [key: string]: unknown // Для динамических полей
+  [key: string]: unknown
 }
 
 export default function RegistrationPage() {
   const navigate = useNavigate()
+  const { settings } = useSettingsStore()
   const [currentSeason, setCurrentSeason] = useState<Season | null>(null)
   const [customFields, setCustomFields] = useState<RegistrationField[]>([])
   const [loading, setLoading] = useState(true)
@@ -39,6 +41,12 @@ export default function RegistrationPage() {
   const { isEnabled: captchaEnabled, resetCaptcha } = useSmartCaptcha()
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegistrationFormData>()
+
+  useEffect(() => {
+    if ((settings.registration_form_type as string) === 'old') {
+      window.location.href = 'https://eurobotrussia.ru/eurobot2026#reg'
+    }
+  }, [settings.registration_form_type])
 
   useEffect(() => {
     const fetchSeason = async () => {
