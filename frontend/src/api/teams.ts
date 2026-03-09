@@ -65,6 +65,28 @@ export const teamsApi = {
       responseType: 'blob'
     })
     return response.data
+  },
+
+  downloadCsvTemplate: async (): Promise<Blob> => {
+    const response = await apiClient.get('/teams/csv-template', {
+      responseType: 'blob'
+    })
+    return response.data
+  },
+
+  importCsv: async (file: File, seasonId: number): Promise<{
+    imported: number
+    skipped: number
+    errors: string[]
+    message: string
+  }> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('season_id', seasonId.toString())
+    const response = await apiClient.post('/teams/import-csv', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return response.data
   }
 }
 

@@ -9,10 +9,14 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   DocumentTextIcon,
-  EyeIcon
+  EyeIcon,
+  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline'
 import { seasonsApi } from '../../api/seasons'
 import { settingsApi } from '../../api/settings'
+import { teamsApi } from '../../api/teams'
 import apiClient from '../../api/client'
 import { Season } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
@@ -109,6 +113,9 @@ export default function RegistrationFieldsManagement() {
   const [showPreview, setShowPreview] = useState(true)
   const [formType, setFormType] = useState<'new' | 'old'>('new')
   const [formTypeSaving, setFormTypeSaving] = useState(false)
+  const [csvFile, setCsvFile] = useState<File | null>(null)
+  const [csvUploading, setCsvUploading] = useState(false)
+  const [csvResult, setCsvResult] = useState<{ imported: number; skipped: number; errors: string[] } | null>(null)
 
   const fetchFormType = async () => {
     try {
@@ -130,6 +137,44 @@ export default function RegistrationFieldsManagement() {
       toast.error('Ошибка сохранения')
     } finally {
       setFormTypeSaving(false)
+    }
+  }
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const blob = await teamsApi.downloadCsvTemplate()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'teams_template.csv'
+      a.click()
+      window.URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Ошибка скачивания шаблона')
+    }
+  }
+
+  const handleCsvUpload = async () => {
+    if (!csvFile || !selectedSeasonId) return
+
+    setCsvUploading(true)
+    setCsvResult(null)
+    try {
+      const result = await teamsApi.importCsv(csvFile, selectedSeasonId)
+      setCsvResult(result)
+      if (result.imported > 0) {
+        toast.success(`Импортировано команд: ${result.imported}`)
+      }
+      if (result.skipped > 0) {
+        toast(`Пропущено: ${result.skipped}`, { icon: '⚠️' })
+      }
+      setCsvFile(null)
+      const fileInput = document.getElementById('csv-file-input') as HTMLInputElement
+      if (fileInput) fileInput.value = ''
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || 'Ошибка импорта CSV')
+    } finally {
+      setCsvUploading(false)
     }
   }
 
@@ -335,6 +380,105 @@ export default function RegistrationFieldsManagement() {
               <p className="registration-form-type-saving">Сохранение...</p>
           )}
         </div>
+
+        {/* CSV Import — visible when old form is selected */}
+        {formType === 'old' && (
+          <div className="csv-import-section">
+            <div className="csv-import-header">
+              <TableCellsIcon className="csv-import-header-icon" />
+              <div>
+                <h3 className="csv-import-title">Импорт участников из CSV</h3>
+                <p className="csv-import-description">
+                  Загрузите список команд, зарегистрированных на старом сайте
+                </p>
+              </div>
+            </div>
+
+            <div className="csv-import-body">
+              <div className="csv-import-template">
+                <p className="csv-import-template-text">
+                  Скачайте шаблон CSV с правильными заголовками столбцов. Разделитель — точка с запятой (;), кодировка — UTF-8.
+                </p>
+                <button
+                  className="csv-import-template-button"
+                  onClick={handleDownloadTemplate}
+                >
+                  <ArrowDownTrayIcon className="csv-import-button-icon" />
+                  Скачать шаблон
+                </button>
+              </div>
+
+              <div className="csv-import-upload">
+                <div className="csv-import-season-select">
+                  <Select
+                    label="Сезон для импорта"
+                    options={seasons.map(s => ({ value: s.id.toString(), label: s.name }))}
+                    value={selectedSeasonId?.toString() || ''}
+                    onChange={(e) => setSelectedSeasonId(parseInt(e.target.value))}
+                  />
+                </div>
+
+                <div className="csv-import-file-area">
+                  <label htmlFor="csv-file-input" className="csv-import-file-label">
+                    <ArrowUpTrayIcon className="csv-import-file-icon" />
+                    <span className="csv-import-file-text">
+                      {csvFile ? csvFile.name : 'Выберите CSV файл'}
+                    </span>
+                    {csvFile && (
+                      <span className="csv-import-file-size">
+                        {(csvFile.size / 1024).toFixed(1)} КБ
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    id="csv-file-input"
+                    type="file"
+                    accept=".csv"
+                    className="csv-import-file-input"
+                    onChange={(e) => {
+                      setCsvFile(e.target.files?.[0] || null)
+                      setCsvResult(null)
+                    }}
+                  />
+                </div>
+
+                <Button
+                  onClick={handleCsvUpload}
+                  isLoading={csvUploading}
+                  disabled={!csvFile || !selectedSeasonId || csvUploading}
+                  leftIcon={<ArrowUpTrayIcon className="csv-import-button-icon" />}
+                >
+                  Импортировать
+                </Button>
+              </div>
+
+              {csvResult && (
+                <div className="csv-import-result">
+                  <div className="csv-import-result-stats">
+                    <div className="csv-import-stat csv-import-stat-success">
+                      <span className="csv-import-stat-number">{csvResult.imported}</span>
+                      <span className="csv-import-stat-label">импортировано</span>
+                    </div>
+                    <div className="csv-import-stat csv-import-stat-warning">
+                      <span className="csv-import-stat-number">{csvResult.skipped}</span>
+                      <span className="csv-import-stat-label">пропущено</span>
+                    </div>
+                  </div>
+                  {csvResult.errors.length > 0 && (
+                    <div className="csv-import-errors">
+                      <p className="csv-import-errors-title">Подробности:</p>
+                      <ul className="csv-import-errors-list">
+                        {csvResult.errors.map((err, i) => (
+                          <li key={i}>{err}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Current Form Preview */}
         <div className="registration-fields-preview-container">
