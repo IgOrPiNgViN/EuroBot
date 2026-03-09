@@ -292,10 +292,11 @@ async def import_teams_csv(
 
     COLUMN_MAP = {
         "название команды": "name", "название": "name", "команда": "name", "name": "name", "team": "name",
-        "email": "email", "почта": "email", "e-mail": "email",
-        "телефон": "phone", "phone": "phone", "тел": "phone", "тел.": "phone",
+        "email": "email", "почта": "email", "e-mail": "email", "электронная почта": "email",
+        "телефон": "phone", "phone": "phone", "тел": "phone", "тел.": "phone", "номер телефона": "phone",
         "организация": "organization", "organization": "organization",
         "школа": "organization", "университет": "organization", "учреждение": "organization",
+        "образовательная организация": "organization",
         "город": "city", "city": "city",
         "регион": "region", "region": "region", "область": "region",
         "кол-во участников": "participants_count", "количество участников": "participants_count",
@@ -358,8 +359,8 @@ async def import_teams_csv(
         except ValueError:
             participants_count = 1
 
-        league_raw = get_val("league").lower()
-        if league_raw in ("junior", "юниоры", "юниор"):
+        league_raw = get_val("league").lower().strip()
+        if league_raw in ("junior", "юниоры", "юниор", "джуниор", "junior (младшая лига)"):
             league = League.junior
         else:
             league = League.senior
