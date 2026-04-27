@@ -112,8 +112,7 @@ export default function CompetitionsPage() {
         </Helmet>
 
         <section className="competitions-images-section">
-          <div className="container-custom">
-            <div className="competitions-images-container">
+          <div className="competitions-images-container">
               {formatData?.logo_url && (
                   <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -149,21 +148,21 @@ export default function CompetitionsPage() {
                   </motion.div>
               )}
             </div>
-
-            {currentSeason.registration_open && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="competitions-registration-button-container"
-                >
-                  <Link to="/registration" className="competitions-registration-button">
-                    Зарегистрировать команду
-                  </Link>
-                </motion.div>
-            )}
-          </div>
         </section>
+
+        {currentSeason.registration_open && (
+            <div className="competitions-registration-button-container">
+              <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+              >
+                <Link to="/registration" className="competitions-registration-button">
+                  Зарегистрировать команду
+                </Link>
+              </motion.div>
+            </div>
+        )}
 
         {(currentSeason.theme || formatData) && (
             <section className="competitions-theme-section">

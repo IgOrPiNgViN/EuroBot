@@ -62,20 +62,20 @@ export default function HomePage() {
           <div className="home-container-hero">
             <div className="hero-left-column">
               <div className="hero-left-title-image-container">
-                {formatData?.title_url && (
+                {(formatData?.hero_title_url || formatData?.title_url) && (
                     <img
-                        src={formatData.title_url}
-                        alt={currentSeason?.name || "EUROBOT"}
+                        src={formatData.hero_title_url || formatData.title_url}
+                        alt={currentSeason?.name || "Евробот"}
                         className="hero-title-image"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}
                     />
                 )}
-                {!formatData?.title_url && (
+                {!formatData?.hero_title_url && !formatData?.title_url && (
                     <img
                         src="/images/admin-logo.png"
-                        alt={currentSeason?.name || "EUROBOT"}
+                        alt={currentSeason?.name || "Евробот"}
                         className="hero-title-image"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
@@ -105,15 +105,15 @@ export default function HomePage() {
             <div className="hero-right-column">
               <div className="hero-right-text">
                 <p>
-                  Международные молодежные робототехнические соревнование ЕВРОБОТ -
-                  это открытый чемпионат мобильных роботов, созданных
-                  молодёжными командами со всего мира.
+                  Всероссийские молодежные робототехнические соревнования «ЕВРОБОТ-Россия»
+                  с международным участием — это открытый чемпионат мобильных роботов,
+                  созданных молодёжными командами.
                 </p>
               </div>
               <div className="hero-right-logo-image-container">
-                {formatData?.logo_url && (
+                {(formatData?.hero_logo_url || formatData?.logo_url) && (
                     <img
-                        src={formatData.logo_url}
+                        src={formatData.hero_logo_url || formatData.logo_url}
                         alt="Логотип"
                         className="hero-logo-image"
                         onError={(e) => {
@@ -143,7 +143,7 @@ export default function HomePage() {
               </div>
               <h2 className="home-section-title">Последние события</h2>
               <p className="home-news-subtitle">
-                Самое важное из мира робототехнических соревнований EUROBOT
+                Самое важное из мира робототехнических соревнований Евробот
               </p>
             </motion.div>
 

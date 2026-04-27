@@ -48,7 +48,7 @@ const navigation: NavItem[] = [
 ]
 
 // Заголовок для всех страниц
-const DEFAULT_TITLE = 'Админ-панель | EUROBOT'
+const DEFAULT_TITLE = 'Админ-панель | Евробот'
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -65,9 +65,9 @@ export default function AdminLayout() {
         {/* Настройка мета-тегов и заголовка */}
         <Helmet>
           <title>{DEFAULT_TITLE}</title>
-          <meta name="description" content="Административная панель EUROBOT" />
+          <meta name="description" content="Административная панель Евробот" />
           <meta property="og:title" content={DEFAULT_TITLE} />
-          <meta property="og:site_name" content="EUROBOT" />
+          <meta property="og:site_name" content="Евробот" />
           <meta property="og:type" content="website" />
 
           {/* Иконки */}
@@ -152,7 +152,7 @@ export default function AdminLayout() {
             <Link to="/admin" className="admin-layout-desktop-logo">
               <img
                   src="/images/admin-logo.png"
-                  alt="Eurobot Logo"
+                  alt="Евробот Logo"
                   className="admin-layout-logo-image"
               />
               <span className="admin-layout-desktop-title">Админ-панель</span>

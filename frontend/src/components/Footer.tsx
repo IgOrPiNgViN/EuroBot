@@ -30,7 +30,7 @@ export default function Footer() {
           <div className="footer-bottom" style={footerBg ? { backgroundImage: `url(${footerBg})` } : undefined}>
             <div className="footer-bottom-container">
               <div className="footer-bottom-title">
-                EUROBOT RUSSIA
+                ЕВРОБОТ РОССИЯ
               </div>
               <div className="footer-bottom-text">
                 © НЕКОММЕРЧЕСКАЯ ОРГАНИЗАЦИЯ НАЦИОНАЛЬНЫЙ ОРГАНИЗАЦИОННЫЙ

@@ -78,7 +78,7 @@ export default function LoginModal() {
             </button>
 
             <div className="login-modal-header">
-              <img src="/images/admin-logo.png" alt="EUROBOT" className="login-modal-logo" />
+              <img src="/images/admin-logo.png" alt="Евробот" className="login-modal-logo" />
               <h2 className="login-modal-title">Вход в админ-панель</h2>
               <p className="login-modal-subtitle">Введите данные для доступа</p>
             </div>

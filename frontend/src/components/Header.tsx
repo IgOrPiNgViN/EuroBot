@@ -34,20 +34,20 @@ export default function Header() {
               <Link to="/" className="header-logo">
                 <div className="logo-block">
                   <img
-                      src='/images/admin-logo.png'
+                      src='/images/logo-eurobot.png'
                       className='logo'
-                      alt='logo'
+                      alt='Евробот'
                   />
                 </div>
               </Link>
 
               <div className='text-block'>
                 <div className='left-text'>
-                  МЕЖДУНАРОДНЫЕ МОЛОДЁЖНЫЕ
+                  Всероссийские молодежные робототехнические
                   <br />
-                  РОБОТОТЕХНИЧЕСКИЕ
+                  соревнования «ЕВРОБОТ-Россия»
                   <br />
-                  СОРЕВНОВАНИЯ
+                  с международным участием
                 </div>
 
                 <div className='right-text'>

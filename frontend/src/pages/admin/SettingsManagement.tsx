@@ -513,7 +513,7 @@ export default function SettingsManagement() {
         <div className="settings-management-group">
           <h2 className="settings-management-group-title">Страница «О нас»</h2>
           <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
-            Управляйте содержимым страницы «О соревнованиях EUROBOT». Все поля поддерживают HTML-разметку для текстовых секций.
+            Управляйте содержимым страницы «О соревнованиях Евробот». Все поля поддерживают HTML-разметку для текстовых секций.
           </p>
 
           {/* Hero заголовок */}
@@ -521,7 +521,7 @@ export default function SettingsManagement() {
             <div className="settings-management-setting-header">
               <div>
                 <label className="settings-management-setting-label">Заголовок Hero-секции</label>
-                <p className="settings-management-setting-description">Главный заголовок на странице «О нас». По умолчанию: «О соревнованиях EUROBOT»</p>
+                <p className="settings-management-setting-description">Главный заголовок на странице «О нас». По умолчанию: «О соревнованиях Евробот»</p>
               </div>
               <Button
                 size="sm"
@@ -534,7 +534,7 @@ export default function SettingsManagement() {
             <Input
               value={editedValues['about_hero_title'] || ''}
               onChange={(e) => setEditedValues({ ...editedValues, about_hero_title: e.target.value })}
-              placeholder="О соревнованиях EUROBOT"
+              placeholder="О соревнованиях Евробот"
             />
           </div>
 
@@ -582,7 +582,7 @@ export default function SettingsManagement() {
             <Textarea
               value={editedValues['about_history'] || ''}
               onChange={(e) => setEditedValues({ ...editedValues, about_history: e.target.value })}
-              placeholder="<p>Международные молодежные робототехнические соревнования EUROBOT...</p>"
+              placeholder="<p>Международные молодежные робототехнические соревнования Евробот...</p>"
               rows={10}
             />
           </div>
@@ -607,7 +607,7 @@ export default function SettingsManagement() {
             <Textarea
               value={editedValues['about_russia'] || ''}
               onChange={(e) => setEditedValues({ ...editedValues, about_russia: e.target.value })}
-              placeholder="<p>Российский этап EUROBOT проводится с 2006 года...</p>"
+              placeholder="<p>Российский этап Евробот проводится с 2006 года...</p>"
               rows={10}
             />
           </div>

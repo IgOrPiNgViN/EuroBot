@@ -14,6 +14,8 @@ interface FormatStructure {
   logo_url: string
   title_url: string
   icon_url?: string
+  hero_title_url?: string
+  hero_logo_url?: string
   tasks: string[]
   documents: Array<{
     url: string
@@ -269,8 +271,8 @@ export default function SeasonsManagement() {
       return
     }
 
-    if (!formatData.logo_url || !formatData.title_url) {
-      toast.error('Заполните обязательные поля формата (логотип и название)')
+    if (!formatData.title_url) {
+      toast.error('Заполните обязательные поля формата (название)')
       return
     }
 
@@ -534,7 +536,7 @@ export default function SeasonsManagement() {
                           required
                           value={formData.name || ''}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="EUROBOT 2025"
+                          placeholder="Евробот 2025"
                       />
 
                       <Input
@@ -583,9 +585,8 @@ export default function SeasonsManagement() {
                     {/* Вторая колонка - Формат */}
                     <div className="seasons-management-form-column">
                       <Input
-                          label="URL логотипа (обязательно)"
+                          label="URL логотипа (необязательно)"
                           type="url"
-                          required
                           value={formatData.logo_url}
                           onChange={(e) => handleFormatFieldChange('logo_url', e.target.value)}
                           placeholder="https://example.com/logo.png"
@@ -606,6 +607,22 @@ export default function SeasonsManagement() {
                           value={formatData.icon_url || ''}
                           onChange={(e) => handleFormatFieldChange('icon_url', e.target.value)}
                           placeholder="https://example.com/icon.png"
+                      />
+
+                      <Input
+                          label="URL картинки главной страницы — заголовок (необязательно)"
+                          type="url"
+                          value={formatData.hero_title_url || ''}
+                          onChange={(e) => handleFormatFieldChange('hero_title_url', e.target.value)}
+                          placeholder="https://example.com/hero-title.png"
+                      />
+
+                      <Input
+                          label="URL картинки главной страницы — маскот (необязательно)"
+                          type="url"
+                          value={formatData.hero_logo_url || ''}
+                          onChange={(e) => handleFormatFieldChange('hero_logo_url', e.target.value)}
+                          placeholder="https://example.com/hero-logo.png"
                       />
 
                       {/* Задания */}

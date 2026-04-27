@@ -50,13 +50,51 @@ export default function PartnersSection() {
 
   return (
     <>
+      {/* General partners — full-width sections with background */}
+      {generalPartners.map((partner) => {
+        const { logo, background } = getPartnerLogoAndBackground(partner)
+
+        return (
+          <section key={partner.id} className="general-partner-section">
+            {background && (
+              <div
+                className="general-partner-bg"
+                style={{ backgroundImage: `url(${background})` }}
+              />
+            )}
+            <div className="general-partner-overlay" />
+            <motion.div
+              className="general-partner-content"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <a
+                href={partner.website || '#'}
+                target={partner.website ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                className="general-partner-link"
+              >
+                <img
+                  src={logo}
+                  alt={partner.name}
+                  className="general-partner-logo"
+                />
+              </a>
+              <h2 className="general-partner-title">ГЕНЕРАЛЬНЫЙ ПАРТНЁР</h2>
+            </motion.div>
+          </section>
+        )
+      })}
+
       {/* Other partner categories in the light section */}
       {hasOtherPartners && (
         <section className="partners-section">
           <div className="partners-container">
             <h2 className="partners-title">Наши партнёры</h2>
             <h3 className="partners-description">
-              Ежегодно соревнования EUROBOT RUSSIA получают поддержку множества технологических компаний
+              Ежегодно соревнования Евробот Россия получают поддержку множества технологических компаний
             </h3>
 
             {categoryOrder.map((category) => {
@@ -65,10 +103,6 @@ export default function PartnersSection() {
 
               return (
                 <div key={category} className="partners-category">
-                  <h3 className="partners-category-title">
-                    {categoryNames[category]}
-                  </h3>
-
                   <div className="partners-grid">
                     {categoryPartners.map((partner, index) => (
                       <motion.div
@@ -114,43 +148,7 @@ export default function PartnersSection() {
         </section>
       )}
 
-      {/* General partners — full-width sections with background */}
-      {generalPartners.map((partner) => {
-        const { logo, background } = getPartnerLogoAndBackground(partner)
 
-        return (
-          <section key={partner.id} className="general-partner-section">
-            {background && (
-              <div
-                className="general-partner-bg"
-                style={{ backgroundImage: `url(${background})` }}
-              />
-            )}
-            <div className="general-partner-overlay" />
-            <motion.div
-              className="general-partner-content"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <a
-                href={partner.website || '#'}
-                target={partner.website ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                className="general-partner-link"
-              >
-                <img
-                  src={logo}
-                  alt={partner.name}
-                  className="general-partner-logo"
-                />
-              </a>
-              <h2 className="general-partner-title">ГЕНЕРАЛЬНЫЙ ПАРТНЁР</h2>
-            </motion.div>
-          </section>
-        )
-      })}
     </>
   )
 }

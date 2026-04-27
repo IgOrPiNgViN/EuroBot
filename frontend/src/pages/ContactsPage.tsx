@@ -292,7 +292,7 @@ export default function ContactsPage() {
               markers={[
                 {
                   coordinates: [55.7025, 37.5547],
-                  title: 'EUROBOT Россия',
+                  title: 'Евробот Россия',
                   description: 'ул. Косыгина, 17, корп. 1, Москва'
                 }
               ]}
