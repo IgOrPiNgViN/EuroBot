@@ -40,9 +40,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # НЕ открываем порт наружу — nginx проксирует внутри сети
-    expose:
-      - "8000"
+    # Порт нужен для proxy.php на Masterhost (обращается к IP:8000 напрямую)
+    ports:
+      - "8000:8000"
     environment:
       DATABASE_URL: mysql+aiomysql://root:${DB_ROOT_PASSWORD}@db:3306/eurobot?charset=utf8mb4
 
