@@ -14,7 +14,7 @@ class ArchiveMediaBase(BaseModel):
     thumbnail: Optional[str] = None
     video_url: Optional[str] = None
     duration: Optional[int] = None
-    display_order: int = 0
+    display_order: Optional[int] = 0
 
 
 class ArchiveMediaCreate(ArchiveMediaBase):
