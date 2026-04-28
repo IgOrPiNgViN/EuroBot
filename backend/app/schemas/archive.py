@@ -10,7 +10,7 @@ class ArchiveMediaBase(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     media_type: MediaType
-    file_path: str
+    file_path: Optional[str] = None
     thumbnail: Optional[str] = None
     video_url: Optional[str] = None
     duration: Optional[int] = None

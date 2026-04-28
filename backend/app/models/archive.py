@@ -55,7 +55,7 @@ class ArchiveMedia(Base):
     title = Column(String(255), nullable=True)
     description = Column(Text, nullable=True)
     media_type = Column(Enum(MediaType), nullable=False)
-    file_path = Column(String(500), nullable=False)
+    file_path = Column(String(500), nullable=True)
     thumbnail = Column(String(500), nullable=True)
     
     # For videos
