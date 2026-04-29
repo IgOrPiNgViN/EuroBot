@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     
     # CORS
     FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL_2: Optional[str] = None
+    FRONTEND_EXTRA_ORIGINS: Optional[str] = None
     
     class Config:
         env_file = ".env"

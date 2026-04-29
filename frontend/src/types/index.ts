@@ -81,7 +81,7 @@ export interface Partner {
 
 // Team types
 export type TeamStatus = 'pending' | 'approved' | 'rejected' | 'withdrawn'
-export type League = 'junior' | 'senior' | 'open' | 'pro'
+export type League = 'junior' | 'starter' | 'open' | 'pro'
 
 export interface TeamMember {
   id: number

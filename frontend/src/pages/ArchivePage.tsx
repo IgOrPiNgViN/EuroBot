@@ -41,6 +41,19 @@ export default function ArchivePage() {
     fetchSeasons()
   }, [])
 
+  function getVideoThumbnail(video: ArchiveSeason['media'][number]): string | null {
+    if (video.thumbnail) return video.thumbnail
+    const url = video.video_url || video.file_path || ''
+    const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&?\s]+)/)
+    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`
+    return null
+  }
+
+  function isVkVideo(video: ArchiveSeason['media'][number]): boolean {
+    const url = video.video_url || video.file_path || ''
+    return url.includes('vk.com') || url.includes('vkvideo.ru')
+  }
+
   function decodeDescriptionData(description: string): ArchiveSeasonDescriptionData {
     if (!description) {
       return { mainDescription: '' };
@@ -66,6 +79,20 @@ export default function ArchivePage() {
     return { mainDescription: description };
   }
 
+  // Разбирает строку вида "OPEN: команда1 | JUNIOR: команда2" в объект {OPEN, JUNIOR}
+  const parseLeagueResult = (raw: string | null | undefined): { open?: string; junior?: string; full?: string } => {
+    if (!raw) return {}
+    const openMatch = raw.match(/OPEN:\s*([^|]+)/i)
+    const juniorMatch = raw.match(/JUNIOR:\s*([^|]+)/i)
+    if (openMatch || juniorMatch) {
+      return {
+        open: openMatch?.[1].trim(),
+        junior: juniorMatch?.[1].trim(),
+      }
+    }
+    return { full: raw }
+  }
+
   // Функция для получения логотипа и названия из описания
   const getSeasonLogoAndTitle = (season: ProcessedArchiveSeason) => {
     if (!season.parsedDescription) {
@@ -85,6 +112,11 @@ export default function ArchivePage() {
   const photos = selectedSeason?.media.filter(m => m.media_type === 'photo') || []
   const videos = selectedSeason?.media.filter(m => m.media_type === 'video') || []
   const documents = selectedSeason?.media.filter(m => m.media_type === 'document') || []
+  const protocolDocuments = documents.filter((doc) => {
+    if (!selectedSeason || selectedSeason.year < 2023 || selectedSeason.year > 2025) return false
+    const title = (doc.title || '').toLowerCase().trim()
+    return title.startsWith('соревнования евробот')
+  })
 
   return (
       <>
@@ -234,36 +266,106 @@ export default function ArchivePage() {
                           </div>
 
                           {/* Results */}
-                          {(selectedSeason.first_place || selectedSeason.second_place || selectedSeason.third_place) && (
+                          {(selectedSeason.first_place || selectedSeason.second_place || selectedSeason.third_place) && (() => {
+                            const first = parseLeagueResult(selectedSeason.first_place)
+                            const second = parseLeagueResult(selectedSeason.second_place)
+                            const third = parseLeagueResult(selectedSeason.third_place)
+                            const hasLeagues = !!(first.open || first.junior)
+
+                            if (hasLeagues) {
+                              const leagues = [
+                                { key: 'open', label: 'OPEN' },
+                                { key: 'junior', label: 'JUNIOR' },
+                              ] as const
+                              return (
+                                <div className="archive-results">
+                                  <h3 className="archive-results-title">Итоги</h3>
+                                  <div className="archive-leagues-grid">
+                                    {leagues.map(({ key, label }) => {
+                                      const p1 = key === 'open' ? first.open : first.junior
+                                      const p2 = key === 'open' ? second.open : second.junior
+                                      const p3 = key === 'open' ? third.open : third.junior
+                                      if (!p1 && !p2 && !p3) return null
+                                      return (
+                                        <div key={key} className="archive-league-block">
+                                          <div className="archive-league-title">{label}</div>
+                                          <div className="archive-winners-list">
+                                            {p1 && <div className="archive-winner-item"><span className="archive-winner-emoji">🥇</span><span className="archive-winner-name">{p1}</span></div>}
+                                            {p2 && <div className="archive-winner-item"><span className="archive-winner-emoji">🥈</span><span className="archive-winner-name">{p2}</span></div>}
+                                            {p3 && <div className="archive-winner-item"><span className="archive-winner-emoji">🥉</span><span className="archive-winner-name">{p3}</span></div>}
+                                          </div>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                  {selectedSeason.additional_info && (
+                                    <p className="archive-additional-info">{selectedSeason.additional_info}</p>
+                                  )}
+                                  {protocolDocuments.length > 0 && (
+                                    <div className="archive-documents-list">
+                                      {protocolDocuments.map((doc) => (
+                                        <a
+                                          key={doc.id}
+                                          href={doc.file_path || '#'}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="archive-document-item"
+                                        >
+                                          <DocumentIcon className="archive-document-icon" />
+                                          <span className="archive-document-name">{doc.title || 'Итоговый PDF'}</span>
+                                        </a>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            }
+
+                            return (
                               <div className="archive-results">
                                 <h3 className="archive-results-title">Итоги</h3>
                                 <div className="archive-winners-list">
                                   {selectedSeason.first_place && (
-                                      <div className="archive-winner-item">
-                                        <span className="archive-winner-emoji">🥇</span>
-                                        <span className="archive-winner-name">{selectedSeason.first_place}</span>
-                                      </div>
+                                    <div className="archive-winner-item">
+                                      <span className="archive-winner-emoji">🥇</span>
+                                      <span className="archive-winner-name">{first.full}</span>
+                                    </div>
                                   )}
                                   {selectedSeason.second_place && (
-                                      <div className="archive-winner-item">
-                                        <span className="archive-winner-emoji">🥈</span>
-                                        <span className="archive-winner-name">{selectedSeason.second_place}</span>
-                                      </div>
+                                    <div className="archive-winner-item">
+                                      <span className="archive-winner-emoji">🥈</span>
+                                      <span className="archive-winner-name">{second.full}</span>
+                                    </div>
                                   )}
                                   {selectedSeason.third_place && (
-                                      <div className="archive-winner-item">
-                                        <span className="archive-winner-emoji">🥉</span>
-                                        <span className="archive-winner-name">{selectedSeason.third_place}</span>
-                                      </div>
+                                    <div className="archive-winner-item">
+                                      <span className="archive-winner-emoji">🥉</span>
+                                      <span className="archive-winner-name">{third.full}</span>
+                                    </div>
                                   )}
                                   {selectedSeason.additional_info && (
-                                      <p className="archive-additional-info">
-                                        {selectedSeason.additional_info}
-                                      </p>
+                                    <p className="archive-additional-info">{selectedSeason.additional_info}</p>
+                                  )}
+                                  {protocolDocuments.length > 0 && (
+                                    <div className="archive-documents-list">
+                                      {protocolDocuments.map((doc) => (
+                                        <a
+                                          key={doc.id}
+                                          href={doc.file_path || '#'}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="archive-document-item"
+                                        >
+                                          <DocumentIcon className="archive-document-icon" />
+                                          <span className="archive-document-name">{doc.title || 'Итоговый PDF'}</span>
+                                        </a>
+                                      ))}
+                                    </div>
                                   )}
                                 </div>
                               </div>
-                          )}
+                            )
+                          })()}
 
                           {/* Videos */}
                           {videos.length > 0 && (
@@ -280,17 +382,24 @@ export default function ArchivePage() {
                                           className="archive-video-card"
                                       >
                                         <div className="archive-video-preview">
-                                          {video.thumbnail ? (
-                                              <img
-                                                  src={video.thumbnail}
-                                                  alt={video.title || 'Video'}
-                                                  className="archive-video-thumbnail"
-                                              />
-                                          ) : (
+                                          {(() => {
+                                            const thumb = getVideoThumbnail(video)
+                                            if (thumb) {
+                                              return <img src={thumb} alt={video.title || 'Video'} className="archive-video-thumbnail" />
+                                            }
+                                            if (isVkVideo(video)) {
+                                              return (
+                                                <div className="archive-video-placeholder archive-video-placeholder-vk">
+                                                  <span className="archive-video-placeholder-vk-label">VK</span>
+                                                </div>
+                                              )
+                                            }
+                                            return (
                                               <div className="archive-video-placeholder">
                                                 <PlayIcon className="archive-video-placeholder-icon" />
                                               </div>
-                                          )}
+                                            )
+                                          })()}
                                           <div className="archive-video-overlay">
                                             <PlayIcon className="archive-video-overlay-icon" />
                                           </div>
@@ -340,7 +449,7 @@ export default function ArchivePage() {
                                   {documents.map((doc) => (
                                       <a
                                           key={doc.id}
-                                          href={doc.file_path}
+                                          href={doc.file_path || '#'}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="archive-document-item"
@@ -380,13 +489,35 @@ export default function ArchivePage() {
                 <div className="archive-modal-content" onClick={(e) => e.stopPropagation()}>
                   {selectedMedia.media_type === 'video' ? (
                       <div className="archive-video-player">
-                        <ReactPlayer
-                            url={selectedMedia.video_url || selectedMedia.file_path}
-                            width="100%"
-                            height="100%"
-                            controls
-                            playing
-                        />
+                        {(() => {
+                          const url = selectedMedia.video_url || selectedMedia.file_path || ''
+                          const isVk = url.includes('vk.com') || url.includes('vkvideo.ru')
+                          if (isVk) {
+                            const m = url.match(/video(-?\d+)_(\d+)/)
+                            const embedUrl = m
+                              ? `https://vk.com/video_ext.php?oid=${m[1]}&id=${m[2]}&hd=2`
+                              : url
+                            return (
+                              <iframe
+                                src={embedUrl}
+                                width="100%"
+                                height="100%"
+                                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                                frameBorder="0"
+                                allowFullScreen
+                              />
+                            )
+                          }
+                          return (
+                            <ReactPlayer
+                              url={url}
+                              width="100%"
+                              height="100%"
+                              controls
+                              playing
+                            />
+                          )
+                        })()}
                       </div>
                   ) : (
                       <img

@@ -74,9 +74,10 @@ services:
       UPLOAD_DIR: /app/uploads
       MAX_FILE_SIZE: 10485760
 
-      # CORS — оба домена через запятую
-      FRONTEND_URL: ${FRONTEND_URL:-https://eurobot-noc.ru}
-      FRONTEND_URL_2: ${FRONTEND_URL_2:-https://xn--90abi1bbjr.xn--p1ai}
+      # CORS — канон + зеркала (см. env.production)
+      FRONTEND_URL: ${FRONTEND_URL:-https://eurobotrussia.ru}
+      FRONTEND_URL_2: ${FRONTEND_URL_2:-https://eurobot-noc.ru}
+      FRONTEND_EXTRA_ORIGINS: ${FRONTEND_EXTRA_ORIGINS:-}
     volumes:
       - uploads_data:/app/uploads
     depends_on:

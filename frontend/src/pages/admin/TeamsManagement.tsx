@@ -34,14 +34,14 @@ const statusColors: Record<TeamStatus, string> = {
 
 const leagueColors: Record<string, string> = {
   junior: 'teams-management-league-junior',
-  senior: 'teams-management-league-senior',
+  starter: 'teams-management-league-starter',
   open: 'teams-management-league-open',
   pro: 'teams-management-league-pro'
 }
 
 const leagueLabels: Record<string, string> = {
   junior: 'Junior',
-  senior: 'Senior',
+  starter: 'Starter',
   open: 'Open',
   pro: 'Pro'
 }

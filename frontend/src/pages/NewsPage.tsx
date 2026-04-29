@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MagnifyingGlassIcon, NewspaperIcon } from '@heroicons/react/24/outline'
+import { NewspaperIcon } from '@heroicons/react/24/outline'
 import { newsApi } from '../api/news'
-import { News, NewsCategory, NewsTag } from '../types'
+import { News } from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import SEO from '../components/SEO'
 import '../styles/pages/NewsPage.css'
@@ -11,8 +11,6 @@ import '../styles/pages/NewsPage.css'
 export default function NewsPage() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [news, setNews] = useState<News[]>([])
-    const [categories, setCategories] = useState<NewsCategory[]>([])
-    const [tags, setTags] = useState<NewsTag[]>([])
     const [loading, setLoading] = useState(true)
     const [totalPages, setTotalPages] = useState(1)
 
@@ -25,15 +23,9 @@ export default function NewsPage() {
         const fetchData = async () => {
             setLoading(true)
             try {
-                const [newsData, categoriesData, tagsData] = await Promise.all([
-                    newsApi.getList({ page, category, tag, search, limit: 9 }),
-                    newsApi.getCategories(),
-                    newsApi.getTags()
-                ])
+                const newsData = await newsApi.getList({ page, category, tag, search, limit: 9 })
                 setNews(newsData.items)
                 setTotalPages(newsData.pages)
-                setCategories(categoriesData)
-                setTags(tagsData)
             } catch (error) {
                 console.error('Failed to fetch news:', error)
             } finally {
@@ -43,35 +35,6 @@ export default function NewsPage() {
 
         fetchData()
     }, [page, category, tag, search])
-
-    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        const searchValue = formData.get('search') as string
-        setSearchParams({ search: searchValue, page: '1' })
-    }
-
-    const handleCategoryChange = (categorySlug: string) => {
-        const newParams = new URLSearchParams(searchParams)
-        if (categorySlug) {
-            newParams.set('category', categorySlug)
-        } else {
-            newParams.delete('category')
-        }
-        newParams.set('page', '1')
-        setSearchParams(newParams)
-    }
-
-    const handleTagChange = (tagSlug: string) => {
-        const newParams = new URLSearchParams(searchParams)
-        if (tagSlug) {
-            newParams.set('tag', tagSlug)
-        } else {
-            newParams.delete('tag')
-        }
-        newParams.set('page', '1')
-        setSearchParams(newParams)
-    }
 
     const renderNewsGrid = (newsItems: News[]) => {
         const gridItems = []
@@ -136,63 +99,6 @@ export default function NewsPage() {
             </div>
 
             <section className="news-layout news-container">
-                <aside className="news-sidebar">
-                    <form onSubmit={handleSearch}>
-                        <div className="news-search-container">
-                            <input
-                                name="search"
-                                placeholder="Поиск..."
-                                defaultValue={search}
-                                className="news-search-input"
-                            />
-                            <button type="submit" className="news-search-button">
-                                <MagnifyingGlassIcon className="news-search-icon" />
-                            </button>
-                        </div>
-                    </form>
-
-                    <div className="news-categories">
-                        <h3>Категории</h3>
-                        <ul>
-                            <li>
-                                <button
-                                    onClick={() => handleCategoryChange('')}
-                                    className={`news-category-button ${!category ? 'active' : ''}`}
-                                >
-                                    Все категории
-                                </button>
-                            </li>
-                            {categories.map((cat) => (
-                                <li key={cat.id}>
-                                    <button
-                                        onClick={() => handleCategoryChange(cat.slug)}
-                                        className={`news-category-button ${category === cat.slug ? 'active' : ''}`}
-                                    >
-                                        {cat.name}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {tags.length > 0 && (
-                        <div className="news-tags">
-                            <h3>Теги</h3>
-                            <div className="news-tags-container">
-                                {tags.map((t) => (
-                                    <button
-                                        key={t.id}
-                                        onClick={() => handleTagChange(tag === t.slug ? '' : t.slug)}
-                                        className={`news-tag-button ${tag === t.slug ? 'active' : ''}`}
-                                    >
-                                        {t.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </aside>
-
                 <div className="news-content">
                     {loading ? (
                         <div className="news-loading">

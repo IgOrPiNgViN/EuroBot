@@ -130,6 +130,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.25));
 }
 
 .partner-fallback {
@@ -357,21 +358,22 @@
 }
 
 .general-partner-logo {
-    max-width: 400px;
-    max-height: 280px;
-    width: auto;
+    max-width: 700px;
+    max-height: 500px;
+    width: 60vw;
     height: auto;
     object-fit: contain;
     filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
 }
 
 .general-partner-title {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 1rem;
+    font-weight: 600;
     font-family: 'FunnyFont', sans-serif;
     color: white;
     letter-spacing: 3px;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    opacity: 0.85;
 }
 
 @media (max-width: 768px) {

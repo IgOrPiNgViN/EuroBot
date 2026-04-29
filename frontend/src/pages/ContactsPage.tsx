@@ -183,7 +183,7 @@ export default function ContactsPage() {
                     <div>
                       <h3 className="contacts-contact-title">Адрес</h3>
                       <p className="contacts-contact-text">
-                        Москва, ул. Косыгина, 17, корп. 1.
+                        Москва, Каширское ш. 31 (НИЯУ МИФИ)
                       </p>
                     </div>
                   </div>
@@ -287,13 +287,13 @@ export default function ContactsPage() {
 
         <section className="contacts-map-section">
           <YandexMap
-              center={[55.7025, 37.5547]}
+              center={[55.6469, 37.6604]}
               zoom={16}
               markers={[
                 {
-                  coordinates: [55.7025, 37.5547],
+                  coordinates: [55.6469, 37.6604],
                   title: 'Евробот Россия',
-                  description: 'ул. Косыгина, 17, корп. 1, Москва'
+                  description: 'НИЯУ МИФИ, Москва, Каширское ш. 31'
                 }
               ]}
               height="400px"

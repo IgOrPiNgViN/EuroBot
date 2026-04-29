@@ -68,6 +68,14 @@ export default function Header() {
                   >
                     <img src='/images/vk-logo.png' alt='VK' />
                   </a>
+                  <a
+                      href="https://max.ru/join/DeyL3IUDfbMmMpjQ-obL6jdiLvpqmqVcb3ZYicemQDc"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ marginTop: '6px', display: 'block' }}
+                  >
+                    <img src='/images/max-logo.png' alt='Max' style={{ width: '48px', height: '48px' }} />
+                  </a>
                 </div>
               </div>
             </div>

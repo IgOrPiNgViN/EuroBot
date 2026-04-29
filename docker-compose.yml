@@ -65,8 +65,9 @@ services:
       UPLOAD_DIR: /app/uploads
       MAX_FILE_SIZE: 10485760
 
-      # CORS — укажи свой домен при деплое
-      FRONTEND_URL: ${FRONTEND_URL:-https://eurobot-noc.ru}
+      FRONTEND_URL: ${FRONTEND_URL:-https://eurobotrussia.ru}
+      FRONTEND_URL_2: ${FRONTEND_URL_2:-}
+      FRONTEND_EXTRA_ORIGINS: ${FRONTEND_EXTRA_ORIGINS:-}
     volumes:
       - uploads_data:/app/uploads
     depends_on:

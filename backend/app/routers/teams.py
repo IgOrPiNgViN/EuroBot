@@ -226,7 +226,7 @@ async def download_csv_template(
     writer = csv.writer(output, delimiter=';')
     writer.writerow([
         "Название команды", "Email", "Телефон", "Организация",
-        "Город", "Регион", "Кол-во участников", "Лига (junior/senior/open/pro)",
+        "Город", "Регион", "Кол-во участников", "Лига (junior/starter/open/pro)",
         "Ссылка на плакат", "Участники (ФИО через запятую)"
     ])
     writer.writerow([
@@ -363,14 +363,17 @@ async def import_teams_csv(
         league_raw = get_val("league").lower().strip()
         if league_raw in ("junior", "юниоры", "юниор", "джуниор", "junior (младшая лига)"):
             league = League.junior
-        elif league_raw in ("senior", "сеньор", "старшая", "основная", "senior (основная лига)"):
-            league = League.senior
+        elif league_raw in (
+            "starter", "стартёр", "стартер", "starter (начальная лига)",
+            "senior", "сеньор", "старшая", "основная", "senior (основная лига)"
+        ):
+            league = League.starter
         elif league_raw in ("open", "оупен"):
             league = League.open
         elif league_raw in ("pro", "про"):
             league = League.pro
         else:
-            league = League.senior
+            league = League.starter
 
         poster_link = get_val("poster_link") or None
 

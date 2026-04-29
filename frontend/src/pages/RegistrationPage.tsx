@@ -24,7 +24,7 @@ interface RegistrationFormData {
   organization: string
   region: string
   participants_count: number
-  league: 'junior' | 'senior' | 'open' | 'pro'
+  league: 'junior' | 'starter' | 'open' | 'pro'
   rules_accepted: boolean
   [key: string]: unknown
 }
@@ -474,8 +474,8 @@ export default function RegistrationPage() {
                       <option value="">Выберите лигу</option>
                       <option value="pro">Pro</option>
                       <option value="open">Open</option>
-                      <option value="senior">Senior</option>
                       <option value="junior">Junior</option>
+                      <option value="starter">Starter</option>
                     </select>
                     {errors.league && (
                         <p style={{ marginTop: '0.25rem', fontSize: '0.875rem', color: '#ef4444' }}>{errors.league.message}</p>

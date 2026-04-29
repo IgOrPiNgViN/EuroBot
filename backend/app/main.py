@@ -65,7 +65,9 @@ async def run_migrations():
             modify_migrations = [
                 "ALTER TABLE seasons MODIFY COLUMN theme TEXT",
                 "ALTER TABLE archive_seasons MODIFY COLUMN theme TEXT",
-                "ALTER TABLE teams MODIFY COLUMN league ENUM('junior','senior','open','pro') NOT NULL",
+                # Leagues: rename senior -> starter
+                "UPDATE teams SET league = 'starter' WHERE league = 'senior'",
+                "ALTER TABLE teams MODIFY COLUMN league ENUM('junior','starter','open','pro') NOT NULL",
             ]
             for migration in modify_migrations:
                 try:

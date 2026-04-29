@@ -4,14 +4,6 @@ import { partnersApi } from '../api/partners'
 import { Partner, PartnerCategory } from '../types'
 import '../styles/components/PartnersSection.css'
 
-const categoryNames: Record<PartnerCategory, string> = {
-  general: 'Генеральные партнёры',
-  official: 'Официальные партнёры',
-  technology: 'Технологические партнёры',
-  educational: 'Образовательные партнёры',
-  media: 'СМИ партнёры'
-}
-
 const categoryOrder: PartnerCategory[] = ['official', 'technology', 'educational', 'media']
 
 const getPartnerLogoAndBackground = (partner: Partner) => {

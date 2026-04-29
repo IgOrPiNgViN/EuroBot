@@ -17,7 +17,7 @@ class TeamStatus(str, enum.Enum):
 class League(str, enum.Enum):
     """Competition leagues."""
     junior = "junior"  # Юниоры
-    senior = "senior"  # Основная лига
+    starter = "starter"  # Начальная лига
     open = "open"      # Open лига
     pro = "pro"        # Pro лига
 
