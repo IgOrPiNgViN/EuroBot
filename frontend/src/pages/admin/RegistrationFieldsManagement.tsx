@@ -46,7 +46,8 @@ const CURRENT_FORM_FIELDS = [
   { name: 'phone', label: 'Телефон', type: 'phone', required: true, section: 'contact' },
   { name: 'organization', label: 'Организация / Школа / Университет', type: 'text', required: true, section: 'main' },
   { name: 'region', label: 'Регион', type: 'text', required: true, section: 'main' },
-  { name: 'participants_count', label: 'Количество участников', type: 'number', required: true, section: 'main' }
+  { name: 'participants_count', label: 'Количество участников', type: 'number', required: true, section: 'main' },
+  { name: 'league', label: 'Лига', type: 'select', required: true, section: 'main' }
 ]
 
 interface RegistrationField {

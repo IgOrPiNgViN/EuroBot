@@ -44,8 +44,12 @@
     /* League Badge Colors */
     --teams-league-junior-bg: var(--color-blue-100);
     --teams-league-junior-text: var(--color-blue-800);
-    --teams-league-main-bg: var(--color-purple-100);
-    --teams-league-main-text: var(--color-purple-800);
+    --teams-league-senior-bg: var(--color-purple-100);
+    --teams-league-senior-text: var(--color-purple-800);
+    --teams-league-open-bg: var(--color-green-100);
+    --teams-league-open-text: var(--color-green-800);
+    --teams-league-pro-bg: var(--color-yellow-100);
+    --teams-league-pro-text: var(--color-yellow-800);
 
     /* Status Badge Colors */
     --teams-status-pending-bg: var(--color-blue-100);
@@ -290,9 +294,19 @@
     color: var(--teams-league-junior-text);
 }
 
-.teams-management-league-main {
-    background-color: var(--teams-league-main-bg);
-    color: var(--teams-league-main-text);
+.teams-management-league-senior {
+    background-color: var(--teams-league-senior-bg);
+    color: var(--teams-league-senior-text);
+}
+
+.teams-management-league-open {
+    background-color: var(--teams-league-open-bg);
+    color: var(--teams-league-open-text);
+}
+
+.teams-management-league-pro {
+    background-color: var(--teams-league-pro-bg);
+    color: var(--teams-league-pro-text);
 }
 
 /* Status Badge */

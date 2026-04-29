@@ -34,7 +34,16 @@ const statusColors: Record<TeamStatus, string> = {
 
 const leagueColors: Record<string, string> = {
   junior: 'teams-management-league-junior',
-  main: 'teams-management-league-main'
+  senior: 'teams-management-league-senior',
+  open: 'teams-management-league-open',
+  pro: 'teams-management-league-pro'
+}
+
+const leagueLabels: Record<string, string> = {
+  junior: 'Junior',
+  senior: 'Senior',
+  open: 'Open',
+  pro: 'Pro'
 }
 
 const roleColors: Record<string, string> = {
@@ -232,7 +241,7 @@ export default function TeamsManagement() {
                   </td>
                   <td className="teams-management-table-cell">
                   <span className={`teams-management-league-badge ${leagueColors[team.league]}`}>
-                    {team.league === 'junior' ? 'Юниоры' : 'Основная'}
+                    {leagueLabels[team.league] || team.league}
                   </span>
                   </td>
                   <td className="teams-management-table-cell">
@@ -333,7 +342,7 @@ export default function TeamsManagement() {
                     <div className="teams-management-team-detail">
                       <p className="teams-management-detail-label">Лига</p>
                       <p className="teams-management-detail-value">
-                        {selectedTeam.league === 'junior' ? 'Юниоры' : 'Основная'}
+                        {leagueLabels[selectedTeam.league] || selectedTeam.league}
                       </p>
                     </div>
                   </div>

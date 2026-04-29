@@ -65,6 +65,7 @@ async def run_migrations():
             modify_migrations = [
                 "ALTER TABLE seasons MODIFY COLUMN theme TEXT",
                 "ALTER TABLE archive_seasons MODIFY COLUMN theme TEXT",
+                "ALTER TABLE teams MODIFY COLUMN league ENUM('junior','senior','open','pro') NOT NULL",
             ]
             for migration in modify_migrations:
                 try:
@@ -157,15 +158,25 @@ app = FastAPI(
 )
 
 # CORS middleware
-cors_origins = [
-    settings.FRONTEND_URL,
-    "http://localhost:5173",
-    "http://localhost:3000",
-]
-# Поддержка второго домена (для продакшна с двумя доменами)
-frontend_url_2 = os.environ.get("FRONTEND_URL_2")
-if frontend_url_2:
-    cors_origins.append(frontend_url_2)
+def _collect_cors_origins() -> list[str]:
+    out: list[str] = [
+        settings.FRONTEND_URL,
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ]
+    env2 = getattr(settings, "FRONTEND_URL_2", None) or os.environ.get("FRONTEND_URL_2")
+    if env2:
+        out.append(env2.strip())
+    extra = getattr(settings, "FRONTEND_EXTRA_ORIGINS", None) or os.environ.get("FRONTEND_EXTRA_ORIGINS")
+    if extra:
+        for part in extra.split(","):
+            o = part.strip()
+            if o:
+                out.append(o)
+    return list(dict.fromkeys(out))
+
+
+cors_origins = _collect_cors_origins()
 
 app.add_middleware(
     CORSMiddleware,
