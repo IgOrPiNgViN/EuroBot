@@ -184,13 +184,40 @@
 }
 
 .archive-season-theme {
-    color: var(--archive-accent-gold);
-    font-weight: 500;
     margin-bottom: 2rem;
-    font-size: 2rem;
-    line-height: 1.5rem;
-    background-color: rgba(33, 127, 210, 0.2);
-    padding: 15px;
+    padding: 1.25rem 1.5rem;
+    background-color: rgba(33, 127, 210, 0.12);
+    border-left: 4px solid #217fd2;
+    border-radius: 0.5rem;
+}
+
+.archive-season-theme-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #217fd2;
+}
+
+.archive-season-theme-text {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #1f2937;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+@media (max-width: 640px) {
+    .archive-season-theme {
+        padding: 1rem;
+    }
+
+    .archive-season-theme-text {
+        font-size: 1rem;
+    }
 }
 
 .archive-season-description {

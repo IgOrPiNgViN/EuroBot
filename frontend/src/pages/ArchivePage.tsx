@@ -287,9 +287,10 @@ export default function ArchivePage() {
                             )}
 
                             {selectedSeason.theme && (
-                                <p className="archive-season-theme">
-                                  Тема: {selectedSeason.theme}
-                                </p>
+                                <div className="archive-season-theme">
+                                  <span className="archive-season-theme-label">Тема сезона</span>
+                                  <p className="archive-season-theme-text">{selectedSeason.theme}</p>
+                                </div>
                             )}
 
                             {/* Основное описание из дешифрованных данных */}
