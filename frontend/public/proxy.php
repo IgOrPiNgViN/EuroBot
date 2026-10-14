@@ -4,7 +4,7 @@
  * Runs on Masterhost shared hosting (Apache + PHP).
  */
 
-$BACKEND = 'http://85.239.60.54:8000';
+$BACKEND = 'http://5.129.215.45:8000';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri    = $_SERVER['REQUEST_URI'];
