@@ -12,6 +12,8 @@ import { settingsApi } from '../api/settings'
 import { News, Season, FormatStructure } from '../types'
 import { parseFormat } from '../utils/parseFormat'
 import SEO from '../components/SEO'
+import OffseasonBanner from '../components/OffseasonBanner'
+import { useSiteText } from '../utils/siteText'
 import '../styles/pages/HomePage.css'
 
 export default function HomePage() {
@@ -19,6 +21,7 @@ export default function HomePage() {
   const [currentSeason, setCurrentSeason] = useState<Season | null>(null)
   const [formatData, setFormatData] = useState<FormatStructure | null>(null)
   const [loading, setLoading] = useState(true)
+  const siteText = useSiteText()
   const [heroBg, setHeroBg] = useState<string>('')
 
   useEffect(() => {
@@ -100,15 +103,21 @@ export default function HomePage() {
                       </Link>
                     </>
                 )}
+                {!loading && !currentSeason && (
+                    <>
+                      <Link to="/news" className="header-home-link">
+                        Новости
+                      </Link>
+                      <Link to="/archive" className="header-home-link">
+                        Архив сезонов
+                      </Link>
+                    </>
+                )}
               </div>
             </div>
             <div className="hero-right-column">
               <div className="hero-right-text">
-                <p>
-                  Всероссийские молодежные робототехнические соревнования «ЕВРОБОТ-Россия»
-                  с международным участием — это открытый чемпионат мобильных роботов,
-                  созданных молодёжными командами.
-                </p>
+                <p>{siteText.home_hero_text}</p>
               </div>
               <div className="hero-right-logo-image-container">
                 {(formatData?.hero_logo_url || formatData?.logo_url) && (
@@ -125,6 +134,8 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {!loading && !currentSeason && <OffseasonBanner compact />}
 
         <section className="home-news">
           <div className="home-news-container">

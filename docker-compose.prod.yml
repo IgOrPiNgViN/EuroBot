@@ -72,7 +72,7 @@ services:
 
       # Файлы
       UPLOAD_DIR: /app/uploads
-      MAX_FILE_SIZE: 10485760
+      MAX_FILE_SIZE: 20971520  # 20 МБ — совпадает с client_max_body_size в nginx
 
       # CORS — канон + зеркала (см. env.production)
       FRONTEND_URL: ${FRONTEND_URL:-https://eurobotrussia.ru}

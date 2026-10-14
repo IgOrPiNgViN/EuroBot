@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline'
@@ -11,6 +11,8 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
 import Select from '../../components/ui/Select'
+import ImageUrlField from '../../components/ui/ImageUrlField'
+import HtmlInsertToolbar from '../../components/ui/HtmlInsertToolbar'
 import '../../styles/pages/admin/NewsManagement.css'
 
 type PublishMode = 'draft' | 'now' | 'scheduled'
@@ -23,6 +25,7 @@ export default function NewsManagement() {
   const [editingNews, setEditingNews] = useState<News | null>(null)
   const [formData, setFormData] = useState<Partial<NewsCreateData>>({})
   const [saving, setSaving] = useState(false)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
   const [publishMode, setPublishMode] = useState<PublishMode>('draft')
   const [scheduledDate, setScheduledDate] = useState('')
   const [scheduledTime, setScheduledTime] = useState('')
@@ -298,26 +301,31 @@ export default function NewsManagement() {
               />
 
               <Textarea
+                ref={contentRef}
                 label="Содержание"
                 required
                 rows={8}
                 value={formData.content || ''}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                helperText="Поддерживается HTML"
+                helperText="Поддерживается HTML. Кнопки ниже загружают файл на сайт и вставляют его в текст в месте курсора."
+              />
+              <HtmlInsertToolbar
+                textareaRef={contentRef}
+                value={formData.content || ''}
+                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="URL изображения"
-                  value={formData.featured_image || ''}
-                  onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                />
-                <Input
-                  label="URL видео"
-                  value={formData.video_url || ''}
-                  onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                />
-              </div>
+              <ImageUrlField
+                label="Главное изображение"
+                value={formData.featured_image || ''}
+                onChange={(url) => setFormData(prev => ({ ...prev, featured_image: url }))}
+              />
+              <Input
+                label="Ссылка на видео"
+                value={formData.video_url || ''}
+                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                placeholder="https://youtube.com/... или https://vk.com/video..."
+              />
 
               <Select
                 label="Категория"

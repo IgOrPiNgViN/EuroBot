@@ -8,6 +8,16 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
+import ImageUrlField, {
+  isValidImageRef,
+} from '../../components/ui/ImageUrlField'
+import FileUrlField from '../../components/ui/FileUrlField'
+import {
+  ARCHIVE_LEAGUES,
+  emptyLeaguePlaces,
+  encodePlaceFromForm,
+  type LeaguePlacesForm,
+} from '../../utils/leaguePlaces'
 import '../../styles/pages/admin/SeasonsManagement.css'
 
 interface FormatStructure {
@@ -45,6 +55,9 @@ export default function SeasonsManagement() {
   const [finalizingSeason, setFinalizingSeason] = useState<Season | null>(null)
   const [finalizeData, setFinalizeData] = useState<FinalizeSeasonData>({})
   const [finalizing, setFinalizing] = useState(false)
+  const [archiveLogoUrl, setArchiveLogoUrl] = useState('')
+  const [archiveTitleUrl, setArchiveTitleUrl] = useState('')
+  const [leaguePlaces, setLeaguePlaces] = useState<LeaguePlacesForm>(emptyLeaguePlaces())
 
   const fetchSeasons = async () => {
     try {
@@ -167,12 +180,9 @@ export default function SeasonsManagement() {
     }
   }
 
-  // Обновляем интерфейс FinalizeSeasonData
-// В handleOpenFinalize:
   const handleOpenFinalize = (season: Season) => {
     setFinalizingSeason(season)
 
-    // Пытаемся извлечь логотип и название из format сезона
     let logoUrl = ''
     let titleUrl = ''
 
@@ -198,43 +208,26 @@ export default function SeasonsManagement() {
       additional_info: ''
     })
 
-    // Добавляем состояние для полей логотипа и названия
     setArchiveLogoUrl(logoUrl)
     setArchiveTitleUrl(titleUrl)
-
+    setLeaguePlaces(emptyLeaguePlaces())
     setShowFinalizeModal(true)
   }
 
-// Добавляем новые состояния
-  const [archiveLogoUrl, setArchiveLogoUrl] = useState('')
-  const [archiveTitleUrl, setArchiveTitleUrl] = useState('')
-
-// Обновляем handleFinalize:
   const handleFinalize = async () => {
     if (!finalizingSeason) return
 
-    // Валидация URL
     if (!archiveLogoUrl || !archiveTitleUrl) {
-      toast.error('Заполните URL логотипа и названия для архива')
+      toast.error('Заполните логотип и название для архива (URL или загрузка файла)')
       return
     }
 
-    // Проверка валидности URL
-    const isValidUrl = (url: string) => {
-      try {
-        new URL(url)
-        return true
-      } catch {
-        return false
-      }
-    }
-
-    if (!isValidUrl(archiveLogoUrl)) {
+    if (!isValidImageRef(archiveLogoUrl)) {
       toast.error('Некорректный URL логотипа')
       return
     }
 
-    if (!isValidUrl(archiveTitleUrl)) {
+    if (!isValidImageRef(archiveTitleUrl)) {
       toast.error('Некорректный URL названия')
       return
     }
@@ -243,13 +236,15 @@ export default function SeasonsManagement() {
       return
     }
 
-    // Обновляем description с JSON
-    const updatedFinalizeData = {
+    const updatedFinalizeData: FinalizeSeasonData = {
       ...finalizeData,
       description: JSON.stringify({
         logoUrl: archiveLogoUrl,
         titleImageUrl: archiveTitleUrl
-      }, null, 2)
+      }, null, 2),
+      first_place: encodePlaceFromForm(leaguePlaces, 'first') || undefined,
+      second_place: encodePlaceFromForm(leaguePlaces, 'second') || undefined,
+      third_place: encodePlaceFromForm(leaguePlaces, 'third') || undefined,
     }
 
     setFinalizing(true)
@@ -272,7 +267,7 @@ export default function SeasonsManagement() {
     }
 
     if (!formatData.title_url) {
-      toast.error('Заполните обязательные поля формата (название)')
+      toast.error('Загрузите картинку названия сезона')
       return
     }
 
@@ -365,9 +360,11 @@ export default function SeasonsManagement() {
   }
 
   const handleDocumentChange = (index: number, field: 'url' | 'name', value: string) => {
-    const newDocuments = [...formatData.documents]
-    newDocuments[index] = { ...newDocuments[index], [field]: value }
-    setFormatData(prev => ({ ...prev, documents: newDocuments }))
+    setFormatData(prev => {
+      const newDocuments = [...prev.documents]
+      newDocuments[index] = { ...newDocuments[index], [field]: value }
+      return { ...prev, documents: newDocuments }
+    })
   }
 
   const addDocument = () => {
@@ -584,45 +581,35 @@ export default function SeasonsManagement() {
 
                     {/* Вторая колонка - Формат */}
                     <div className="seasons-management-form-column">
-                      <Input
-                          label="URL логотипа (необязательно)"
-                          type="url"
-                          value={formatData.logo_url}
-                          onChange={(e) => handleFormatFieldChange('logo_url', e.target.value)}
-                          placeholder="https://example.com/logo.png"
+                      <ImageUrlField
+                          label="Логотип (необязательно)"
+                          value={formatData.logo_url || ''}
+                          onChange={(url) => handleFormatFieldChange('logo_url', url)}
                       />
 
-                      <Input
-                          label="URL названия (обязательно)"
-                          type="url"
+                      <ImageUrlField
+                          label="Картинка названия"
                           required
-                          value={formatData.title_url}
-                          onChange={(e) => handleFormatFieldChange('title_url', e.target.value)}
-                          placeholder="https://example.com/title.png"
+                          value={formatData.title_url || ''}
+                          onChange={(url) => handleFormatFieldChange('title_url', url)}
                       />
 
-                      <Input
-                          label="URL иконки маркера перечисления (необязательно)"
-                          type="url"
+                      <ImageUrlField
+                          label="Иконка маркера перечисления (необязательно)"
                           value={formatData.icon_url || ''}
-                          onChange={(e) => handleFormatFieldChange('icon_url', e.target.value)}
-                          placeholder="https://example.com/icon.png"
+                          onChange={(url) => handleFormatFieldChange('icon_url', url)}
                       />
 
-                      <Input
-                          label="URL картинки главной страницы — заголовок (необязательно)"
-                          type="url"
+                      <ImageUrlField
+                          label="Главная страница — картинка заголовка (необязательно)"
                           value={formatData.hero_title_url || ''}
-                          onChange={(e) => handleFormatFieldChange('hero_title_url', e.target.value)}
-                          placeholder="https://example.com/hero-title.png"
+                          onChange={(url) => handleFormatFieldChange('hero_title_url', url)}
                       />
 
-                      <Input
-                          label="URL картинки главной страницы — маскот (необязательно)"
-                          type="url"
+                      <ImageUrlField
+                          label="Главная страница — маскот (необязательно)"
                           value={formatData.hero_logo_url || ''}
-                          onChange={(e) => handleFormatFieldChange('hero_logo_url', e.target.value)}
-                          placeholder="https://example.com/hero-logo.png"
+                          onChange={(url) => handleFormatFieldChange('hero_logo_url', url)}
                       />
 
                       {/* Задания */}
@@ -691,12 +678,14 @@ export default function SeasonsManagement() {
                         {formatData.documents.map((doc, index) => (
                             <div key={index} className="seasons-management-document-item">
                               <div className="seasons-management-document-fields">
-                                <Input
-                                    label="URL документа"
-                                    type="url"
+                                <FileUrlField
+                                    label="Документ"
+                                    kind="documents"
                                     value={doc.url}
-                                    onChange={(e) => handleDocumentChange(index, 'url', e.target.value)}
-                                    placeholder="https://example.com/document.pdf"
+                                    onChange={(url) => handleDocumentChange(index, 'url', url)}
+                                    onUploaded={({ originalName }) => {
+                                      if (!doc.name) handleDocumentChange(index, 'name', originalName.replace(/\.[^.]+$/, ''))
+                                    }}
                                 />
                                 <Input
                                     label="Название документа"
@@ -828,61 +817,29 @@ export default function SeasonsManagement() {
                     </div>
                   </div>
 
-                  {/* Обязательные URL для архива */}
+                  {/* Обязательные изображения для архива */}
                   <div className="seasons-management-archive-urls-section">
                     <p className="seasons-management-archive-urls-label">
-                      Обязательные URL для архива *
+                      Обязательные изображения для архива *
                     </p>
                     <div className="seasons-management-archive-urls-fields">
-                      <Input
-                          label="URL логотипа *"
-                          type="url"
+                      <ImageUrlField
+                          label="Логотип *"
                           required
                           value={archiveLogoUrl}
-                          onChange={(e) => setArchiveLogoUrl(e.target.value)}
-                          placeholder="https://example.com/logo.png"
+                          onChange={setArchiveLogoUrl}
+                          placeholder="https://... или загрузите файл"
+                          previewAlt="Превью логотипа"
                       />
-                      {archiveLogoUrl && (
-                          <div className="seasons-management-url-preview">
-                            <img
-                                src={archiveLogoUrl}
-                                alt="Превью логотипа"
-                                className="seasons-management-preview-image"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                  e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                                }}
-                            />
-                            <div className="seasons-management-preview-error hidden">
-                              Не удалось загрузить изображение
-                            </div>
-                          </div>
-                      )}
 
-                      <Input
-                          label="URL названия *"
-                          type="url"
+                      <ImageUrlField
+                          label="Название *"
                           required
                           value={archiveTitleUrl}
-                          onChange={(e) => setArchiveTitleUrl(e.target.value)}
-                          placeholder="https://example.com/title.png"
+                          onChange={setArchiveTitleUrl}
+                          placeholder="https://... или загрузите файл"
+                          previewAlt="Превью названия"
                       />
-                      {archiveTitleUrl && (
-                          <div className="seasons-management-url-preview">
-                            <img
-                                src={archiveTitleUrl}
-                                alt="Превью названия"
-                                className="seasons-management-preview-image"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                  e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                                }}
-                            />
-                            <div className="seasons-management-preview-error hidden">
-                              Не удалось загрузить изображение
-                            </div>
-                          </div>
-                      )}
                     </div>
                   </div>
 
@@ -897,55 +854,62 @@ export default function SeasonsManagement() {
                       className="seasons-management-readonly-textarea"
                   />
                   <p className="seasons-management-hint-small">
-                    Это поле заполняется автоматически на основе URL выше
+                    Это поле заполняется автоматически на основе изображений выше
                   </p>
 
-                  <Input
-                      label="URL обложки"
+                  <ImageUrlField
+                      label="Обложка"
                       value={finalizeData.cover_image || ''}
-                      onChange={(e) => setFinalizeData({ ...finalizeData, cover_image: e.target.value })}
-                      placeholder="https://example.com/image.jpg"
+                      onChange={(url) => setFinalizeData({ ...finalizeData, cover_image: url })}
+                      placeholder="https://... или загрузите файл"
+                      previewAlt="Превью обложки"
                   />
-                  {finalizeData.cover_image && (
-                      <div className="seasons-management-cover-preview">
-                        <img
-                            src={finalizeData.cover_image}
-                            alt="Превью обложки"
-                            className="seasons-management-cover-image"
-                            onError={(e) => (e.currentTarget.style.display = 'none')}
-                        />
-                      </div>
-                  )}
 
                   <div className="seasons-management-results-section">
-                    <p className="seasons-management-results-label">Итоги сезона</p>
-                    <div className="seasons-management-results-fields">
-                      <Input
-                          label="🥇 1 место"
-                          value={finalizeData.first_place || ''}
-                          onChange={(e) => setFinalizeData({ ...finalizeData, first_place: e.target.value })}
-                          placeholder="Название команды-победителя"
-                      />
-                      <Input
-                          label="🥈 2 место"
-                          value={finalizeData.second_place || ''}
-                          onChange={(e) => setFinalizeData({ ...finalizeData, second_place: e.target.value })}
-                          placeholder="Название команды"
-                      />
-                      <Input
-                          label="🥉 3 место"
-                          value={finalizeData.third_place || ''}
-                          onChange={(e) => setFinalizeData({ ...finalizeData, third_place: e.target.value })}
-                          placeholder="Название команды"
-                      />
-                      <Textarea
-                          label="Дополнительная информация"
-                          value={finalizeData.additional_info || ''}
-                          onChange={(e) => setFinalizeData({ ...finalizeData, additional_info: e.target.value })}
-                          placeholder="Другие награды, особые достижения и т.д."
-                          rows={3}
-                      />
-                    </div>
+                    <p className="seasons-management-results-label">Итоги сезона — призовые места по лигам</p>
+
+                    {ARCHIVE_LEAGUES.map((league) => (
+                      <div key={league.key} className="seasons-management-league-block">
+                        <h4 className="seasons-management-league-title">Лига {league.label}</h4>
+                        <div className="seasons-management-results-fields">
+                          <Input
+                              label="🥇 1 место"
+                              value={leaguePlaces[league.key].first}
+                              onChange={(e) => setLeaguePlaces({
+                                ...leaguePlaces,
+                                [league.key]: { ...leaguePlaces[league.key], first: e.target.value },
+                              })}
+                              placeholder={`Команда — ${league.label}`}
+                          />
+                          <Input
+                              label="🥈 2 место"
+                              value={leaguePlaces[league.key].second}
+                              onChange={(e) => setLeaguePlaces({
+                                ...leaguePlaces,
+                                [league.key]: { ...leaguePlaces[league.key], second: e.target.value },
+                              })}
+                              placeholder={`Команда — ${league.label}`}
+                          />
+                          <Input
+                              label="🥉 3 место"
+                              value={leaguePlaces[league.key].third}
+                              onChange={(e) => setLeaguePlaces({
+                                ...leaguePlaces,
+                                [league.key]: { ...leaguePlaces[league.key], third: e.target.value },
+                              })}
+                              placeholder={`Команда — ${league.label}`}
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    <Textarea
+                        label="Дополнительная информация"
+                        value={finalizeData.additional_info || ''}
+                        onChange={(e) => setFinalizeData({ ...finalizeData, additional_info: e.target.value })}
+                        placeholder="Другие награды, особые достижения и т.д."
+                        rows={3}
+                    />
                   </div>
                   <p className="seasons-management-hint">
                     Количество команд будет подсчитано автоматически.

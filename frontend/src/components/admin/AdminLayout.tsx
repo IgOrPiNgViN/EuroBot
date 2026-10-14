@@ -19,7 +19,8 @@ import {
   PaperAirplaneIcon,
   ClipboardDocumentListIcon,
   ArchiveBoxIcon,
-  ShareIcon
+  ShareIcon,
+  FolderOpenIcon
 } from '@heroicons/react/24/outline'
 import { useAuthStore } from '../../store/authStore'
 import '../../styles/components/admin/AdminLayout.css'
@@ -38,6 +39,7 @@ const navigation: NavItem[] = [
   { name: 'Партнеры', href: '/admin/partners', icon: BuildingOfficeIcon },
   { name: 'Сезоны', href: '/admin/seasons', icon: CalendarIcon },
   { name: 'Архив', href: '/admin/archive', icon: ArchiveBoxIcon },
+  { name: 'Файлы', href: '/admin/files', icon: FolderOpenIcon },
   { name: 'Поля регистрации', href: '/admin/registration-fields', icon: ClipboardDocumentListIcon },
   { name: 'Сообщения', href: '/admin/messages', icon: EnvelopeIcon },
   { name: 'Рассылки', href: '/admin/mailings', icon: PaperAirplaneIcon },

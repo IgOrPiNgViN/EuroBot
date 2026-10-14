@@ -2,6 +2,13 @@
     RewriteEngine On
     RewriteBase /
 
+    # Allow ACME/other well-known endpoints (SSL verification etc.)
+    RewriteRule ^\.well-known/ - [L]
+
+    # Force canonical domain first
+    RewriteCond %{HTTP_HOST} !^eurobot\.ru$ [NC]
+    RewriteRule ^ https://eurobot.ru%{REQUEST_URI} [R=301,L]
+
     # API requests → proxy
     RewriteRule ^api/(.*)$ proxy.php [L,QSA]
 

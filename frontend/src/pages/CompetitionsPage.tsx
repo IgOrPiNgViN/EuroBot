@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import OffseasonBanner from '../components/OffseasonBanner'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import {
@@ -33,7 +34,21 @@ export default function CompetitionsPage() {
         ])
         setCurrentSeason(season)
         if (season && season.format) {
-          setFormatData(parseFormat(season.format))
+          const parsed = parseFormat(season.format)
+          if (season.year === 2026) {
+            const filename = 'ПОЛОЖЕНИЕ Евробот 2026.pdf'
+            const url = `/documents/2026/${encodeURIComponent(filename)}`
+            const extraDoc = { url, name: 'ПОЛОЖЕНИЕ Евробот 2026' }
+
+            const docs = Array.isArray(parsed.documents) ? [...parsed.documents] : []
+            const exists = docs.some((d) => d.url === extraDoc.url || d.name === extraDoc.name)
+            if (!exists) {
+              const insertIndex = 6 // 7th (0-based)
+              docs.splice(Math.min(insertIndex, docs.length), 0, extraDoc)
+              parsed.documents = docs
+            }
+          }
+          setFormatData(parsed)
         }
         if (settings.bg_competitions_docs) {
           setDocsBg(settings.bg_competitions_docs as string)
@@ -74,7 +89,7 @@ export default function CompetitionsPage() {
                         textAlign: 'center'
                     }}>
                         <h1 style={{
-                            fontSize: '3rem',
+                            fontSize: 'clamp(2rem, 8vw, 3rem)',
                             lineHeight: '1',
                             fontWeight: 'bold',
                             fontFamily: 'var(--font-heading)',
@@ -86,20 +101,7 @@ export default function CompetitionsPage() {
                     </div>
                 </div>
 
-                <div style={{
-                    maxWidth: '1200px',
-                    margin: '0 auto',
-                    padding: '5rem 1rem',
-                    textAlign: 'center'
-                }}>
-                    <p style={{
-                        color: '#4b5563',
-                        fontSize: '1.125rem',
-                        lineHeight: '1.75rem'
-                    }}>
-                        Информация о текущем сезоне будет доступна позже
-                    </p>
-                </div>
+                <OffseasonBanner />
             </>
         )
     }

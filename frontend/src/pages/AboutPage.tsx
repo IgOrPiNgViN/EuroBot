@@ -67,6 +67,25 @@ export default function AboutPage() {
   const { settings } = useSettingsStore()
   const [committees, setCommittees] = useState<Committee[]>([])
 
+  const getMemberPhotoStyle = (member: CommitteeMember): React.CSSProperties | undefined => {
+    const name = (member.name || '').toLowerCase()
+
+    // точечные правки кадрирования/центровки
+    if (name.includes('марченко') && name.includes('светлан')) {
+      // 1) обрезается верх головы -> поднимаем "фокус" выше
+      return { objectPosition: '50% 8%' }
+    }
+    if (name.includes('дарья') && name.includes('ванк')) {
+      // 2) лицо уехало вправо -> чуть смещаем фокус влево
+      return { objectPosition: '45% 20%' }
+    }
+    if (name.includes('конюшенко') && name.includes('светлан')) {
+      // 3) "отдалить" лицо (показываем больше кадра; может появиться белое поле)
+      return { objectFit: 'contain', backgroundColor: '#fff' }
+    }
+    return undefined
+  }
+
   useEffect(() => {
     if (settings.about_goals) {
       try {
@@ -178,6 +197,7 @@ export default function AboutPage() {
                                 src={member.photo_url}
                                 alt={member.name}
                                 className="about-member-photo"
+                                style={getMemberPhotoStyle(member)}
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none'
                                   const placeholder = e.currentTarget.nextElementSibling as HTMLElement

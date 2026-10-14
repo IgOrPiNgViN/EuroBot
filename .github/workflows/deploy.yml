@@ -1,0 +1,104 @@
+# Автодеплой: при push в main
+#   - фронтенд собирается и заливается по FTP на Masterhost
+#   - бэкенд обновляется на сервере Timeweb по SSH (git pull + пересборка контейнера)
+#
+# Секреты (GitHub → Settings → Secrets and variables → Actions):
+#   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD                  — Masterhost
+#   FTP_SERVER_DIRS — папка сайта на хостинге в виде ["/eurobot.ru/www/"]
+#   SSH_HOST, SSH_USER, SSH_PRIVATE_KEY, SERVER_PROJECT_DIR — Timeweb
+#
+# Зеркальные домены только переадресуют на eurobot.ru, поэтому сборка
+# заливается в одну папку.
+#
+# Файлы, загруженные через админку, здесь не участвуют — они сразу сохраняются
+# на сервере бэкенда и деплой их не затрагивает.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Что деплоить'
+        type: choice
+        options: [all, frontend, backend]
+        default: all
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+              - 'docker-compose.prod.yml'
+
+  frontend:
+    needs: changes
+    if: >-
+      (github.event_name == 'push' && needs.changes.outputs.frontend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.target != 'backend')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Upload to Masterhost (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./frontend/dist/
+          server-dir: ${{ fromJSON(secrets.FTP_SERVER_DIRS)[0] }}
+          # Удаляются только файлы, которые раньше залил этот же деплой;
+          # всё, что лежит на хостинге помимо сборки, не трогается.
+          exclude: |
+            **/.git*
+            **/.git*/**
+
+  backend:
+    needs: changes
+    if: >-
+      (github.event_name == 'push' && needs.changes.outputs.backend == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.target != 'frontend')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update backend on Timeweb (SSH)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd "${{ secrets.SERVER_PROJECT_DIR }}"
+            git pull --ff-only origin main
+            docker compose -f docker-compose.prod.yml up -d --build backend
+            docker image prune -f

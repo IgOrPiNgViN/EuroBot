@@ -10,6 +10,7 @@ import { useSettingsStore } from '../store/settingsStore'
 import { Season, RegistrationField } from '../types'
 import { useSmartCaptcha } from '../hooks/useSmartCaptcha'
 import SmartCaptcha from '../components/ui/SmartCaptcha'
+import OffseasonBanner from '../components/OffseasonBanner'
 import SEO from '../components/SEO'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Input from '../components/ui/Input'
@@ -272,7 +273,7 @@ export default function RegistrationPage() {
           }}>
             <div style={{ maxWidth: '1200px', width: '100%', padding: '0 1rem', textAlign: 'center' }}>
               <h1 style={{
-                fontSize: '3rem',
+                fontSize: 'clamp(2rem, 8vw, 3rem)',
                 lineHeight: '1',
                 fontWeight: 'bold',
                 fontFamily: "'FunnyFont', sans-serif",
@@ -284,14 +285,18 @@ export default function RegistrationPage() {
             </div>
           </div>
 
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '5rem 1rem', textAlign: 'center' }}>
-            <p style={{ color: '#6b7280', fontSize: '1.125rem', marginBottom: '1rem' }}>
-              Регистрация на соревнования в данный момент закрыта
-            </p>
-            <p style={{ color: '#9ca3af' }}>
-              Следите за новостями, чтобы не пропустить открытие регистрации
-            </p>
-          </div>
+          {currentSeason ? (
+            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '5rem 1rem', textAlign: 'center' }}>
+              <p style={{ color: '#6b7280', fontSize: '1.125rem', marginBottom: '1rem' }}>
+                Регистрация на соревнования в данный момент закрыта
+              </p>
+              <p style={{ color: '#9ca3af' }}>
+                Следите за новостями, чтобы не пропустить открытие регистрации
+              </p>
+            </div>
+          ) : (
+            <OffseasonBanner />
+          )}
         </>
     )
   }
@@ -353,7 +358,7 @@ export default function RegistrationPage() {
         }}>
           <div style={{ maxWidth: '1200px', width: '100%', padding: '0 1rem', textAlign: 'center' }}>
             <h1 style={{
-              fontSize: '3rem',
+              fontSize: 'clamp(2rem, 8vw, 3rem)',
               lineHeight: '1',
               fontWeight: 'bold',
               color: 'white',

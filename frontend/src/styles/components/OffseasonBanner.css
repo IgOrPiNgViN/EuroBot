@@ -1,0 +1,119 @@
+.offseason {
+  --offseason-navy: #0f3d63;
+  --offseason-accent: #f2a617;
+  padding: 4rem 1rem;
+  background: linear-gradient(180deg, #f2f6ff 0%, #ffffff 100%);
+}
+
+.offseason-compact {
+  padding: 2.5rem 1rem;
+}
+
+.offseason-card {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 20px 50px -20px rgba(15, 61, 99, 0.35);
+  border: 1px solid #e2e8f0;
+}
+
+.offseason-image-wrap {
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #f8fafc;
+  aspect-ratio: 1 / 1;
+}
+
+.offseason-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.offseason-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(242, 166, 23, 0.15);
+  color: #b77806;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.offseason-title {
+  margin: 1rem 0;
+  font-family: 'FunnyFont', var(--font-heading), sans-serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  line-height: 1.15;
+  color: var(--offseason-navy);
+}
+
+.offseason-text {
+  margin-bottom: 2rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: #475569;
+  white-space: pre-line;
+}
+
+.offseason-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.offseason-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  border-radius: 999px;
+  font-family: 'FunnyFont', sans-serif;
+  font-size: 0.9375rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.offseason-button:hover {
+  transform: translateY(-2px);
+}
+
+.offseason-button-primary {
+  background: var(--offseason-navy);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(15, 61, 99, 0.6);
+}
+
+.offseason-button-secondary {
+  border: 2px solid var(--offseason-navy);
+  color: var(--offseason-navy);
+}
+
+@media (max-width: 768px) {
+  .offseason-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .offseason-image-wrap {
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .offseason-body {
+    text-align: center;
+  }
+
+  .offseason-actions {
+    justify-content: center;
+  }
+}

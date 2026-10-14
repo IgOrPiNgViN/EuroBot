@@ -7,6 +7,7 @@ import { Partner, PartnerCategory } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
+import ImageUrlField from '../../components/ui/ImageUrlField'
 import Textarea from '../../components/ui/Textarea'
 import Select from '../../components/ui/Select'
 import '../../styles/pages/admin/PartnersManagement.css'
@@ -131,12 +132,12 @@ export default function PartnersManagement() {
     // Для генеральных партнеров собираем URL с разделителем
     if (formData.category === 'general') {
       if (!generalPartnerLogo) {
-        toast.error('Заполните URL логотипа для генерального партнера')
+        toast.error('Загрузите логотип генерального партнёра')
         return
       }
       logoUrl = buildGeneralPartnerUrl(generalPartnerLogo, generalPartnerBackground)
     } else if (!formData.logo) {
-      toast.error('Заполните URL логотипа')
+      toast.error('Загрузите логотип')
       return
     }
 
@@ -270,52 +271,30 @@ export default function PartnersManagement() {
                   {/* Для генеральных партнеров - два поля */}
                   {formData.category === 'general' ? (
                       <>
-                        <Input
-                            label="URL логотипа (обязательно)"
+                        <ImageUrlField
+                            label="Логотип"
                             required
                             value={generalPartnerLogo || ''}
-                            onChange={(e) => setGeneralPartnerLogo(e.target.value)}
-                            placeholder="https://..."
+                            onChange={setGeneralPartnerLogo}
+                            previewAlt="Превью логотипа"
                         />
 
-                        <Input
-                            label="URL фона (необязательно)"
+                        <ImageUrlField
+                            label="Фон (необязательно)"
                             value={generalPartnerBackground || ''}
-                            onChange={(e) => setGeneralPartnerBackground(e.target.value)}
-                            placeholder="https://..."
+                            onChange={setGeneralPartnerBackground}
+                            previewAlt="Превью фона"
                         />
-
-                        {generalPartnerLogo && (
-                            <div className="partners-management-logo-preview">
-                              <img
-                                  src={generalPartnerLogo}
-                                  alt="Preview логотипа"
-                                  className="partners-management-logo-preview-image"
-                                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                              />
-                            </div>
-                        )}
                       </>
                   ) : (
                       <>
-                        <Input
-                            label="URL логотипа"
+                        <ImageUrlField
+                            label="Логотип"
                             required
                             value={formData.logo || ''}
-                            onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
-                            placeholder="https://..."
+                            onChange={(url) => setFormData({ ...formData, logo: url })}
+                            previewAlt="Превью логотипа"
                         />
-
-                        {formData.logo && (
-                            <div className="partners-management-logo-preview">
-                              <img
-                                  src={formData.logo}
-                                  alt="Preview"
-                                  className="partners-management-logo-preview-image"
-                                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                              />
-                            </div>
-                        )}
                       </>
                   )}
 

@@ -646,6 +646,21 @@
     gap: 0.75rem;
 }
 
+.seasons-management-league-block {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--seasons-border);
+    border-radius: 0.5rem;
+    background: var(--seasons-hover-bg);
+}
+
+.seasons-management-league-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--seasons-text-primary);
+    margin: 0 0 0.75rem;
+}
+
 /* Hint */
 .seasons-management-hint {
     font-size: 0.75rem;

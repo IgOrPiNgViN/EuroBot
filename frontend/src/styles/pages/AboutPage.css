@@ -164,24 +164,29 @@
 
 .about-member-photo-container {
     position: relative;
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 170px;
     margin-bottom: 1rem;
+    border-radius: 999px;
+    overflow: hidden;
 }
 
 .about-member-photo {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
     border: 3px solid #e5e7eb;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 999px;
+    object-position: 50% 20%;
+    background: #fff;
+    display: block;
 }
 
 .about-member-placeholder {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    border-radius: 999px;
     background: linear-gradient(135deg, #1e40af 0%, #0f3d63 100%);
     display: flex;
     align-items: center;
@@ -295,8 +300,8 @@
     }
 
     .about-member-photo-container {
-        width: 110px;
-        height: 110px;
+        width: 120px;
+        height: 150px;
     }
 
     .about-member-photo,
@@ -362,8 +367,8 @@
     }
 
     .about-member-photo-container {
-        width: 90px;
-        height: 90px;
+        width: 105px;
+        height: 135px;
     }
 
     .about-member-placeholder {
@@ -386,8 +391,8 @@
     }
 
     .about-member-photo-container {
-        width: 110px;
-        height: 110px;
+        width: 120px;
+        height: 150px;
     }
 
     .about-member-fullname {

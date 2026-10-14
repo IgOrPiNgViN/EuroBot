@@ -15,6 +15,16 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
 import Select from '../../components/ui/Select'
+import ImageUrlField from '../../components/ui/ImageUrlField'
+import FileUrlField from '../../components/ui/FileUrlField'
+import { uploadApi, uploadErrorMessage, ACCEPT } from '../../api/upload'
+import {
+  ARCHIVE_LEAGUES,
+  emptyLeaguePlaces,
+  encodePlaceFromForm,
+  parsePlacesIntoForm,
+  type LeaguePlacesForm,
+} from '../../utils/leaguePlaces'
 import '../../styles/pages/admin/ArchiveManagement.css'
 
 export default function ArchiveManagement() {
@@ -29,8 +39,10 @@ export default function ArchiveManagement() {
     logoUrl: string;
     titleImageUrl: string;
   }>>({})
+  const [leaguePlaces, setLeaguePlaces] = useState<LeaguePlacesForm>(emptyLeaguePlaces())
   const [mediaForm, setMediaForm] = useState<Partial<ArchiveMediaCreateData>>({ media_type: 'photo' })
   const [saving, setSaving] = useState(false)
+  const [bulkProgress, setBulkProgress] = useState<string | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingSeason, setDeletingSeason] = useState<ArchiveSeason | null>(null)
 
@@ -53,6 +65,7 @@ export default function ArchiveManagement() {
   const handleCreateSeason = () => {
     setEditingSeason(null)
     setSeasonForm({ mainDescription: '', logoUrl: '', titleImageUrl: '' })
+    setLeaguePlaces(emptyLeaguePlaces())
     setShowSeasonModal(true)
   }
 
@@ -106,12 +119,10 @@ export default function ArchiveManagement() {
       logoUrl: descriptionData.logoUrl || '',
       titleImageUrl: descriptionData.titleImageUrl || '',
       cover_image: season.cover_image || '',
-      first_place: season.first_place || '',
-      second_place: season.second_place || '',
-      third_place: season.third_place || '',
       additional_info: season.additional_info || '',
       teams_count: season.teams_count || undefined
     })
+    setLeaguePlaces(parsePlacesIntoForm(season.first_place, season.second_place, season.third_place))
     setShowSeasonModal(true)
   }
 
@@ -128,9 +139,9 @@ export default function ArchiveManagement() {
         name: seasonForm.name,
         theme: seasonForm.theme || '',
         cover_image: seasonForm.cover_image || '',
-        first_place: seasonForm.first_place || '',
-        second_place: seasonForm.second_place || '',
-        third_place: seasonForm.third_place || '',
+        first_place: encodePlaceFromForm(leaguePlaces, 'first'),
+        second_place: encodePlaceFromForm(leaguePlaces, 'second'),
+        third_place: encodePlaceFromForm(leaguePlaces, 'third'),
         additional_info: seasonForm.additional_info || '',
         teams_count: seasonForm.teams_count || undefined,
         description: encodeDescriptionData({
@@ -197,7 +208,7 @@ export default function ArchiveManagement() {
 
   const handleSaveMedia = async () => {
     if (!selectedSeason || !mediaForm.file_path) {
-      toast.error('Укажите ссылку на файл')
+      toast.error('Загрузите файл или укажите ссылку')
       return
     }
 
@@ -211,6 +222,31 @@ export default function ArchiveManagement() {
       toast.error(error.response?.data?.detail || 'Ошибка добавления')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleBulkPhotos = async (files: File[]) => {
+    if (!selectedSeason) return
+    let added = 0
+    for (const [i, file] of files.entries()) {
+      setBulkProgress(`${i + 1} из ${files.length}`)
+      try {
+        const { url } = await uploadApi.uploadImage(file)
+        await archiveApi.addMedia(selectedSeason.id, {
+          media_type: 'photo',
+          file_path: url,
+          title: file.name.replace(/\.[^.]+$/, ''),
+        })
+        added++
+      } catch (error) {
+        toast.error(`${file.name}: ${uploadErrorMessage(error)}`)
+      }
+    }
+    setBulkProgress(null)
+    if (added) {
+      toast.success(`Добавлено фото: ${added}`)
+      setShowMediaModal(false)
+      fetchSeasons()
     }
   }
 
@@ -432,18 +468,18 @@ export default function ArchiveManagement() {
                           placeholder="Например: Farming Mars"
                       />
 
-                      <Input
-                          label="URL логотипа"
+                      <ImageUrlField
+                          label="Логотип"
                           value={seasonForm.logoUrl || ''}
-                          onChange={(e) => setSeasonForm({ ...seasonForm, logoUrl: e.target.value })}
-                          placeholder="https://..."
+                          onChange={(url) => setSeasonForm({ ...seasonForm, logoUrl: url })}
+                          placeholder="https://... или загрузите файл"
                       />
 
-                      <Input
-                          label="URL картинки названия"
+                      <ImageUrlField
+                          label="Картинка названия"
                           value={seasonForm.titleImageUrl || ''}
-                          onChange={(e) => setSeasonForm({ ...seasonForm, titleImageUrl: e.target.value })}
-                          placeholder="https://..."
+                          onChange={(url) => setSeasonForm({ ...seasonForm, titleImageUrl: url })}
+                          placeholder="https://... или загрузите файл"
                       />
 
                       <Textarea
@@ -453,45 +489,61 @@ export default function ArchiveManagement() {
                           rows={3}
                       />
 
-                      <Input
-                          label="URL обложки"
+                      <ImageUrlField
+                          label="Обложка"
                           value={seasonForm.cover_image || ''}
-                          onChange={(e) => setSeasonForm({ ...seasonForm, cover_image: e.target.value })}
-                          placeholder="https://..."
+                          onChange={(url) => setSeasonForm({ ...seasonForm, cover_image: url })}
+                          placeholder="https://... или загрузите файл"
                       />
                     </div>
 
                     {/* Вторая колонка */}
                     <div className="archive-management-column-right">
                       <div className="archive-management-winners-section">
-                        <h4 className="archive-management-winners-title">🏆 Призёры соревнований</h4>
-                        <div className="archive-management-winners-fields">
-                          <Input
-                              label="🥇 1 место"
-                              value={seasonForm.first_place || ''}
-                              onChange={(e) => setSeasonForm({ ...seasonForm, first_place: e.target.value })}
-                              placeholder="Название команды — 150 очков"
-                          />
-                          <Input
-                              label="🥈 2 место"
-                              value={seasonForm.second_place || ''}
-                              onChange={(e) => setSeasonForm({ ...seasonForm, second_place: e.target.value })}
-                              placeholder="Название команды — 142 очка"
-                          />
-                          <Input
-                              label="🥉 3 место"
-                              value={seasonForm.third_place || ''}
-                              onChange={(e) => setSeasonForm({ ...seasonForm, third_place: e.target.value })}
-                              placeholder="Название команды — 138 очков"
-                          />
-                          <Textarea
-                              label="Дополнительная информация"
-                              value={seasonForm.additional_info || ''}
-                              onChange={(e) => setSeasonForm({ ...seasonForm, additional_info: e.target.value })}
-                              rows={2}
-                              placeholder="Например: Всего участвовало 45 команд из 12 регионов"
-                          />
-                        </div>
+                        <h4 className="archive-management-winners-title">🏆 Призёры по лигам</h4>
+
+                        {ARCHIVE_LEAGUES.map((league) => (
+                          <div key={league.key} className="archive-management-league-block">
+                            <h5 className="archive-management-league-title">Лига {league.label}</h5>
+                            <div className="archive-management-winners-fields">
+                              <Input
+                                  label="🥇 1 место"
+                                  value={leaguePlaces[league.key].first}
+                                  onChange={(e) => setLeaguePlaces({
+                                    ...leaguePlaces,
+                                    [league.key]: { ...leaguePlaces[league.key], first: e.target.value },
+                                  })}
+                                  placeholder={`Команда — ${league.label}`}
+                              />
+                              <Input
+                                  label="🥈 2 место"
+                                  value={leaguePlaces[league.key].second}
+                                  onChange={(e) => setLeaguePlaces({
+                                    ...leaguePlaces,
+                                    [league.key]: { ...leaguePlaces[league.key], second: e.target.value },
+                                  })}
+                                  placeholder={`Команда — ${league.label}`}
+                              />
+                              <Input
+                                  label="🥉 3 место"
+                                  value={leaguePlaces[league.key].third}
+                                  onChange={(e) => setLeaguePlaces({
+                                    ...leaguePlaces,
+                                    [league.key]: { ...leaguePlaces[league.key], third: e.target.value },
+                                  })}
+                                  placeholder={`Команда — ${league.label}`}
+                              />
+                            </div>
+                          </div>
+                        ))}
+
+                        <Textarea
+                            label="Дополнительная информация"
+                            value={seasonForm.additional_info || ''}
+                            onChange={(e) => setSeasonForm({ ...seasonForm, additional_info: e.target.value })}
+                            rows={2}
+                            placeholder="Например: Всего участвовало 45 команд из 12 регионов"
+                        />
                       </div>
                     </div>
                   </div>
@@ -542,29 +594,74 @@ export default function ArchiveManagement() {
                       placeholder="Название файла"
                   />
 
-                  <Input
-                      label={mediaForm.media_type === 'video' ? 'URL видео' : 'URL файла'}
-                      required
-                      value={mediaForm.file_path || ''}
-                      onChange={(e) => setMediaForm({ ...mediaForm, file_path: e.target.value })}
-                      placeholder="https://..."
-                  />
-
-                  {mediaForm.media_type === 'video' && (
-                      <Input
-                          label="URL превью (thumbnail)"
-                          value={mediaForm.thumbnail || ''}
-                          onChange={(e) => setMediaForm({ ...mediaForm, thumbnail: e.target.value })}
-                          placeholder="https://..."
+                  {mediaForm.media_type === 'photo' ? (
+                      <ImageUrlField
+                          label="Фото *"
+                          required
+                          value={mediaForm.file_path || ''}
+                          onChange={(url) => setMediaForm({ ...mediaForm, file_path: url })}
+                          placeholder="https://... или загрузите файл"
+                      />
+                  ) : mediaForm.media_type === 'video' ? (
+                      <FileUrlField
+                          label="Видео"
+                          kind="files"
+                          required
+                          value={mediaForm.file_path || ''}
+                          onChange={(url) => setMediaForm(prev => ({ ...prev, file_path: url }))}
+                          placeholder="https://youtube.com/... или загрузите mp4"
+                          helperText="Для больших видео лучше вставить ссылку на YouTube / VK"
+                      />
+                  ) : (
+                      <FileUrlField
+                          label="Документ"
+                          kind="documents"
+                          required
+                          value={mediaForm.file_path || ''}
+                          onChange={(url) => setMediaForm(prev => ({ ...prev, file_path: url }))}
+                          onUploaded={({ originalName }) => setMediaForm(prev => (
+                            prev.title ? prev : { ...prev, title: originalName.replace(/\.[^.]+$/, '') }
+                          ))}
                       />
                   )}
 
                   {mediaForm.media_type === 'photo' && (
-                      <Input
-                          label="URL миниатюры"
+                      <div className="archive-management-bulk-upload">
+                        <label className={`image-url-field-upload ${bulkProgress ? 'is-loading' : ''}`}>
+                          {bulkProgress ? `Загрузка ${bulkProgress}...` : 'Загрузить сразу несколько фото'}
+                          <input
+                              type="file"
+                              multiple
+                              accept={ACCEPT.images}
+                              className="image-url-field-file-input"
+                              disabled={!!bulkProgress}
+                              onChange={(e) => {
+                                if (e.target.files?.length) void handleBulkPhotos(Array.from(e.target.files))
+                                e.target.value = ''
+                              }}
+                          />
+                        </label>
+                        <span className="image-url-field-drop-hint">
+                          Каждое фото будет сразу добавлено в архив сезона
+                        </span>
+                      </div>
+                  )}
+
+                  {mediaForm.media_type === 'video' && (
+                      <ImageUrlField
+                          label="Превью (thumbnail)"
                           value={mediaForm.thumbnail || ''}
-                          onChange={(e) => setMediaForm({ ...mediaForm, thumbnail: e.target.value })}
-                          placeholder="https://... (опционально)"
+                          onChange={(url) => setMediaForm({ ...mediaForm, thumbnail: url })}
+                          placeholder="https://... или загрузите файл"
+                      />
+                  )}
+
+                  {mediaForm.media_type === 'photo' && (
+                      <ImageUrlField
+                          label="Миниатюра"
+                          value={mediaForm.thumbnail || ''}
+                          onChange={(url) => setMediaForm({ ...mediaForm, thumbnail: url })}
+                          placeholder="https://... или загрузите файл (опционально)"
                       />
                   )}
 

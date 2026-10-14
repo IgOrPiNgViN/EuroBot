@@ -398,6 +398,21 @@
     gap: 0.75rem;
 }
 
+.archive-management-league-block {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--archive-winners-border, #e5e7eb);
+    border-radius: 0.5rem;
+    background: #f9fafb;
+}
+
+.archive-management-league-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--archive-winners-title, #374151);
+    margin: 0 0 0.75rem;
+}
+
 /* Delete Modal Styles */
 .archive-management-delete-text {
     color: var(--archive-text-secondary);
@@ -571,4 +586,14 @@
     .archive-management-column-left .archive-management-form-grid {
         grid-template-columns: 1fr;
     }
+}
+/* Bulk photo upload */
+.archive-management-bulk-upload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px dashed var(--archive-modal-border);
+    border-radius: 0.5rem;
 }

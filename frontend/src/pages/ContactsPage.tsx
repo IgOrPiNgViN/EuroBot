@@ -8,6 +8,7 @@ import {
   MapPinIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
+import { phoneHref, useSiteText } from '../utils/siteText'
 import { contactsApi, ContactCreateData } from '../api/contacts'
 import { useSettingsStore } from '../store/settingsStore'
 import { useSmartCaptcha } from '../hooks/useSmartCaptcha'
@@ -31,6 +32,7 @@ const topicOptions = [
 
 export default function ContactsPage() {
   const { settings } = useSettingsStore()
+  const siteText = useSiteText()
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
@@ -183,7 +185,7 @@ export default function ContactsPage() {
                     <div>
                       <h3 className="contacts-contact-title">Адрес</h3>
                       <p className="contacts-contact-text">
-                        Москва, Каширское ш. 31 (НИЯУ МИФИ)
+                        {siteText.contact_address}
                       </p>
                     </div>
                   </div>
@@ -192,8 +194,8 @@ export default function ContactsPage() {
                     <PhoneIcon className="contacts-contact-icon" />
                     <div>
                       <h3 className="contacts-contact-title">Телефон</h3>
-                      <a href="tel:+79067127744" className="contacts-contact-link">
-                        +7 (906) 712‑7744
+                      <a href={phoneHref(siteText.contact_phone)} className="contacts-contact-link">
+                        {siteText.contact_phone}
                       </a>
                     </div>
                   </div>

@@ -6,6 +6,10 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Textarea from '../../components/ui/Textarea'
+import ImageUrlField from '../../components/ui/ImageUrlField'
+import { uploadErrorMessage } from '../../api/upload'
+import { OFFSEASON_DEFAULTS, OffseasonKey } from '../../components/OffseasonBanner'
+import { SITE_TEXT_FIELDS } from '../../utils/siteText'
 import { PlusIcon, TrashIcon, XMarkIcon, UserIcon, UserGroupIcon, PhotoIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import '../../styles/pages/admin/SettingsManagement.css'
 
@@ -112,7 +116,7 @@ export default function SettingsManagement() {
       toast.success('Фоновое изображение обновлено')
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('Ошибка загрузки изображения')
+      toast.error(uploadErrorMessage(error))
     } finally {
       setBgUploading(null)
     }
@@ -349,6 +353,34 @@ export default function SettingsManagement() {
     }
   }
 
+  const handleSaveSiteTexts = async () => {
+    setSaving('site_texts')
+    try {
+      for (const field of SITE_TEXT_FIELDS) {
+        await settingsApi.update(field.key, editedValues[field.key] ?? '')
+      }
+      toast.success('Контакты и тексты сохранены')
+    } catch (error) {
+      toast.error('Ошибка сохранения')
+    } finally {
+      setSaving(null)
+    }
+  }
+
+  const handleSaveOffseason = async () => {
+    setSaving('offseason')
+    try {
+      for (const key of Object.keys(OFFSEASON_DEFAULTS) as OffseasonKey[]) {
+        await settingsApi.update(key, editedValues[key] ?? '')
+      }
+      toast.success('Блок «Межсезонье» сохранён')
+    } catch (error) {
+      toast.error('Ошибка сохранения')
+    } finally {
+      setSaving(null)
+    }
+  }
+
   // Group settings by category
   const aboutSettings = settings.filter(s =>
       s.key.startsWith('about_') &&
@@ -367,6 +399,8 @@ export default function SettingsManagement() {
       !s.key.startsWith('contact_') &&
       !s.key.startsWith('site_') &&
       !bgKeys.includes(s.key) &&
+      !s.key.startsWith('offseason_') &&
+      !SITE_TEXT_FIELDS.some(f => f.key === s.key) &&
       s.key !== 'show_advantages'
   )
 
@@ -506,6 +540,76 @@ export default function SettingsManagement() {
                   </div>
                 </div>
             ))}
+          </div>
+        </div>
+
+        {/* Контакты и тексты, которые показываются в шапке, подвале и на главной */}
+        <div className="settings-management-group">
+          <h2 className="settings-management-group-title">Контакты и тексты сайта</h2>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+            Показываются в шапке, подвале, на странице «Контакты» и на главной.
+            Пустое поле — используется значение по умолчанию (серым в поле).
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {SITE_TEXT_FIELDS.map((field) => field.multiline ? (
+                <Textarea
+                    key={field.key}
+                    label={field.label}
+                    rows={3}
+                    value={editedValues[field.key] || ''}
+                    onChange={(e) => setEditedValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                    placeholder={field.default}
+                />
+            ) : (
+                <Input
+                    key={field.key}
+                    label={field.label}
+                    value={editedValues[field.key] || ''}
+                    onChange={(e) => setEditedValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                    placeholder={field.default}
+                />
+            ))}
+            <div>
+              <Button onClick={handleSaveSiteTexts} isLoading={saving === 'site_texts'}>
+                Сохранить
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Межсезонье */}
+        <div className="settings-management-group">
+          <h2 className="settings-management-group-title">Межсезонье («Ждём новый сезон»)</h2>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+            Этот блок автоматически показывается на главной, на страницах «Соревнования» и «Регистрация»,
+            когда нет текущего сезона (например, после закрытия сезона в разделе «Сезоны»).
+            Пустое поле — используется текст по умолчанию.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <ImageUrlField
+                label="Картинка"
+                value={editedValues.offseason_image || ''}
+                onChange={(url) => setEditedValues(prev => ({ ...prev, offseason_image: url }))}
+                placeholder={OFFSEASON_DEFAULTS.offseason_image}
+            />
+            <Input
+                label="Заголовок"
+                value={editedValues.offseason_title || ''}
+                onChange={(e) => setEditedValues(prev => ({ ...prev, offseason_title: e.target.value }))}
+                placeholder={OFFSEASON_DEFAULTS.offseason_title}
+            />
+            <Textarea
+                label="Текст"
+                rows={4}
+                value={editedValues.offseason_text || ''}
+                onChange={(e) => setEditedValues(prev => ({ ...prev, offseason_text: e.target.value }))}
+                placeholder={OFFSEASON_DEFAULTS.offseason_text}
+            />
+            <div>
+              <Button onClick={handleSaveOffseason} isLoading={saving === 'offseason'}>
+                Сохранить
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -715,29 +819,13 @@ export default function SettingsManagement() {
                                   onChange={(e) => updateMember(committee.id, member.id, 'position', e.target.value)}
                                   placeholder="Председатель комитета"
                               />
-                              <Input
-                                  label="URL фотографии"
-                                  type="url"
+                              <ImageUrlField
+                                  label="Фотография"
                                   value={member.photo_url}
-                                  onChange={(e) => updateMember(committee.id, member.id, 'photo_url', e.target.value)}
-                                  placeholder="https://example.com/photo.jpg"
+                                  onChange={(url) => updateMember(committee.id, member.id, 'photo_url', url)}
+                                  placeholder="https://... или загрузите файл"
+                                  previewAlt="Превью фото"
                               />
-                              {member.photo_url && (
-                                  <div className="committee-member-photo-preview">
-                                    <img
-                                        src={member.photo_url}
-                                        alt="Превью фото"
-                                        className="committee-member-photo"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = 'none';
-                                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                        }}
-                                    />
-                                    <div className="committee-member-photo-error hidden">
-                                      Не удалось загрузить фото
-                                    </div>
-                                  </div>
-                              )}
                             </div>
                           </div>
                       ))}

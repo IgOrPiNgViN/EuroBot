@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useSettingsStore } from '../store/settingsStore'
+import { useSiteText } from '../utils/siteText'
 import { useAuthStore } from '../store/authStore'
 import { useLoginModalStore } from '../store/loginModalStore'
 import '../styles/components/Footer.css'
 
 export default function Footer() {
   const { settings } = useSettingsStore()
+  const siteText = useSiteText()
   const { isAuthenticated, isAdmin } = useAuthStore()
   const openLoginModal = useLoginModalStore((s) => s.open)
   const navigate = useNavigate()
@@ -20,10 +22,10 @@ export default function Footer() {
               КОНТАКТЫ:
             </div>
             <div className="footer-top-text">
-              Председатель орг. комитета: 8 (906) 712 77-44
+              Председатель орг. комитета: {siteText.contact_phone}
             </div>
             <div className="footer-top-text">
-              eurobotrussia@yandex.ru
+              {siteText.contact_main_email}
             </div>
           </div>
 
@@ -41,7 +43,7 @@ export default function Footer() {
 
               <div className="footer-vk-icon">
                 <a
-                    href="https://vk.com/eurobotrussia"
+                    href={siteText.contact_vk}
                     target="_blank"
                     rel="noopener noreferrer"
                 >

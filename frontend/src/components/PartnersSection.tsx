@@ -6,6 +6,20 @@ import '../styles/components/PartnersSection.css'
 
 const categoryOrder: PartnerCategory[] = ['official', 'technology', 'educational', 'media']
 
+const isSagaElectro = (partner: Partner) => {
+  const n = (partner.name || '').trim().toLowerCase()
+  return n.includes('сага') && n.includes('электро')
+}
+
+const moveSagaElectroToEnd = (list: Partner[]) => {
+  const saga: Partner[] = []
+  const rest: Partner[] = []
+  for (const p of list) {
+    ;(isSagaElectro(p) ? saga : rest).push(p)
+  }
+  return rest.concat(saga)
+}
+
 const getPartnerLogoAndBackground = (partner: Partner) => {
   if (partner.category === 'general' && partner.logo.includes('|')) {
     const [logo, background] = partner.logo.split('|').map(s => s.trim())
@@ -90,7 +104,7 @@ export default function PartnersSection() {
             </h3>
 
             {categoryOrder.map((category) => {
-              const categoryPartners = partners[category]
+              const categoryPartners = moveSagaElectroToEnd(partners[category] || [])
               if (!categoryPartners || categoryPartners.length === 0) return null
 
               return (

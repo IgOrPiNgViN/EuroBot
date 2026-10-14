@@ -11,6 +11,47 @@ interface ProcessedArchiveSeason extends ArchiveSeason {
 }
 import ReactPlayer from 'react-player'
 import '../styles/pages/ArchivePage.css'
+import {
+  ARCHIVE_LEAGUES,
+  hasLeagueTags,
+  parseLeaguePlaces,
+} from '../utils/leaguePlaces'
+
+function getUrlBasename(url: string): string {
+  try {
+    const u = new URL(url, window.location.origin)
+    const pathname = u.pathname || ''
+    const base = pathname.split('/').filter(Boolean).pop() || ''
+    return decodeURIComponent(base)
+  } catch {
+    const pathname = (url || '').split('?')[0].split('#')[0]
+    const base = pathname.split('/').filter(Boolean).pop() || ''
+    try {
+      return decodeURIComponent(base)
+    } catch {
+      return base
+    }
+  }
+}
+
+function getProtocolDisplayName(doc: ArchiveSeason['media'][number]): string {
+  const stripTrailingCopyIndex = (name: string): string =>
+    name.replace(/\s*\(\d+\)(?=\.pdf$)/i, '').trim()
+
+  const title = (doc.title || '').trim()
+  if (title.toLowerCase().startsWith('соревнования евробот')) return stripTrailingCopyIndex(title)
+
+  const fromPath = getUrlBasename(doc.file_path || '')
+  const normalized = fromPath.toLowerCase()
+
+  // Force exact filenames for 2023–2025 finals (as in local project root)
+  if (normalized === 'competition_final_2023.pdf') return 'Соревнования Евробот_ Российский финал 19-21.05.2023.pdf'
+  if (normalized === 'competition_final_2024.pdf') return 'Соревнования Евробот_ Российский финал 24-27.05.2024.pdf'
+  if (normalized === 'competition_final_2025.pdf') return 'Соревнования Евробот_ Российский финал 2-4.05.2025.pdf'
+
+  const fallback = fromPath || title || 'Итоговый PDF'
+  return stripTrailingCopyIndex(fallback)
+}
 
 export default function ArchivePage() {
   const [seasons, setSeasons] = useState<ProcessedArchiveSeason[]>([])
@@ -79,19 +120,8 @@ export default function ArchivePage() {
     return { mainDescription: description };
   }
 
-  // Разбирает строку вида "OPEN: команда1 | JUNIOR: команда2" в объект {OPEN, JUNIOR}
-  const parseLeagueResult = (raw: string | null | undefined): { open?: string; junior?: string; full?: string } => {
-    if (!raw) return {}
-    const openMatch = raw.match(/OPEN:\s*([^|]+)/i)
-    const juniorMatch = raw.match(/JUNIOR:\s*([^|]+)/i)
-    if (openMatch || juniorMatch) {
-      return {
-        open: openMatch?.[1].trim(),
-        junior: juniorMatch?.[1].trim(),
-      }
-    }
-    return { full: raw }
-  }
+  // Разбирает строку вида "PRO: ... | OPEN: ... | JUNIOR: ... | STARTER: ..."
+  const parseLeagueResult = (raw: string | null | undefined) => parseLeaguePlaces(raw)
 
   // Функция для получения логотипа и названия из описания
   const getSeasonLogoAndTitle = (season: ProcessedArchiveSeason) => {
@@ -115,8 +145,12 @@ export default function ArchivePage() {
   const protocolDocuments = documents.filter((doc) => {
     if (!selectedSeason || selectedSeason.year < 2023 || selectedSeason.year > 2025) return false
     const title = (doc.title || '').toLowerCase().trim()
-    return title.startsWith('соревнования евробот')
+    const base = getUrlBasename(doc.file_path || '').toLowerCase()
+    return title.startsWith('соревнования евробот') || base.startsWith('competition_final_')
   })
+  const protocolDocumentIds = new Set(protocolDocuments.map((d) => d.id))
+  const otherDocuments = documents.filter((d) => !protocolDocumentIds.has(d.id))
+  const documentsOrdered = [...protocolDocuments, ...otherDocuments]
 
   return (
       <>
@@ -270,25 +304,24 @@ export default function ArchivePage() {
                             const first = parseLeagueResult(selectedSeason.first_place)
                             const second = parseLeagueResult(selectedSeason.second_place)
                             const third = parseLeagueResult(selectedSeason.third_place)
-                            const hasLeagues = !!(first.open || first.junior)
+                            const hasLeagues =
+                              hasLeagueTags(selectedSeason.first_place) ||
+                              hasLeagueTags(selectedSeason.second_place) ||
+                              hasLeagueTags(selectedSeason.third_place)
 
                             if (hasLeagues) {
-                              const leagues = [
-                                { key: 'open', label: 'OPEN' },
-                                { key: 'junior', label: 'JUNIOR' },
-                              ] as const
                               return (
                                 <div className="archive-results">
                                   <h3 className="archive-results-title">Итоги</h3>
                                   <div className="archive-leagues-grid">
-                                    {leagues.map(({ key, label }) => {
-                                      const p1 = key === 'open' ? first.open : first.junior
-                                      const p2 = key === 'open' ? second.open : second.junior
-                                      const p3 = key === 'open' ? third.open : third.junior
+                                    {ARCHIVE_LEAGUES.map(({ key, label }) => {
+                                      const p1 = first[key]
+                                      const p2 = second[key]
+                                      const p3 = third[key]
                                       if (!p1 && !p2 && !p3) return null
                                       return (
                                         <div key={key} className="archive-league-block">
-                                          <div className="archive-league-title">{label}</div>
+                                          <div className="archive-league-title">{label.toUpperCase()}</div>
                                           <div className="archive-winners-list">
                                             {p1 && <div className="archive-winner-item"><span className="archive-winner-emoji">🥇</span><span className="archive-winner-name">{p1}</span></div>}
                                             {p2 && <div className="archive-winner-item"><span className="archive-winner-emoji">🥈</span><span className="archive-winner-name">{p2}</span></div>}
@@ -301,22 +334,6 @@ export default function ArchivePage() {
                                   {selectedSeason.additional_info && (
                                     <p className="archive-additional-info">{selectedSeason.additional_info}</p>
                                   )}
-                                  {protocolDocuments.length > 0 && (
-                                    <div className="archive-documents-list">
-                                      {protocolDocuments.map((doc) => (
-                                        <a
-                                          key={doc.id}
-                                          href={doc.file_path || '#'}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="archive-document-item"
-                                        >
-                                          <DocumentIcon className="archive-document-icon" />
-                                          <span className="archive-document-name">{doc.title || 'Итоговый PDF'}</span>
-                                        </a>
-                                      ))}
-                                    </div>
-                                  )}
                                 </div>
                               )
                             }
@@ -328,44 +345,79 @@ export default function ArchivePage() {
                                   {selectedSeason.first_place && (
                                     <div className="archive-winner-item">
                                       <span className="archive-winner-emoji">🥇</span>
-                                      <span className="archive-winner-name">{first.full}</span>
+                                      <span className="archive-winner-name">{selectedSeason.first_place}</span>
                                     </div>
                                   )}
                                   {selectedSeason.second_place && (
                                     <div className="archive-winner-item">
                                       <span className="archive-winner-emoji">🥈</span>
-                                      <span className="archive-winner-name">{second.full}</span>
+                                      <span className="archive-winner-name">{selectedSeason.second_place}</span>
                                     </div>
                                   )}
                                   {selectedSeason.third_place && (
                                     <div className="archive-winner-item">
                                       <span className="archive-winner-emoji">🥉</span>
-                                      <span className="archive-winner-name">{third.full}</span>
+                                      <span className="archive-winner-name">{selectedSeason.third_place}</span>
                                     </div>
                                   )}
                                   {selectedSeason.additional_info && (
                                     <p className="archive-additional-info">{selectedSeason.additional_info}</p>
                                   )}
-                                  {protocolDocuments.length > 0 && (
-                                    <div className="archive-documents-list">
-                                      {protocolDocuments.map((doc) => (
-                                        <a
+                                </div>
+                              </div>
+                            )
+                          })()}
+
+                          {/* Documents */}
+                          {documentsOrdered.length > 0 && (
+                              <div className="archive-media-section">
+                                <h3 className="archive-section-title archive-documents-title">
+                                  <DocumentIcon className="archive-section-icon" />
+                                  Документы
+                                </h3>
+                                <div className="archive-documents-list">
+                                  {documentsOrdered.map((doc) => (
+                                      <a
                                           key={doc.id}
                                           href={doc.file_path || '#'}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="archive-document-item"
-                                        >
-                                          <DocumentIcon className="archive-document-icon" />
-                                          <span className="archive-document-name">{doc.title || 'Итоговый PDF'}</span>
-                                        </a>
-                                      ))}
-                                    </div>
-                                  )}
+                                      >
+                                        <DocumentIcon className="archive-document-icon" />
+                                        <span className="archive-document-name">
+                                          {protocolDocumentIds.has(doc.id) ? getProtocolDisplayName(doc) : (doc.title || 'Документ')}
+                                        </span>
+                                      </a>
+                                  ))}
                                 </div>
                               </div>
-                            )
-                          })()}
+                          )}
+
+                          {/* Photos */}
+                          {photos.length > 0 && (
+                              <div className="archive-media-section">
+                                <h3 className="archive-section-title archive-photos-title">
+                                  <PhotoIcon className="archive-section-icon" />
+                                  Фотографии
+                                </h3>
+                                <div className="archive-photos-grid">
+                                  {photos.map((photo) => (
+                                      <div
+                                          key={photo.id}
+                                          onClick={() => setSelectedMedia(photo)}
+                                          className="archive-photo-card"
+                                      >
+                                        <img
+                                            src={photo.thumbnail || photo.file_path}
+                                            alt={photo.title || 'Photo'}
+                                            className="archive-photo-image"
+                                        />
+                                      </div>
+                                  ))}
+                                </div>
+                              </div>
+                          )}
 
                           {/* Videos */}
                           {videos.length > 0 && (
@@ -408,55 +460,6 @@ export default function ArchivePage() {
                                             <p className="archive-video-title">{video.title}</p>
                                         )}
                                       </div>
-                                  ))}
-                                </div>
-                              </div>
-                          )}
-
-                          {/* Photos */}
-                          {photos.length > 0 && (
-                              <div className="archive-media-section">
-                                <h3 className="archive-section-title archive-photos-title">
-                                  <PhotoIcon className="archive-section-icon" />
-                                  Фотографии
-                                </h3>
-                                <div className="archive-photos-grid">
-                                  {photos.map((photo) => (
-                                      <div
-                                          key={photo.id}
-                                          onClick={() => setSelectedMedia(photo)}
-                                          className="archive-photo-card"
-                                      >
-                                        <img
-                                            src={photo.thumbnail || photo.file_path}
-                                            alt={photo.title || 'Photo'}
-                                            className="archive-photo-image"
-                                        />
-                                      </div>
-                                  ))}
-                                </div>
-                              </div>
-                          )}
-
-                          {/* Documents */}
-                          {documents.length > 0 && (
-                              <div className="archive-media-section">
-                                <h3 className="archive-section-title archive-documents-title">
-                                  <DocumentIcon className="archive-section-icon" />
-                                  Документы
-                                </h3>
-                                <div className="archive-documents-list">
-                                  {documents.map((doc) => (
-                                      <a
-                                          key={doc.id}
-                                          href={doc.file_path || '#'}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="archive-document-item"
-                                      >
-                                        <DocumentIcon className="archive-document-icon" />
-                                        <span className="archive-document-name">{doc.title || 'Документ'}</span>
-                                      </a>
                                   ))}
                                 </div>
                               </div>

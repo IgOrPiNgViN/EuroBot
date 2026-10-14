@@ -36,6 +36,29 @@ if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
     $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
     if (stripos($contentType, 'multipart/form-data') !== false) {
+        // PHP отбросил файл (больше upload_max_filesize / post_max_size хостинга)
+        $uploadError = null;
+        if (empty($_FILES) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            $uploadError = UPLOAD_ERR_INI_SIZE;
+        }
+        foreach ($_FILES as $file) {
+            foreach ((array)$file['error'] as $err) {
+                if ($err !== UPLOAD_ERR_OK) $uploadError = $err;
+            }
+        }
+        if ($uploadError !== null) {
+            $tooBig = in_array($uploadError, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE]);
+            http_response_code($tooBig ? 413 : 400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'detail' => $tooBig
+                    ? 'Файл слишком большой для хостинга (лимит ' . ini_get('upload_max_filesize') . ')'
+                    : 'Ошибка передачи файла на хостинг (код ' . $uploadError . ')',
+            ], JSON_UNESCAPED_UNICODE);
+            curl_close($ch);
+            exit;
+        }
+
         // File upload — rebuild as CURLFile
         $postFields = [];
         foreach ($_POST as $k => $v) {

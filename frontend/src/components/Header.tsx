@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSiteText } from '../utils/siteText'
 import { useAuthStore } from '../store/authStore'
 import { useLoginModalStore } from '../store/loginModalStore'
 import '../styles/components/Header.css'
@@ -17,6 +18,7 @@ const navigation = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const siteText = useSiteText()
   const { isAuthenticated, isAdmin, logout } = useAuthStore()
   const openLoginModal = useLoginModalStore((s) => s.open)
   const navigate = useNavigate()
@@ -55,21 +57,21 @@ export default function Header() {
                   <br />
                   КОМИТЕТ (НОК) ЕВРОБОТ РОССИЯ
                   <br />
-                  eurobotrussia@yandex.ru
+                  {siteText.contact_main_email}
                   <br />
-                  +7 (906) 712‑7744
+                  {siteText.contact_phone}
                 </div>
 
                 <div className='vk-icon'>
                   <a
-                      href="https://vk.com/eurobotrussia"
+                      href={siteText.contact_vk}
                       target="_blank"
                       rel="noopener noreferrer"
                   >
                     <img src='/images/vk-logo.png' alt='VK' />
                   </a>
                   <a
-                      href="https://max.ru/join/DeyL3IUDfbMmMpjQ-obL6jdiLvpqmqVcb3ZYicemQDc"
+                      href={siteText.contact_max}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ marginTop: '6px', display: 'block' }}

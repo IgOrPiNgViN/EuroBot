@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     
     # File upload
     UPLOAD_DIR: str = "uploads"
-    MAX_FILE_SIZE: int = 10485760  # 10MB
+    MAX_FILE_SIZE: int = 20971520  # 20MB (nginx client_max_body_size 20M)
     
     # CORS
     FRONTEND_URL: str = "http://localhost:5173"
