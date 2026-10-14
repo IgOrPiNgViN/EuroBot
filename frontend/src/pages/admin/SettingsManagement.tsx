@@ -605,6 +605,19 @@ export default function SettingsManagement() {
                 onChange={(e) => setEditedValues(prev => ({ ...prev, offseason_text: e.target.value }))}
                 placeholder={OFFSEASON_DEFAULTS.offseason_text}
             />
+            <Input
+                label="«Задания сезона» — заголовок (страница «Соревнования»)"
+                value={editedValues.offseason_tasks_title || ''}
+                onChange={(e) => setEditedValues(prev => ({ ...prev, offseason_tasks_title: e.target.value }))}
+                placeholder={OFFSEASON_DEFAULTS.offseason_tasks_title}
+            />
+            <Textarea
+                label="«Задания сезона» — текст"
+                rows={3}
+                value={editedValues.offseason_tasks_text || ''}
+                onChange={(e) => setEditedValues(prev => ({ ...prev, offseason_tasks_text: e.target.value }))}
+                placeholder={OFFSEASON_DEFAULTS.offseason_tasks_text}
+            />
             <div>
               <Button onClick={handleSaveOffseason} isLoading={saving === 'offseason'}>
                 Сохранить

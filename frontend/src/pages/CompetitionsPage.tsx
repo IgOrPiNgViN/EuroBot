@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import OffseasonBanner from '../components/OffseasonBanner'
+import OffseasonBanner, { OffseasonTasks } from '../components/OffseasonBanner'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import {
@@ -102,6 +102,7 @@ export default function CompetitionsPage() {
                 </div>
 
                 <OffseasonBanner />
+                <OffseasonTasks />
             </>
         )
     }
