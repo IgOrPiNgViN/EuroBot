@@ -85,8 +85,18 @@ export default function ArchiveManagement() {
       return { mainDescription: '' };
     }
 
-    const jsonMatch = description.match(/\{JSON\}(.*)$/);
-    const mainMatch = description.match(/^\{MAIN\}(.*?)(?=\{JSON\}|$)/);
+    // Закрытие сезона раньше сохраняло только JSON с картинками, без текста
+    const trimmed = description.trim();
+    if (trimmed.startsWith('{') && !trimmed.startsWith('{MAIN}')) {
+      try {
+        return { mainDescription: '', ...JSON.parse(trimmed) };
+      } catch {
+        /* обычный текст, начинающийся с фигурной скобки */
+      }
+    }
+
+    const jsonMatch = description.match(/\{JSON\}([\s\S]*)$/);
+    const mainMatch = description.match(/^\{MAIN\}([\s\S]*?)(?=\{JSON\}|$)/);
 
     if (jsonMatch && mainMatch) {
       try {

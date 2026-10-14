@@ -238,10 +238,11 @@ export default function SeasonsManagement() {
 
     const updatedFinalizeData: FinalizeSeasonData = {
       ...finalizeData,
-      description: JSON.stringify({
+      // Формат, который понимают архив и его редактор: {MAIN}текст{JSON}{...}
+      description: `{MAIN}{JSON}${JSON.stringify({
         logoUrl: archiveLogoUrl,
         titleImageUrl: archiveTitleUrl
-      }, null, 2),
+      })}`,
       first_place: encodePlaceFromForm(leaguePlaces, 'first') || undefined,
       second_place: encodePlaceFromForm(leaguePlaces, 'second') || undefined,
       third_place: encodePlaceFromForm(leaguePlaces, 'third') || undefined,
