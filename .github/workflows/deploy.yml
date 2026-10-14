@@ -44,6 +44,7 @@ jobs:
           filters: |
             frontend:
               - 'frontend/**'
+              - '.github/workflows/deploy.yml'
             backend:
               - 'backend/**'
               - 'docker-compose.prod.yml'
@@ -77,6 +78,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./frontend/dist/
           server-dir: ${{ fromJSON(secrets.FTP_SERVER_DIRS)[0] }}
+          # Хостинг медленно принимает крупные файлы (фото, PDF) — по умолчанию 30 с мало
+          timeout: 600000
           # Удаляются только файлы, которые раньше залил этот же деплой;
           # всё, что лежит на хостинге помимо сборки, не трогается.
           exclude: |
