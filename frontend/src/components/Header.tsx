@@ -76,7 +76,7 @@ export default function Header() {
                       rel="noopener noreferrer"
                       style={{ marginTop: '6px', display: 'block' }}
                   >
-                    <img src='/images/max-logo.png' alt='Max' style={{ width: '48px', height: '48px' }} />
+                    <img src='/images/max-logo-new.png' alt='Max' style={{ width: '48px', height: '48px' }} />
                   </a>
                 </div>
               </div>
