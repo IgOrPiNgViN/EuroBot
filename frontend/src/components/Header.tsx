@@ -36,7 +36,7 @@ export default function Header() {
               <Link to="/" className="header-logo">
                 <div className="logo-block">
                   <img
-                      src='/images/logo-eurobot.png'
+                      src='/images/logo-eurobot-white.png'
                       className='logo'
                       alt='Евробот'
                   />
