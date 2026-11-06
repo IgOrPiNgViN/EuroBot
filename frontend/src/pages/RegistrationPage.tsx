@@ -288,7 +288,7 @@ export default function RegistrationPage() {
           {currentSeason ? (
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '5rem 1rem', textAlign: 'center' }}>
               <p style={{ color: '#6b7280', fontSize: '1.125rem', marginBottom: '1rem' }}>
-                Регистрация на соревнования в данный момент закрыта
+                Регистрация откроется в ближайшее время
               </p>
               <p style={{ color: '#9ca3af' }}>
                 Следите за новостями, чтобы не пропустить открытие регистрации

@@ -115,7 +115,7 @@ export default function CompetitionsPage() {
         </Helmet>
 
         <section className="competitions-images-section">
-          <div className="competitions-images-container">
+          <div className={`competitions-images-container ${formatData?.logo_url ? '' : 'competitions-images-single'}`}>
               {formatData?.logo_url && (
                   <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -153,7 +153,13 @@ export default function CompetitionsPage() {
             </div>
         </section>
 
-        {currentSeason.registration_open && (
+        {formatData?.registration_button_url ? (
+            <div className="competitions-pill">
+              <Link to="/registration" className="competitions-pill-link">
+                <img src={formatData.registration_button_url} alt="Регистрация" className="competitions-pill-image" />
+              </Link>
+            </div>
+        ) : currentSeason.registration_open && (
             <div className="competitions-registration-button-container">
               <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -170,28 +176,41 @@ export default function CompetitionsPage() {
         {(currentSeason.theme || formatData) && (
             <section className="competitions-theme-section">
               <div className="container-custom">
-                <div className="competitions-theme-content">
-                  {currentSeason.theme && (
-                      <motion.h2
+                <div className={`competitions-theme-content ${formatData?.theme_image_url ? 'competitions-theme-with-image' : ''}`}>
+                  {formatData?.theme_image_url && (
+                      <motion.img
                           initial={{ opacity: 0, y: 20 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
-                          className="competitions-theme-title"
-                      >
-                        ТЕМА ПРЕДСТОЯЩИХ СОРЕВНОВАНИЙ:
-                      </motion.h2>
+                          src={formatData.theme_image_url}
+                          alt=""
+                          className="competitions-theme-image"
+                      />
                   )}
 
                   {currentSeason.theme && (
-                      <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.1 }}
-                          className="competitions-format-text"
-                      >
+                      <div className="competitions-theme-body">
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="competitions-theme-title"
+                        >
+                          {formatData?.theme_image_url
+                              ? `ТЕМА СОРЕВНОВАНИЙ ${currentSeason.year}:`
+                              : 'ТЕМА ПРЕДСТОЯЩИХ СОРЕВНОВАНИЙ:'}
+                        </motion.h2>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="competitions-format-text"
+                        >
                           {currentSeason.theme}
-                      </motion.div>
+                        </motion.div>
+                      </div>
                   )}
                 </div>
               </div>
@@ -208,7 +227,7 @@ export default function CompetitionsPage() {
                       viewport={{ once: true }}
                       className="competitions-tasks-title"
                   >
-                    Задания сезона
+                    Задания для участников российского этапа {currentSeason.year}:
                   </motion.h3>
 
                   <motion.ul
@@ -250,8 +269,17 @@ export default function CompetitionsPage() {
         )}
 
         {/* Блок 4: Документы с фоновым изображением */}
+        {formatData?.documents_button_url && (
+            <div className="competitions-pill">
+              <img src={formatData.documents_button_url} alt="Документы" className="competitions-pill-image" />
+            </div>
+        )}
+
         {formatData?.documents && formatData.documents.length > 0 && (
-            <section className="competitions-documents-section" style={docsBg ? { backgroundImage: `url(${docsBg})` } : undefined}>
+            <section
+                className={`competitions-documents-section ${formatData.documents_button_url ? 'competitions-documents-section-red' : ''}`}
+                style={docsBg && !formatData.documents_button_url ? { backgroundImage: `url(${docsBg})` } : undefined}
+            >
               <div className="competitions-documents-content">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
@@ -296,6 +324,15 @@ export default function CompetitionsPage() {
             </section>
         )}
 
+        {!currentSeason.registration_open && (
+            <section className="competitions-registration-soon">
+              <h2 className="competitions-registration-soon-text">Регистрация откроется в ближайшее время</h2>
+            </section>
+        )}
+
+        {(currentSeason.registration_open ||
+            (currentSeason.show_dates && currentSeason.competition_date_start) ||
+            (currentSeason.show_location && currentSeason.location)) && (
         <section className="competitions-info-section">
           <div className="container-custom">
             <div className="competitions-info-grid">
@@ -377,6 +414,7 @@ export default function CompetitionsPage() {
             </div>
           </div>
         </section>
+        )}
 
         {currentSeason.competitions.length > 0 && (
             <section className="competitions-files-section">

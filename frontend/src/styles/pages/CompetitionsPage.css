@@ -58,8 +58,8 @@
 }
 
 .competitions-theme-section {
-    background: linear-gradient(135deg, #0f3d63 0%, #1e3a8a 100%);
-    padding: 4rem 0;
+    background: #333fb5;
+    padding: 6rem 0 5rem;
     color: white;
 }
 
@@ -86,13 +86,13 @@
 }
 
 .competitions-tasks-section {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    padding: 4rem 0;
+    background: #fd0304;
+    padding: 4rem 0 6rem;
     color: white;
 }
 
 .competitions-tasks-content {
-    max-width: 800px;
+    max-width: 960px;
     margin: 0 auto;
     font-family: 'FunnyFont', sans-serif;
 }
@@ -140,7 +140,7 @@
 
 .competitions-task-text {
     width: fit-content;
-    max-width: 600px;
+    max-width: 880px;
 }
 
 /* ===== DOCUMENTS SECTION (PDF grid with orange overlay) ===== */
@@ -585,5 +585,111 @@
 
     .competitions-date-label {
         font-size: 0.75rem;
+    }
+}
+/* ===== Дизайн сезона: кнопки-картинки на стыке секций ===== */
+
+.competitions-images-single {
+    justify-content: center;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4.5rem;
+}
+
+.competitions-pill {
+    position: relative;
+    z-index: 3;
+    height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.competitions-pill-link {
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.competitions-pill-link:hover {
+    transform: translateY(-3px);
+}
+
+.competitions-pill-image {
+    display: block;
+    width: min(450px, 72vw);
+    height: auto;
+}
+
+.competitions-theme-with-image {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    align-items: center;
+    gap: 4rem;
+    max-width: 1000px;
+    text-align: left;
+    font-family: inherit;
+}
+
+.competitions-theme-with-image .competitions-theme-title {
+    font-family: inherit;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+}
+
+.competitions-theme-with-image .competitions-format-text {
+    font-family: inherit;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.competitions-theme-image {
+    width: 100%;
+    height: auto;
+}
+
+.competitions-documents-section-red {
+    background: linear-gradient(180deg, #5c0c0b 0%, #c00403 100%);
+    padding-top: 6.5rem;
+}
+
+.competitions-documents-section-red::before {
+    display: none;
+}
+
+.competitions-documents-section-red .competitions-documents-title {
+    font-family: inherit;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+}
+
+.competitions-registration-soon {
+    padding: 4rem 1rem;
+    background: white;
+    text-align: center;
+}
+
+.competitions-registration-soon-text {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
+    color: #1f2937;
+}
+
+@media (max-width: 768px) {
+    .competitions-theme-with-image {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 0 1rem;
+    }
+
+    .competitions-theme-image {
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .competitions-images-single {
+        padding-bottom: 3rem;
     }
 }

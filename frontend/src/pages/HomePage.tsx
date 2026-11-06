@@ -89,12 +89,14 @@ export default function HomePage() {
               <div className="hero-left-buttons-container">
                 {formatData?.title_url && (
                     <>
-                      <Link
-                          to="/registration"
-                          className="header-home-link"
-                      >
-                        Зарегистрировать команду
-                      </Link>
+                      {currentSeason?.registration_open && (
+                          <Link
+                              to="/registration"
+                              className="header-home-link"
+                          >
+                            Зарегистрировать команду
+                          </Link>
+                      )}
                       <Link
                           to="/competitions"
                           className="header-home-link"

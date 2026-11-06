@@ -266,6 +266,9 @@ export interface FormatStructure {
   icon_url?: string;
   hero_title_url?: string;
   hero_logo_url?: string;
+  theme_image_url?: string;
+  registration_button_url?: string;
+  documents_button_url?: string;
   tasks: string[];
   documents: Array<{
     url: string;

@@ -26,6 +26,9 @@ interface FormatStructure {
   icon_url?: string
   hero_title_url?: string
   hero_logo_url?: string
+  theme_image_url?: string
+  registration_button_url?: string
+  documents_button_url?: string
   tasks: string[]
   documents: Array<{
     url: string
@@ -281,7 +284,11 @@ export default function SeasonsManagement() {
           originalFormatData = JSON.parse(editingSeason.format)
 
           // Удаляем наши кастомные поля из оригинала, чтобы избежать дублирования
-          const { logo_url: _l, title_url: _t, icon_url: _i, tasks: _tk, documents: _d, ...rest } = originalFormatData
+          const {
+            logo_url: _l, title_url: _t, icon_url: _i, hero_title_url: _ht, hero_logo_url: _hl,
+            theme_image_url: _ti, registration_button_url: _rb, documents_button_url: _db,
+            tasks: _tk, documents: _d, ...rest
+          } = originalFormatData
           originalFormatData = rest
         } catch (error) {
           console.error('Error parsing original format:', error)
@@ -293,6 +300,11 @@ export default function SeasonsManagement() {
         logo_url: formatData.logo_url,
         title_url: formatData.title_url,
         ...(formatData.icon_url && { icon_url: formatData.icon_url }),
+        ...(formatData.hero_title_url && { hero_title_url: formatData.hero_title_url }),
+        ...(formatData.hero_logo_url && { hero_logo_url: formatData.hero_logo_url }),
+        ...(formatData.theme_image_url && { theme_image_url: formatData.theme_image_url }),
+        ...(formatData.registration_button_url && { registration_button_url: formatData.registration_button_url }),
+        ...(formatData.documents_button_url && { documents_button_url: formatData.documents_button_url }),
         tasks: formatData.tasks.filter(task => task.trim() !== ''),
         documents: formatData.documents.filter(doc =>
             doc.url.trim() !== '' && doc.name.trim() !== ''
@@ -611,6 +623,24 @@ export default function SeasonsManagement() {
                           label="Главная страница — маскот (необязательно)"
                           value={formatData.hero_logo_url || ''}
                           onChange={(url) => handleFormatFieldChange('hero_logo_url', url)}
+                      />
+
+                      <ImageUrlField
+                          label="Страница «Соревнования» — картинка рядом с темой (необязательно)"
+                          value={formatData.theme_image_url || ''}
+                          onChange={(url) => handleFormatFieldChange('theme_image_url', url)}
+                      />
+
+                      <ImageUrlField
+                          label="Страница «Соревнования» — кнопка-картинка «Регистрация» (необязательно)"
+                          value={formatData.registration_button_url || ''}
+                          onChange={(url) => handleFormatFieldChange('registration_button_url', url)}
+                      />
+
+                      <ImageUrlField
+                          label="Страница «Соревнования» — кнопка-картинка «Документы» (необязательно)"
+                          value={formatData.documents_button_url || ''}
+                          onChange={(url) => handleFormatFieldChange('documents_button_url', url)}
                       />
 
                       {/* Задания */}
