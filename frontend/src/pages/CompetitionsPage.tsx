@@ -19,6 +19,12 @@ import { ru } from 'date-fns/locale'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import '../styles/pages/CompetitionsPage.css'
 
+// Подпись на значке документа по расширению файла: PDF, ZIP, EPS…
+function fileTypeLabel(url: string): string {
+  const ext = url.split('?')[0].split('.').pop()?.toUpperCase() || ''
+  return /^[A-Z0-9]{2,4}$/.test(ext) ? ext : 'PDF'
+}
+
 export default function CompetitionsPage() {
   const [currentSeason, setCurrentSeason] = useState<Season | null>(null)
   const [formatData, setFormatData] = useState<FormatStructure | null>(null)
@@ -313,7 +319,7 @@ export default function CompetitionsPage() {
                             <path d="M46 8V28H66" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                             <path d="M46 8L66 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
                             {/* PDF text */}
-                            <text x="38" y="58" textAnchor="middle" fill="white" fontSize="18" fontWeight="700" fontFamily="sans-serif">PDF</text>
+                            <text x="38" y="58" textAnchor="middle" fill="white" fontSize="18" fontWeight="700" fontFamily="sans-serif">{fileTypeLabel(doc.url)}</text>
                           </svg>
                         </div>
                         <span className="competitions-document-name">{doc.name}</span>
