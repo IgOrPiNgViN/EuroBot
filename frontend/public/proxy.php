@@ -15,7 +15,9 @@ $url = $BACKEND . $uri;
 $fwdHeaders = [];
 foreach (getallheaders() as $name => $value) {
     $lower = strtolower($name);
-    if ($lower === 'host' || $lower === 'connection') continue;
+    // Длину и кодирование тела cURL выставит сам: при загрузке файла тело
+    // пересобирается, и старый Content-Length заставлял бэкенд ждать лишние байты
+    if (in_array($lower, ['host', 'connection', 'content-length', 'transfer-encoding', 'expect'])) continue;
     $fwdHeaders[] = "$name: $value";
 }
 
