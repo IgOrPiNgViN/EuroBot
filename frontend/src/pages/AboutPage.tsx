@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import { useSettingsStore } from '../store/settingsStore'
+import MemberPhoto from '../components/MemberPhoto'
 import '../styles/pages/AboutPage.css'
 
 interface CommitteeMember {
@@ -9,6 +10,8 @@ interface CommitteeMember {
   name: string
   position: string
   photo_url: string
+  photo_position?: string
+  photo_zoom?: number
 }
 
 interface Committee {
@@ -66,25 +69,6 @@ const DEFAULT_RUSSIA = `<p>Россия участвует в междунаро
 export default function AboutPage() {
   const { settings } = useSettingsStore()
   const [committees, setCommittees] = useState<Committee[]>([])
-
-  const getMemberPhotoStyle = (member: CommitteeMember): React.CSSProperties | undefined => {
-    const name = (member.name || '').toLowerCase()
-
-    // точечные правки кадрирования/центровки
-    if (name.includes('марченко') && name.includes('светлан')) {
-      // 1) обрезается верх головы -> поднимаем "фокус" выше
-      return { objectPosition: '50% 8%' }
-    }
-    if (name.includes('дарья') && name.includes('ванк')) {
-      // 2) лицо уехало вправо -> чуть смещаем фокус влево
-      return { objectPosition: '45% 20%' }
-    }
-    if (name.includes('конюшенко') && name.includes('светлан')) {
-      // 3) "отдалить" лицо (показываем больше кадра; может появиться белое поле)
-      return { objectFit: 'contain', backgroundColor: '#fff' }
-    }
-    return undefined
-  }
 
   useEffect(() => {
     if (settings.about_goals) {
@@ -191,27 +175,7 @@ export default function AboutPage() {
                     <div className="about-members-grid">
                       {committee.members.map((member) => (
                         <div key={member.id} className="about-member-item">
-                          <div className="about-member-photo-container">
-                            {member.photo_url ? (
-                              <img
-                                src={member.photo_url}
-                                alt={member.name}
-                                className="about-member-photo"
-                                style={getMemberPhotoStyle(member)}
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                  const placeholder = e.currentTarget.nextElementSibling as HTMLElement
-                                  if (placeholder) placeholder.style.display = 'flex'
-                                }}
-                              />
-                            ) : null}
-                            <div
-                              className="about-member-placeholder"
-                              style={{ display: member.photo_url ? 'none' : 'flex' }}
-                            >
-                              {member.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                            </div>
-                          </div>
+                          <MemberPhoto member={member} />
                           <div className="about-member-info">
                             <h3 className="about-member-fullname">{member.name}</h3>
                             <p className="about-member-position">{member.position}</p>

@@ -500,3 +500,39 @@
     gap: 0.5rem;
     margin-bottom: 0.75rem;
 }
+/* Плавающая панель «Сохранить всё» — появляется при несохранённых изменениях */
+.settings-management {
+    padding-bottom: 6rem;
+}
+
+.settings-save-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    z-index: 60;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    width: min(720px, calc(100vw - 2rem));
+    padding: 0.75rem 1rem 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    background: #1f2937;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.settings-save-bar-text {
+    font-weight: 500;
+}
+
+.settings-save-bar-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.settings-save-bar-actions button:first-child {
+    color: #e5e7eb;
+}

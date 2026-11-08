@@ -169,14 +169,24 @@
     margin-bottom: 1rem;
     border-radius: 999px;
     overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Обводка поверх фото: при приближении фото она не обрезается */
+.about-member-photo-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid #e5e7eb;
+    border-radius: 999px;
+    pointer-events: none;
 }
 
 .about-member-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border: 3px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 999px;
     object-position: 50% 20%;
     background: #fff;
@@ -194,7 +204,6 @@
     color: white;
     font-size: 2.25rem;
     font-weight: bold;
-    border: 3px solid #e5e7eb;
 }
 
 .about-member-info {
@@ -304,8 +313,7 @@
         height: 150px;
     }
 
-    .about-member-photo,
-    .about-member-placeholder {
+    .about-member-photo-container::after {
         border-width: 2px;
     }
 

@@ -1,0 +1,60 @@
+/* Редактор кадрирования фото члена комитета (админка) */
+.member-photo-editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+}
+
+.member-photo-editor-frame {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.member-photo-editor-frame:active {
+  cursor: grabbing;
+}
+
+.member-photo-editor-frame .about-member-photo-container {
+  margin-bottom: 0;
+}
+
+.member-photo-editor-controls {
+  display: flex;
+  flex: 1 1 200px;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.member-photo-editor-hint {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.member-photo-editor-zoom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.member-photo-editor-reset {
+  align-self: flex-start;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  color: #374151;
+  background: #fff;
+}
+
+.member-photo-editor-reset:hover {
+  background: #f3f4f6;
+}

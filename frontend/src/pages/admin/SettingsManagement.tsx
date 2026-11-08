@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { settingsApi } from '../../api/settings'
 import apiClient from '../../api/client'
@@ -10,6 +10,7 @@ import ImageUrlField from '../../components/ui/ImageUrlField'
 import { uploadErrorMessage } from '../../api/upload'
 import { OFFSEASON_DEFAULTS, OffseasonKey } from '../../components/OffseasonBanner'
 import { SITE_TEXT_FIELDS } from '../../utils/siteText'
+import { MemberPhotoEditor } from '../../components/MemberPhoto'
 import { PlusIcon, TrashIcon, XMarkIcon, UserIcon, UserGroupIcon, PhotoIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import '../../styles/pages/admin/SettingsManagement.css'
 
@@ -27,6 +28,8 @@ interface CommitteeMember {
   name: string
   position: string
   photo_url: string
+  photo_position?: string
+  photo_zoom?: number
 }
 
 interface Committee {
@@ -98,6 +101,19 @@ export default function SettingsManagement() {
     { key: 'bg_competitions_docs', label: 'Соревнования (документы)', description: 'Фон секции документов на странице соревнований' },
     { key: 'bg_footer', label: 'Футер', description: 'Фон нижней части сайта' },
   ]
+
+  // Последнее сохранённое состояние: по нему видно, есть ли несохранённые правки
+  const [savedValues, setSavedValues] = useState<Record<string, string>>({})
+  const [savedCommittees, setSavedCommittees] = useState('')
+  const [savedEmails, setSavedEmails] = useState('')
+  const [savingAll, setSavingAll] = useState(false)
+
+  const markSaved = (keys: string[]) =>
+    setSavedValues(prev => {
+      const next = { ...prev }
+      keys.forEach(k => { next[k] = editedValues[k] ?? '' })
+      return next
+    })
 
   const [bgImages, setBgImages] = useState<Record<string, string>>({})
   const [bgUploading, setBgUploading] = useState<string | null>(null)
@@ -198,6 +214,16 @@ export default function SettingsManagement() {
         }
       })
       setEditedValues(values)
+      setSavedValues(values)
+      const committeesData = data.find((st: any) => st.key === 'about_goals') as any
+      try {
+        const parsed = committeesData?.value ? JSON.parse(committeesData.value) : null
+        setSavedCommittees(Array.isArray(parsed) ? JSON.stringify(parsed) : '')
+      } catch {
+        setSavedCommittees('')
+      }
+      const emails = data.find((st: any) => st.key === 'contact_emails')?.value_json
+      setSavedEmails(JSON.stringify(emails || {}))
     } catch (error) {
       console.error('Failed to fetch settings:', error)
     } finally {
@@ -224,6 +250,7 @@ export default function SettingsManagement() {
       }
 
       await settingsApi.update(key, parsedValue)
+      markSaved([key])
       toast.success('Настройка сохранена')
     } catch (error) {
       toast.error('Ошибка сохранения')
@@ -237,6 +264,7 @@ export default function SettingsManagement() {
     try {
       const committeesJson = JSON.stringify(committees, null, 2)
       await settingsApi.update('about_goals', committeesJson)
+      setSavedCommittees(JSON.stringify(committees))
       toast.success('Комитеты сохранены')
     } catch (error) {
       console.error('Save committees error:', error)
@@ -250,6 +278,7 @@ export default function SettingsManagement() {
     setSaving('contact_emails')
     try {
       await settingsApi.update('contact_emails', contactEmails)
+      setSavedEmails(JSON.stringify(contactEmails))
       toast.success('Email адреса сохранены')
     } catch (error) {
       toast.error('Ошибка сохранения')
@@ -260,6 +289,63 @@ export default function SettingsManagement() {
 
   const updateContactEmail = (type: string, value: string) => {
     setContactEmails(prev => ({ ...prev, [type]: value }))
+  }
+
+  // ===== Несохранённые изменения и общая кнопка «Сохранить» =====
+  const dirtyKeys = useMemo(
+      () => Object.keys(editedValues).filter(k =>
+          k !== 'about_goals' && k !== 'contact_emails' && (editedValues[k] ?? '') !== (savedValues[k] ?? '')
+      ),
+      [editedValues, savedValues]
+  )
+  const committeesDirty = !loading && JSON.stringify(committees) !== savedCommittees
+  const emailsDirty = !loading && JSON.stringify(contactEmails) !== savedEmails
+  const dirtyCount = dirtyKeys.length + (committeesDirty ? 1 : 0) + (emailsDirty ? 1 : 0)
+
+  useEffect(() => {
+    if (!dirtyCount) return
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [dirtyCount])
+
+  // Тексты и картинки сохраняем строкой, остальное — как JSON, если это JSON (как кнопка у настройки)
+  const isPlainTextKey = (key: string) =>
+      key.startsWith('about_') || key.startsWith('offseason_') || SITE_TEXT_FIELDS.some(f => f.key === key)
+
+  const handleSaveAll = async () => {
+    setSavingAll(true)
+    try {
+      for (const key of dirtyKeys) {
+        let value: string | object = editedValues[key] ?? ''
+        if (!isPlainTextKey(key)) {
+          try { value = JSON.parse(value as string) } catch { /* обычная строка */ }
+        }
+        await settingsApi.update(key, value)
+      }
+      markSaved(dirtyKeys)
+      if (committeesDirty) {
+        await settingsApi.update('about_goals', JSON.stringify(committees, null, 2))
+        setSavedCommittees(JSON.stringify(committees))
+      }
+      if (emailsDirty) {
+        await settingsApi.update('contact_emails', contactEmails)
+        setSavedEmails(JSON.stringify(contactEmails))
+      }
+      toast.success('Все изменения сохранены')
+    } catch (error) {
+      console.error('Save all error:', error)
+      toast.error('Не всё удалось сохранить — попробуйте ещё раз')
+    } finally {
+      setSavingAll(false)
+    }
+  }
+
+  const handleDiscardAll = () => {
+    if (!confirm('Отменить все несохранённые изменения?')) return
+    setEditedValues(savedValues)
+    try { setCommittees(savedCommittees ? JSON.parse(savedCommittees) : committees) } catch { /* оставляем как есть */ }
+    try { setContactEmails(JSON.parse(savedEmails || '{}')) } catch { /* оставляем как есть */ }
   }
 
   // Функции для работы с комитетами
@@ -308,14 +394,17 @@ export default function SettingsManagement() {
     )
   }
 
-  const updateMember = (committeeId: number, memberId: number, field: keyof CommitteeMember, value: string) => {
+  const updateMember = (committeeId: number, memberId: number, field: keyof CommitteeMember, value: string) =>
+    patchMember(committeeId, memberId, { [field]: value })
+
+  const patchMember = (committeeId: number, memberId: number, changes: Partial<CommitteeMember>) => {
     setCommittees(prev =>
         prev.map(committee =>
             committee.id === committeeId
                 ? {
                   ...committee,
                   members: committee.members.map(member =>
-                      member.id === memberId ? { ...member, [field]: value } : member
+                      member.id === memberId ? { ...member, ...changes } : member
                   )
                 }
                 : committee
@@ -345,6 +434,7 @@ export default function SettingsManagement() {
     setSaving(key)
     try {
       await settingsApi.update(key, editedValues[key] || '')
+      markSaved([key])
       toast.success('Сохранено')
     } catch (error) {
       toast.error('Ошибка сохранения')
@@ -359,6 +449,7 @@ export default function SettingsManagement() {
       for (const field of SITE_TEXT_FIELDS) {
         await settingsApi.update(field.key, editedValues[field.key] ?? '')
       }
+      markSaved(SITE_TEXT_FIELDS.map(f => f.key))
       toast.success('Контакты и тексты сохранены')
     } catch (error) {
       toast.error('Ошибка сохранения')
@@ -373,6 +464,7 @@ export default function SettingsManagement() {
       for (const key of Object.keys(OFFSEASON_DEFAULTS) as OffseasonKey[]) {
         await settingsApi.update(key, editedValues[key] ?? '')
       }
+      markSaved(Object.keys(OFFSEASON_DEFAULTS))
       toast.success('Блок «Межсезонье» сохранён')
     } catch (error) {
       toast.error('Ошибка сохранения')
@@ -591,6 +683,7 @@ export default function SettingsManagement() {
                 value={editedValues.offseason_image || ''}
                 onChange={(url) => setEditedValues(prev => ({ ...prev, offseason_image: url }))}
                 placeholder={OFFSEASON_DEFAULTS.offseason_image}
+                showPreview={false}
             />
             <Input
                 label="Заголовок"
@@ -835,9 +928,14 @@ export default function SettingsManagement() {
                               <ImageUrlField
                                   label="Фотография"
                                   value={member.photo_url}
-                                  onChange={(url) => updateMember(committee.id, member.id, 'photo_url', url)}
+                                  onChange={(url) => patchMember(committee.id, member.id, { photo_url: url, photo_position: undefined, photo_zoom: undefined })}
                                   placeholder="https://... или загрузите файл"
                                   previewAlt="Превью фото"
+                                  showPreview={false}
+                              />
+                              <MemberPhotoEditor
+                                  member={member}
+                                  onChange={(changes) => patchMember(committee.id, member.id, changes)}
                               />
                             </div>
                           </div>
@@ -931,6 +1029,22 @@ export default function SettingsManagement() {
             <Button type="submit">Добавить</Button>
           </form>
         </div>
+
+        {dirtyCount > 0 && (
+            <div className="settings-save-bar">
+              <span className="settings-save-bar-text">
+                Есть несохранённые изменения ({dirtyCount})
+              </span>
+              <div className="settings-save-bar-actions">
+                <Button variant="ghost" onClick={handleDiscardAll} disabled={savingAll}>
+                  Отменить
+                </Button>
+                <Button onClick={handleSaveAll} isLoading={savingAll}>
+                  Сохранить всё
+                </Button>
+              </div>
+            </div>
+        )}
       </div>
   )
 }
