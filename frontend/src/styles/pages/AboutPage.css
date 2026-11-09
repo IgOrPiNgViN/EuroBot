@@ -75,6 +75,11 @@
 .about-prose p {
     margin-bottom: 1.25rem;
     break-inside: avoid;
+    /* Выравнивание по ширине с переносами и красная строка */
+    text-align: justify;
+    text-indent: 2em;
+    hyphens: auto;
+    -webkit-hyphens: auto;
 }
 
 .about-prose p:last-child {
