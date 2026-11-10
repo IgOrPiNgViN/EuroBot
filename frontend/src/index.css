@@ -109,3 +109,14 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Ссылки в тексте новости (в т.ч. автоматически из адресов в постах ВК) */
+.news-detail-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.news-detail-content a:hover {
+  color: #1d4ed8;
+}

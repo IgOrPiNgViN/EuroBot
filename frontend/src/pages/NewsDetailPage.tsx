@@ -195,7 +195,7 @@ export default function NewsDetailPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-eurobot-navy prose-a:text-eurobot-blue prose-a:underline [overflow-wrap:anywhere]"
+              className="news-detail-content prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-eurobot-navy prose-a:text-eurobot-blue prose-a:underline [overflow-wrap:anywhere]"
               dangerouslySetInnerHTML={{ __html: linkifyHtml(news.content) }}
             />
 
