@@ -17,6 +17,24 @@ export const SITE_TEXT_FIELDS = [
     multiline: false,
   },
   {
+    key: 'contact_map_coords',
+    label: 'Карта на странице «Контакты» — координаты места проведения (например: 55.6469, 37.6604). Пусто — карта скрыта',
+    default: '',
+    multiline: false,
+  },
+  {
+    key: 'contact_map_title',
+    label: 'Карта — подпись метки (название и адрес площадки)',
+    default: '',
+    multiline: false,
+  },
+  {
+    key: 'contact_map_placeholder',
+    label: 'Текст вместо карты, пока место проведения неизвестно',
+    default: 'Место проведения соревнований будет объявлено позже — следите за новостями!',
+    multiline: false,
+  },
+  {
     key: 'home_hero_text',
     label: 'Текст на главной (справа от заголовка)',
     default:
@@ -47,4 +65,14 @@ export function useSiteText(): Record<SiteTextKey, string> {
 export function phoneHref(phone: string): string {
   const digits = phone.replace(/[^\d+]/g, '')
   return `tel:${digits.startsWith('8') && digits.length === 11 ? '+7' + digits.slice(1) : digits}`
+}
+
+/** "55.6469, 37.6604" → [55.6469, 37.6604]; пусто или мусор → null */
+export function parseMapCoords(value: string): [number, number] | null {
+  const m = (value || '').match(/(-?\d+(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d+(?:[.,]\d+)?)/)
+  if (!m) return null
+  const lat = parseFloat(m[1].replace(',', '.'))
+  const lng = parseFloat(m[2].replace(',', '.'))
+  if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null
+  return [lat, lng]
 }

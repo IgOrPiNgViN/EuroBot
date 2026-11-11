@@ -8,7 +8,7 @@ import {
   MapPinIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
-import { phoneHref, useSiteText } from '../utils/siteText'
+import { parseMapCoords, phoneHref, useSiteText } from '../utils/siteText'
 import { contactsApi, ContactCreateData } from '../api/contacts'
 import { useSettingsStore } from '../store/settingsStore'
 import { useSmartCaptcha } from '../hooks/useSmartCaptcha'
@@ -33,6 +33,8 @@ const topicOptions = [
 export default function ContactsPage() {
   const { settings } = useSettingsStore()
   const siteText = useSiteText()
+  // Карта показывается, только когда в настройках заданы координаты места проведения
+  const mapCoords = parseMapCoords(siteText.contact_map_coords)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
@@ -287,20 +289,27 @@ export default function ContactsPage() {
           </div>
         </section>
 
-        <section className="contacts-map-section">
-          <YandexMap
-              center={[55.6469, 37.6604]}
-              zoom={16}
-              markers={[
-                {
-                  coordinates: [55.6469, 37.6604],
-                  title: 'Евробот Россия',
-                  description: 'НИЯУ МИФИ, Москва, Каширское ш. 31'
-                }
-              ]}
-              height="400px"
-          />
-        </section>
+        {mapCoords ? (
+            <section className="contacts-map-section">
+              <YandexMap
+                  center={mapCoords}
+                  zoom={16}
+                  markers={[
+                    {
+                      coordinates: mapCoords,
+                      title: 'Евробот Россия',
+                      description: siteText.contact_map_title
+                    }
+                  ]}
+                  height="400px"
+              />
+            </section>
+        ) : (
+            <section className="contacts-map-placeholder">
+              <MapPinIcon className="contacts-map-placeholder-icon" />
+              <p>{siteText.contact_map_placeholder}</p>
+            </section>
+        )}
       </>
   )
 }
