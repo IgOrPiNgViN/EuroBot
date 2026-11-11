@@ -409,3 +409,62 @@
         letter-spacing: 1.5px;
     }
 }
+/* ===== Единая сетка логотипов партнёров =====
+   Все логотипы вписываются в одинаковую рамку, подписи стоят на одной линии. */
+.partners-grid {
+    align-items: flex-start;
+    gap: 2rem 2.5rem;
+}
+
+.partner-item-regular {
+    width: 11rem;
+    height: auto;
+}
+
+.partner-item-regular .partner-link {
+    height: 6rem;
+    padding: 0.25rem;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.partner-item-regular .partner-logo {
+    filter: none;
+}
+
+.partner-item-regular .partner-item-title {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.3;
+}
+
+@media (max-width: 768px) {
+    .partners-grid {
+        gap: 1.25rem 1rem;
+    }
+
+    .partner-item-regular {
+        width: 8.5rem;
+        height: auto;
+    }
+
+    .partner-item-regular .partner-link {
+        height: 4.5rem;
+    }
+
+    .partner-item-regular .partner-item-title {
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .partner-item-regular {
+        width: 8rem;
+        height: auto;
+    }
+
+    .partner-item-regular .partner-link {
+        height: 4rem;
+    }
+}
