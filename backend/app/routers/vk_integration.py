@@ -90,11 +90,36 @@ def extract_hashtags(text: str) -> list[str]:
     return re.findall(r'#(\w+)', text)
 
 
+# Ссылка, «спрятанная в слово» в посте ВК: [цель|текст].
+# Цель — адрес (https://..., vk.com/...) или id/короткое имя страницы ВК (club123, id5, eurobotrussia).
+VK_MARKUP_RE = re.compile(r'\[([^\[\]|\s]+)\|([^\[\]]+)\]')
+
+
+def _vk_target_url(target: str) -> Optional[str]:
+    """URL for the target part of VK [target|label] markup."""
+    if re.match(r'https?://', target, re.I):
+        return target
+    if re.match(r'(www\.|m\.)?(vk\.com|vk\.ru|vk\.cc|vkvideo\.ru)/', target, re.I):
+        return 'https://' + target
+    if re.match(r'[A-Za-z0-9_.]+$', target):
+        return 'https://vk.com/' + target
+    return None
+
+
 def clean_vk_text(text: str) -> str:
-    """Clean VK post text for use as news content, preserving structure."""
-    text = re.sub(r'\[club\d+\|([^\]]+)\]', r'\1', text)
-    text = re.sub(r'\[id\d+\|([^\]]+)\]', r'\1', text)
-    return text.strip()
+    """Plain text of a VK post (for titles and excerpts): [target|label] -> label."""
+    return VK_MARKUP_RE.sub(lambda m: m.group(2), text).strip()
+
+
+def vk_text_to_html(text: str) -> str:
+    """HTML for news content: links hidden in words stay real hyperlinks."""
+    def repl(m: re.Match) -> str:
+        url = _vk_target_url(m.group(1))
+        if not url:
+            return m.group(2)
+        return f'<a href="{url}" target="_blank" rel="noopener noreferrer">{m.group(2)}</a>'
+
+    return VK_MARKUP_RE.sub(repl, text).strip().replace('\n', '<br/>')
 
 
 def make_title_from_text(text: str, max_len: int = 150) -> str:
@@ -216,7 +241,7 @@ async def import_vk_post(
 
     title = make_title_from_text(text)
     content = clean_vk_text(text)
-    content_html = content.replace('\n', '<br/>')
+    content_html = vk_text_to_html(text)
 
     featured_image = None
     gallery_images = []
@@ -251,6 +276,16 @@ async def import_vk_post(
             if thumb_images and not featured_image:
                 best_thumb = max(thumb_images, key=lambda t: t.get("width", 0) * t.get("height", 0))
                 featured_image = best_thumb.get("url", "")
+        elif att["type"] == "link":
+            # Ссылка, прикреплённая к посту карточкой: в тексте её может не быть
+            link = att.get("link") or {}
+            link_url = link.get("url", "")
+            if link_url and link_url not in text:
+                link_title = (link.get("title") or "").strip() or link_url
+                content_html += (
+                    f'<br/><br/>🔗 <a href="{link_url}" target="_blank" '
+                    f'rel="noopener noreferrer">{link_title}</a>'
+                )
 
     gallery_json = json.dumps(gallery_images) if gallery_images else None
 
